@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrace uživatelů</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Administrace uživatelů</h1>
+        <p>Přihlášen jako: <strong><%= username %></strong> (<%= role %>)</p>
+        <p><a href="/dashboard">Zpět na dashboard</a> | <a href="/logout">Odhlásit</a></p>
+
+        <% if (message) { %>
+            <div class="message"><%= message %></div>
+        <% } %>
+
+        <h2>Seznam uživatelů</h2>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Uživatelské jméno</th>
+                <th>Role</th>
+                <th>Vytvořen</th>
+                <th>Akce</th>
+            </tr>
+            <% users.forEach(user => { %>
+            <tr>
+                <td><%= user.id %></td>
+                <td><%= user.username %></td>
+                <td><%= user.role %></td>
+                <td><%= user.created_at %></td>
+                <td>
+                    <% if (user.id !== locals.userId) { %>
+                        <a href="/admin/delete/<%= user.id %>" onclick="return confirm('Opravdu smazat?')">Smazat</a>
+                    <% } else { %>
+                        (aktuální)
+                    <% } %>
+                </td>
+            </tr>
+            <% }) %>
+        </table>
+
+        <h2>Přidat uživatele</h2>
+        <form method="post" action="/admin/add">
+            <label>Uživatelské jméno</label>
+            <input type="text" name="new_username" required>
+            <label>Heslo</label>
+            <input type="password" name="new_password" required>
+            <label>Role</label>
+            <select name="new_role">
+                <option value="user">user</option>
+                <option value="admin">admin</option>
+            </select>
+            <button type="submit">Přidat</button>
+        </form>
+    </div>
+</body>
+</html>

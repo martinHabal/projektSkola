@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Přihlášení</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Přihlášení</h1>
+        <% if (error) { %>
+            <div class="error"><%= error %></div>
+        <% } %>
+        <form method="post" action="/login">
+            <label>Uživatelské jméno</label>
+            <input type="text" name="username" required>
+            <label>Heslo</label>
+            <input type="password" name="password" required>
+            <button type="submit">Přihlásit</button>
+        </form>
+        <p>Nemáte účet? <a href="/register">Zaregistrujte se</a></p>
+        <p>Výchozí admin: <strong>admin / admin123</strong></p>
+    </div>
+</body>
+</html>
