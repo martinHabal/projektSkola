@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Přehled učitelů</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: #f7f7f7;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    table {
+      width: 80%;
+      margin: 20px auto;
+      border-collapse: collapse;
+      background: white;
+      box-shadow: 0 0 6px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: center;
+    }
+
+    th {
+      background: #4CAF50;
+      color: white;
+    }
+
+    tr:nth-child(even) {
+      background: #f2f2f2;
+    }
+
+    tr:hover {
+      background: #e6ffe6;
+    }
+
+    .ratio {
+      color: #333;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Přehled hodin učitelů za měsíc září</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Učitel ID</th>
+        <th>Zkratka</th>
+        <th>Počet hodin</th>
+        <th>Své hodiny (bez suplovaných)</th>
+        <th>Poměr vlastní/suplované (%)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% teacherSummary.forEach(t => { %>
+        <tr>
+          <td><%= t.teacher_id %></td>
+          <td><%= t.teacher_abbr %></td>
+          <td><%= t.total_lessons %></td>
+          <td><%= t.same_teacher_count %></td>
+          <td class="ratio">
+            <%= ((t.same_teacher_count / t.total_lessons) * 100).toFixed(0) %> %
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <p>Cílem je, aby ucitel ten výkaz vůbec nemusel dělat. Jen si to zkontroluje</p>
+  <p>Workflow:</p>
+  <p></p>
+</body>
+</html>
+
+

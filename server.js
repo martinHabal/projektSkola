@@ -29,6 +29,16 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 
+
+//osetreni aby sel user ve vsech sablonach v header
+app.use((req, res, next) => {
+    // Nastavení globálních proměnných pro všechny šablony
+    res.locals.username = req.session?.user?.username || null;
+    res.locals.isLoggedIn = !!req.session?.user;
+    res.locals.user = req.session?.user || null;
+    next();
+});
+
 app.use('/', routerLogin);
 app.use('/', routerOther);
 
