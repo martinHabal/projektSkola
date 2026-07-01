@@ -1,0 +1,85 @@
+<header id="myDiv">
+  <h1>Školní intranet Hotelové školy Mariánské Lázně - <%= username || 'Nepřihlášen' %></h1>
+  <div class="header-right">
+   
+    <!-- <button style="cursor: pointer" class="tooltip" data-tooltip="Zpráva" onclick="window.location.href='/fip-upload'">
+      <span class="material-icons">message</span>
+    </button> -->
+   
+    <!-- <button class="tooltip" data-tooltip=" Základy informatiky " onclick="window.location.href='/zi-uvod'" style="background-color: #95c2f2;">
+      <span class="material-icons">data_object</span>
+    </button>
+    <button class="tooltip" data-tooltip=" Základy informačních systémů " onclick="window.location.href='/zis-uvod'" style="background-color: #95c2f2;">
+      <span class="material-icons">dataset</span>
+    </button>
+    <button class="tooltip" data-tooltip="Mikroekonomie" onclick="window.location.href='/mikro-uvod'" style="background-color: #95c2f2;">
+      <span class="material-icons">view_kanban</span>
+    </button>
+    <button class="tooltip" data-tooltip="Makroekonomie" onclick="window.location.href='/makro-uvod'" style="background-color: #95c2f2;">
+      <span class="material-icons">monitor_heart</span>
+    </button> -->
+    <!-- <button class="tooltip" data-tooltip="Manažerské modelování" onclick="window.location.href='/mam-uvod'" style="background-color: #95c2f2;">
+      <span class="material-icons">roundabout_right</span>
+    </button> -->
+    <button class="tooltip" data-tooltip="Maturita" onclick="window.location.href='/maturita'" style="background-color: #95c2f2;">
+      <span class="material-icons">work</span>
+    </button>
+    <button class="tooltip" data-tooltip="Školní řád" onclick="window.location.href='/skolni-rad'" style="background-color: #95c2f2;">
+      <span class="material-icons">attach_money</span>
+    </button>
+    <!-- <button class="tooltip" data-tooltip="Statistika" onclick="window.location.href='/sta-uvod'" style="background-color: #95c2f2;">
+      <span class="material-icons">bar_chart</span>
+    </button>
+    <button class="tooltip" data-tooltip="Statistické zpracování dat" onclick="window.location.href='/szd-uvod'" style="background-color: #95c2f2;">
+      <span class="material-icons">data_thresholding</span>
+    </button>
+    <button class="tooltip" data-tooltip="Mikroekonomie - státnice" onclick="window.location.href='/mikro-statnice-uvod'" style="background-color: #38d0c0;">
+      <span class="material-icons">view_kanban</span>
+    </button>
+    <button class="tooltip" data-tooltip="Makroekonomie - státnice" onclick="window.location.href='/makro-statnice-uvod'" style="background-color: #38d0c0;">
+      <span class="material-icons">monitor_heart</span>
+    </button>
+    <button class="tooltip" data-tooltip="Management - státnice" onclick="window.location.href='/management-uvod'" style="background-color: #38d0c0;">
+      <span class="material-icons">manage_accounts</span>
+    </button>
+    <button class="tooltip" data-tooltip="Podniková ekonomika - státnice" onclick="window.location.href='/podnikovka-uvod'" style="background-color: #38d0c0;">
+      <span class="material-icons">business</span>
+    </button> -->
+  </div>
+  <!-- <button class="tooltip" data-tooltip="Poslat zprávu" onclick="window.location.href='/fip-upload'"><span class="material-icons">home</span></button> -->
+
+  <!-- on vlastne header jako takovej neni, jsou to jen ty button odkazy, ale vypada to amatersky... musim tad dat klasickej header -->
+   <div id="popup" style="
+  display:none;
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  background:white;
+  padding:20px;
+  border:1px solid black;
+  box-shadow:0 0 10px rgba(0,0,0,0.3);
+">
+  <p>cv,zahrady-stavby,vykaz-tabulka,vykaz-info,vykaz,maturita,js-uvod</p>
+  <button onclick="closePopup()">Zavřít</button>
+</div>
+
+<script>
+  let clickCount = 0;
+const div = document.getElementById("myDiv");
+const popup = document.getElementById("popup");
+
+div.addEventListener("click", () => {
+  clickCount++;
+
+  if (clickCount === 8) {
+    popup.style.display = "block";
+    clickCount = 0; // reset (volitelné)
+  }
+});
+
+function closePopup() {
+  popup.style.display = "none";
+}
+</script>
+</header>

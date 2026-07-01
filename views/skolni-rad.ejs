@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Školní řád - Hotelová škola Mariánské Lázně</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            color: #1e2a3a;
+            line-height: 1.6;
+        }
+
+        #app {
+            display: flex;
+            flex-direction: row;
+            min-height: 100vh;
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #fff;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        }
+
+        #sidebar {
+            width: 280px;
+            background: #f0f4f9;
+            padding: 1.5rem 1rem;
+            border-right: 1px solid #dce1e8;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        #sidebar h2 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #0b2b4a;
+            border-bottom: 2px solid #b0c4d9;
+            padding-bottom: 0.5rem;
+        }
+        #sidebar nav ul {
+            list-style: none;
+            padding: 0;
+        }
+        #sidebar nav ul li {
+            margin-bottom: 0.4rem;
+        }
+        #sidebar nav ul li a {
+            display: block;
+            padding: 0.3rem 0.5rem;
+            color: #1e3a5f;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+        #sidebar nav ul li a:hover {
+            background: #d6e2ee;
+        }
+        #sidebar nav ul li a.active {
+            background: #b8cde0;
+            font-weight: 600;
+        }
+        #sidebar nav ul ul {
+            padding-left: 1rem;
+            margin-top: 0.2rem;
+            margin-bottom: 0.2rem;
+        }
+        #sidebar nav ul ul li a {
+            font-size: 0.8rem;
+            padding: 0.2rem 0.5rem;
+        }
+
+        #main {
+            flex: 1;
+            padding: 2rem 2.5rem;
+            overflow-y: auto;
+            min-width: 0;
+        }
+
+        #search-box {
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        #search-box input {
+            flex: 1;
+            padding: 0.7rem 1rem;
+            border: 2px solid #cbd5e1;
+            border-radius: 30px;
+            font-size: 1rem;
+            outline: none;
+            transition: border 0.2s;
+            min-width: 200px;
+        }
+        #search-box input:focus {
+            border-color: #2a6b9c;
+        }
+        #search-box button {
+            padding: 0.7rem 1.5rem;
+            background: #1e3a5f;
+            color: #fff;
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+        #search-box button:hover {
+            background: #0b2b4a;
+        }
+        #clear-search {
+            background: #8b9aaa;
+        }
+        #clear-search:hover {
+            background: #6a7b8e;
+        }
+
+        #search-info {
+            font-size: 0.9rem;
+            color: #4a5b6e;
+            margin-bottom: 0.5rem;
+            min-height: 1.5rem;
+        }
+
+        #search-results {
+            margin-bottom: 1.5rem;
+            padding: 0.8rem 1rem;
+            background: #f8faff;
+            border-radius: 8px;
+            border: 1px solid #dce1e8;
+            display: none;
+        }
+        #search-results.visible {
+            display: block;
+        }
+        #search-results h4 {
+            font-size: 1rem;
+            color: #0b2b4a;
+            margin-bottom: 0.5rem;
+        }
+        #search-results ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 1.2rem;
+        }
+        #search-results ul li {
+            margin: 0;
+        }
+        #search-results ul li a {
+            color: #1e3a5f;
+            text-decoration: none;
+            border-bottom: 1px dashed #b0c4d9;
+            font-size: 0.9rem;
+        }
+        #search-results ul li a:hover {
+            color: #0b2b4a;
+            border-bottom-color: #0b2b4a;
+        }
+
+        .chapter {
+            margin-bottom: 2.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 1.5rem;
+        }
+        .chapter:last-child {
+            border-bottom: none;
+        }
+        .chapter h2 {
+            font-size: 1.8rem;
+            color: #0b2b4a;
+            margin-bottom: 1rem;
+            padding-bottom: 0.3rem;
+            border-bottom: 3px solid #cbd5e1;
+        }
+        .subsection {
+            margin-top: 1.2rem;
+            padding-left: 0.2rem;
+        }
+        .subsection h3 {
+            font-size: 1.2rem;
+            color: #1e3a5f;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .subsection p, .subsection li {
+            margin-bottom: 0.6rem;
+        }
+        .subsection ul, .subsection ol {
+            padding-left: 1.8rem;
+            margin-bottom: 0.6rem;
+        }
+        .subsection table {
+            border-collapse: collapse;
+            margin: 1rem 0;
+            width: 100%;
+            max-width: 400px;
+        }
+        .subsection table td, .subsection table th {
+            border: 1px solid #b0c4d9;
+            padding: 0.4rem 0.8rem;
+            text-align: center;
+        }
+        .subsection table th {
+            background: #e8edf4;
+            font-weight: 600;
+        }
+        .highlight {
+            background-color: #f9e66b;
+            padding: 0.1rem 0.2rem;
+            border-radius: 2px;
+            font-weight: 600;
+        }
+        .hidden-chapter {
+            display: none;
+        }
+        .hidden-subsection {
+            display: none;
+        }
+
+        @media (max-width: 820px) {
+            #app {
+                flex-direction: column;
+            }
+            #sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                border-right: none;
+                border-bottom: 1px solid #dce1e8;
+                padding: 1rem;
+                max-height: 300px;
+                overflow-y: auto;
+            }
+            #main {
+                padding: 1rem;
+            }
+        }
+
+        .footnote {
+            font-size: 0.9rem;
+            color: #4a5b6e;
+            margin-top: 1rem;
+            border-top: 1px dashed #dce1e8;
+            padding-top: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+
+    <aside id="sidebar">
+        <h2>📖 Obsah</h2>
+        <nav id="toc"></nav>
+    </aside>
+
+    <main id="main">
+        <div id="search-box">
+            <input type="text" id="search-input" placeholder="Hledat ve školním řádu (průběžně)" aria-label="Vyhledávání">
+            <button id="clear-search">✕ Zrušit</button>
+        </div>
+        <div id="search-info"></div>
+        <div id="search-results">
+            <h4>⬇️ Nalezené sekce (klikni pro skok)</h4>
+            <ul id="results-list"></ul>
+        </div>
+
+        <div id="content"></div>
+
+        <div class="footnote">
+            Školní řád nabývá účinnosti dnem 1. září 2025. Schválen školskou radou dne 28. srpna 2025.
+        </div>
+    </main>
+</div>
+
+<script>
+    // ------------------------------------------------------------------
+    // DATA – strukturovaný obsah školního řádu
+    // ------------------------------------------------------------------
+    const schoolData = [
+        {
+            chapter: "Úvod",
+            subsections: [
+                {
+                    title: "",
+                    content: `
+                        <p><strong>Hotelová škola Mariánské Lázně, příspěvková organizace</strong></p>
+                        <h1 style="font-size:2.2rem; color:#0b2b4a; margin:0.2rem 0;">ŠKOLNÍ ŘÁD</h1>
+                        <p><em>Směrnice č.:</em> — Zpracovala: Ing. Lucie Fričlová – ředitelka školy</p>
+                        <p>Schváleno školskou radou dne: 28. srpna 2025 &nbsp;|&nbsp; Platnost od 1. září 2025</p>
+                        <hr>
+                        <p><strong>1.</strong> Hotelová škola Mariánské Lázně, příspěvková organizace je střední škola poskytující střední vzdělání s maturitní zkouškou a střední vzdělání s výučním listem. Za účelem splnění tohoto cíle učitelé předávají a zpřístupňují žákům potřebné informace a dovednosti. V zájmu žáků je si tyto poznatky osvojovat a dále rozšiřovat vlastním studiem a činností. Snadný chod školy očekává účinnou spolupráci jak učitelů a žáků, tak i ostatních pracovníků školy a zákonných zástupců. Dodržování platných zákonů České republiky a zásad školního řádu je pro žáky jednou ze základních povinností. Každý žák i zaměstnanec by měl svým jednáním a vystupováním šířit dobré jméno školy.</p>
+                        <p><strong>2.</strong> Školní řád upravuje v souladu s § 30 zákona č. 561/2004 Sb., o předškolním, základním, středním, vyšším odborném a jiném vzdělávání (dále jen Školský zákon) podmínky soužití na Hotelové škole Mariánské Lázně, příspěvková organizace, (dále jen „škola“). Upravuje podrobnosti k výkonu práv a povinností žáků, jejich zákonných zástupců a pravidla vzájemných vztahů mezi všemi osobami účastnými na vyučování. Jeho součástí jsou podmínky provozu a vnitřního režimu školy, podmínky zajištění bezpečnosti a ochrany zdraví žáků a jejich ochrany před sociálně patologickými jevy a před projevy diskriminace, nepřátelství nebo násilí. Školní řád dále stanoví podmínky zacházení se školním majetkem a pravidla pro hodnocení výsledků vzdělávání.</p>
+                        <p><strong>3.</strong> Nedílnou součástí platného školního řádu jsou Pravidla pro hodnocení výsledků vzdělávání žáků (klasifikační řád).</p>
+                        <p><strong>4.</strong> Školní řád je závazný pro všechny žáky školy, jejich zákonné zástupce a všechny zaměstnance školy.</p>
+                    `
+                }
+            ]
+        },
+        {
+            chapter: "I. Provoz školy",
+            subsections: [
+                {
+                    title: "1. Systém zabezpečení vstupu do budovy A (Komenského 449/2)",
+                    content: `
+                        <p><strong>a)</strong> V době teoretického vyučování je žákům umožněn vstup do budovy školy od 7:30 hod. hlavním vchodem z parku. V době mezi 7.30–7.45 vstupují pod dohledem pana školníka nebo pověřené paní uklízečky, mezi 7.45–8.00 pod dohledem určeného pedagogického pracovníka dle stanoveného rozpisu dozorů.</p>
+                        <p><strong>b)</strong> V rámci odborného výcviku / praxe je žákům umožněn vstup do budovy školy od 6.00 hod. s vědomím učitele odborného výcviku.</p>
+                        <p><strong>c)</strong> Každý žák i pedagog má povinnost zaznamenat svůj příchod/odchod přiděleným osobním čipem.</p>
+                        <p><strong>d)</strong> Žák přichází do školy alespoň 10 minut před zahájením vyučování. Nejpozději v 7.55 hod. musí žák zaujmout své místo v učebně. V případě přesunu do odborné učebny čeká žák připraven před odbornou učebnou na příchod vyučujícího.</p>
+                        <p><strong>e)</strong> Zahájení vyučování je v 8.00 hod.</p>
+                        <p><strong>f)</strong> V průběhu výuky je zakázáno žákům opouštět školní budovu. Zákaz vycházení z budovy se netýká polední přestávky na oběd a nutného přesunu žáků na místa mimo budovu školy, kde probíhá další vyučování či jiné akce školy.</p>
+                        <p><strong>g)</strong> Po ukončení vyučování je žákům zakázáno zdržovat se v prostorách školy.</p>
+                        <p><strong>h)</strong> Zabezpečení objektu během oběda ve školní restauraci v čase 11.30–14.00: hosté vstupují vchodem z Komenského ulice; vchody z restauračního provozu a výroby do prostoru tříd jsou po dobu výdeje obědů uzavřeny – zodpovídá učitel odborného výcviku (nebo jiný pověřený pracovník).</p>
+                        <p><strong>i)</strong> Osobní návštěvy žáků ve škole nejsou povoleny. Výjimkou jsou návštěvy rodičů a úředních osob (např. policie). Návštěva zvoní na zvonek sekretariátu u vstupních dveří z parku. Každá osoba, která není zaměstnancem nebo žákem školy, se zapisuje do knihy návštěv umístěné na sekretariátu nebo ve vrátnici školy. Návštěva nemá právo vstupovat do učeben, na sekretariátu požádá o vyvolání žáka do prostoru vstupní haly školy, a to výhradně v době přestávky.</p>
+                        <p><strong>j)</strong> Ve třetím patře budovy školy se nachází pobočka Pedagogicko-psychologické poradny. Klienti, kteří jsou objednáni do poradny na konzultaci, se mohou v budově školy pohybovat jen v doprovodu poradnou pověřené osoby.</p>
+                    `
+                },
+                {
+                    title: "2. Systém zabezpečení vstupu do budovy B (Poštovní 7)",
+                    content: `
+                        <p><strong>a)</strong> Žákům je umožněn vstup do budovy školy od 7.30 do 7.55 hod. bočním vchodem pod dohledem školníka. Po 8.00 hod. bude žák vpuštěn do budovy školy školníkem nebo paní sekretářkou po zazvonění na zvonek u hlavního vchodu.</p>
+                        <p><strong>b)</strong> Každý žák i pedagog má za povinnost zaznamenat svůj příchod/odchod přiděleným osobním čipem.</p>
+                        <p><strong>c)</strong> Žák přichází do školy alespoň 10 minut před zahájením vyučování. Nejpozději v 7.55 hod. musí žák zaujmout své místo v učebně. V případě přesunu do odborné učebny čeká žák připraven před odbornou učebnou na příchod vyučujícího.</p>
+                        <p><strong>d)</strong> Zahájení vyučování je v 8.00 hodin.</p>
+                        <p><strong>e)</strong> V průběhu výuky je zakázáno žákům opouštět školní budovu. Zákaz vycházení z budovy se netýká polední přestávky na oběd a nutného přesunu žáků na místa mimo budovu školy, kde probíhá další vyučování či jiné akce školy.</p>
+                        <p><strong>f)</strong> Osobní návštěvy žáků ve škole nejsou povoleny. Výjimkou jsou návštěvy rodičů a úředních osob (např. policie). Návštěva zvoní na zvonek u hlavního vchodu na školníka. Každá osoba, která není zaměstnancem nebo žákem školy, se zapíše do knihy návštěv umístěné v sekretariátu, popř. u školníka. Návštěva nemá právo vstupovat do učeben, požádá v sekretariátu nebo školníka o vyvolání žáka do prostoru vstupní haly školy, a to výhradně v době přestávky.</p>
+                        <p><strong>g)</strong> Po ukončení vyučování je žákům zakázáno zdržovat se v prostorách školy.</p>
+                    `
+                },
+                {
+                    title: "3. Organizace vyučovacího dne",
+                    content: `
+                        <p>Začátky vyučovacích hodin na obou budovách jsou stanoveny následovně:</p>
+                        <table>
+                            <tr><th>Hodina</th><th>Začátek</th><th>Konec</th></tr>
+                            <tr><td>1.</td><td>8.00</td><td>8.45</td></tr>
+                            <tr><td>2.</td><td>8.50</td><td>9.35</td></tr>
+                            <tr><td>3.</td><td>9.55</td><td>10.40</td></tr>
+                            <tr><td>4.</td><td>10.50</td><td>11.35</td></tr>
+                            <tr><td>5.</td><td>11.45</td><td>12.30</td></tr>
+                            <tr><td>6.</td><td>12.35</td><td>13.20</td></tr>
+                            <tr><td>7.</td><td>13.25</td><td>14.10</td></tr>
+                            <tr><td>8.</td><td>14.15</td><td>15.00</td></tr>
+                            <tr><td>9.</td><td>15.05</td><td>15.50</td></tr>
+                        </table>
+                    `
+                }
+            ]
+        },
+        {
+            chapter: "II. Provoz šaten",
+            subsections: [
+                {
+                    title: "1. Školní šatny",
+                    content: `
+                        <p><strong>a)</strong> Šatna se nachází v obou budovách v suterénu školy. Každý žák má přidělenu svou školní skříňku.</p>
+                        <p><strong>b)</strong> Na budově A obdrží žák na začátku studia oproti podpisu od šatní skříňky klíč, který využívá po celou dobu studia. Na budově B je každý žák povinen obstarat si vlastní visací zámek.</p>
+                        <p><strong>c)</strong> Po příchodu do školy se žák přezuje, svrchní ošacení a obuv odkládá do své skříňky.</p>
+                        <p><strong>d)</strong> Šatní skříňka není určena k úschově cenností, šperků, dokladů, peněz, mobilních telefonů a jiné elektroniky apod. Ve skříňce je rovněž zakázáno odkládat potraviny, věci ohrožující hygienu a předměty, které by skříňku mohly poškodit.</p>
+                        <p><strong>e)</strong> Žák je povinen svou šatní skříňku zamykat. Při ztrátě věcí z neuzamčené šatní skříňky nepřísluší žákovi náhrada škody.</p>
+                        <p><strong>f)</strong> Případnou ztrátu věcí z uzamčené šatní skříňky, která byla poškozena, hlásí žák neprodleně svému třídnímu učiteli nebo zástupci ředitelky pro teoretické vyučování.</p>
+                        <p><strong>g)</strong> V průběhu studia je žák povinen hlásit všechny závady na své skříňce třídnímu učiteli, který informaci předá školníkovi tak, aby zjištěné závady byly co nejrychleji a bez průtahů odstraněny.</p>
+                        <p><strong>h)</strong> Žák udržuje šatnu a svou skříňku v čistotě.</p>
+                        <p><strong>i)</strong> V odůvodněných případech si vedení školy vyhrazuje právo kontroly šatních skříněk (např. existuje-li důvodné podezření na uložení zakázaných předmětů, návykových látek, zbraní, nebo odcizení věcí apod.). Z kontroly bude školou vždy pořízen písemný záznam a kontrola bude provedena za přítomnosti svědka (vyučující, zákonný zástupce, atd.).</p>
+                        <p><strong>j)</strong> Žáci budovy B, kteří se přesouvají na výuku do budovy A, odkládají své svrchní ošacení a obuv do přidělené místnosti pod dohledem vyučujícího.</p>
+                    `
+                },
+                {
+                    title: "2. Provozní šatna budovy A",
+                    content: `
+                        <p><strong>a)</strong> Šatna slouží pouze k převlékání žáka na výuku TOS, TPP a praxí. Žáci ukládají své oděvy a školní tašky určeným způsobem na základě pokynů vyučujícího.</p>
+                        <p><strong>b)</strong> Do provozních šaten se neukládají cennosti. V případě ztráty za věci škola neručí.</p>
+                    `
+                },
+                {
+                    title: "3. Šatny na pracovištích",
+                    content: `
+                        <p><strong>a)</strong> Na pracovišti při praktickém vyučování se žáci řídí pravidly daného pracoviště, dále pak pokyny vedoucího pracoviště, učitele odborného výcviku nebo instruktora odborného výcviku.</p>
+                    `
+                }
+            ]
+        },
+        {
+            chapter: "III. Práva žáků školy",
+            subsections: [
+                {
+                    title: "",
+                    content: `
+                        <p>Žák má právo:</p>
+                        <ul>
+                            <li><strong>a)</strong> na poskytování kvalitního vzdělání, obsahující informace odpovídající aktuálním trendům a poznání. Metody používané při výuce vychází ze současné úrovně poznatků pedagogiky.</li>
+                            <li><strong>b)</strong> na informace o průběhu a výsledcích svého vzdělávání,</li>
+                            <li><strong>c)</strong> volit a být volen do školské rady, je-li zletilý,</li>
+                            <li><strong>d)</strong> zakládat v rámci školy samosprávné orgány žáků, volit a být do nich volen, pracovat v nich a jejich prostřednictvím se obracet na ředitelku školy s tím, že ředitelka školy je povinna se stanovisky a vyjádřením těchto samosprávných orgánů zabývat.</li>
+                        </ul>
+                    `
+                }
+            ]
+        },
+        {
+            chapter: "IV. Školní parlament",
+            subsections: [
+                {
+                    title: "",
+                    content: `
+                        <p><strong>1.</strong> Ve škole může být zřízen školní parlament (ŠP) jako samosprávný orgán žáků školy, který je současně poradním orgánem ředitelky školy. Smyslem existence školního parlamentu je zajištění vlivu žáků na rozhodování o záležitostech školy a hájení práv žáků školy.</p>
+                        <p><strong>2.</strong> Všichni žáci školy mají aktivní i pasivní volební právo, to znamená, že mohou do ŠP volit i mohou být zvoleni.</p>
+                        <p><strong>3.</strong> Pravidla činnosti, účast, volby do ŠP jsou popsány ve Stanovách Školního parlamentu. V čele ŠP je předseda s volebním obdobím na jeden školní rok.</p>
+                        <p><strong>4.</strong> ŠP má právo požádat ředitelku školy o vysvětlení jejích rozhodnutí, ta je povinna toto učinit.</p>
+                        <p><strong>5.</strong> ŠP má právo vyjadřovat se ke všem problémům týkajícím se školy, žáků, zaměstnanců a provozu a jednat o nich, a to v mezích daných platnými právními předpisy ČR.</p>
+                        <p><strong>6.</strong> Členové ŠP nesmí být jakoukoliv formou postihováni za vyjadřování názorů svých či ŠP.</p>
+                        <p><strong>7.</strong> Školní parlament je nerozpustitelný.</p>
+                    `
+                }
+            ]
+        },
+        {
+            chapter: "V. Školská rada",
+            subsections: [
+                {
+                    title: "",
+                    content: `
+                        <p><strong>1.</strong> Při škole se zřizuje školská rada, její statut vychází ze školského zákona. Školská rada je orgán školy umožňující zákonným zástupcům nezletilých žáků, zletilým žákům, pedagogickým pracovníkům školy, zřizovateli a dalším osobám podílet se na správě školy.</p>
+                        <p><strong>2.</strong> Školskou radu zřizuje zřizovatel školy, který stanovil počet jejích členů na šest. Třetinu členů volí zákonní zástupci nezletilých žáků a zletilí žáci a třetinu volí pedagogičtí pracovníci školy v souladu s volebním řádem.</p>
+                        <p><strong>3.</strong> Funkční období členů školské rady je tři roky.</p>
+                        <p><strong>4.</strong> Školská rada zasedá nejméně dvakrát ročně, zasedání školské rady svolává její předseda.</p>
+                        <p><strong>5.</strong> Ředitelka školy nemůže být členem školské rady, ale je povinna zúčastnit se zasedání školské rady na vyzvání jejího předsedy, případně za sebe pověřit zástupce.</p>
+                    `
+                }
+            ]
+        },
+        {
+            chapter: "VI. Práva zákonných zástupců nezletilých žáků a rodičů zletilých žáků",
+            subsections: [
+                {
+                    title: "",
+                    content: `
+                        <p>Zákonný zástupce nezletilého žáka má právo:</p>
+                        <ul>
+                            <li><strong>a)</strong> na informace o průběhu a výsledcích žákova vzdělávání zejména prostřednictvím svého účtu v informačním systému Edookit, dále pak při třídních schůzkách, popř. individuálních konzultacích. Na stejné informace mají právo i rodiče zletilých žáků, popřípadě osoby, které vůči zletilým žákům plní vyživovací povinnost.</li>
+                            <li><strong>b)</strong> vyjadřovat se ke všem rozhodnutím týkajícím se podstatných záležitostí vzdělávání žáka, přičemž jeho vyjádření musí být věnována náležitá pozornost,</li>
+                            <li><strong>c)</strong> volit a být volen do školské rady.</li>
+                        </ul>
+                    `
+                }
+            ]
+        },
+        {
+            chapter: "VII. Povinnosti žáků školy",
+            subsections: [
+                {
+                    title: "",
+                    content: `
+                        <p>Žák je povinen:</p>
+                        <ul>
+                            <li><strong>a)</strong> řádně docházet do školy a řádně se vzdělávat,</li>
+                            <li><strong>b)</strong> dodržovat školní řád, předpisy a pokyny školy k ochraně zdraví a bezpečnosti, s nimiž byl seznámen,</li>
+                            <li><strong>c)</strong> respektovat a plnit pokyny pedagogických a jiných pracovníků školy vydané v souladu s právními předpisy a školním řádem,</li>
+                            <li><strong>d)</strong> dodržovat vyučovací dobu, rozsah přestávek, docházet do školy pravidelně a včas podle stanoveného rozvrhu hodin, účastnit se vyučování všech povinných předmětů, volitelných i nepovinných předmětů, do kterých byl přijat, účastnit se odborného výcviku, praxe a všech povinných mimoškolních aktivit,</li>
+                            <li><strong>e)</strong> sledovat informace v informačním systému Edookit, respektovat informace o změnách v rozvrhu a suplování,</li>
+                            <li><strong>f)</strong> mít omluvný list a řádně o něj pečovat,</li>
+                            <li><strong>g)</strong> oznámit svému třídnímu učiteli do tří dnů každou změnu údajů týkajících se matriky (zdravotní pojišťovnu, bydliště), dále pak kontaktních údajů svých a zákonných zástupců,</li>
+                            <li><strong>h)</strong> být ve škole vhodně a čistě upraven a oblečen (viz kap. XIII),</li>
+                            <li><strong>i)</strong> chránit své zdraví i zdraví ostatních, dbát na pořádek a čistotu, pomáhat udržovat pořádek ve škole i v jejím okolí,</li>
+                            <li><strong>j)</strong> šetřit školní zařízení, chránit jej před poškozením. Poškodí-li žák úmyslně nebo z nedbalosti majetek školy, je povinen okamžitě nahlásit škodu třídnímu učiteli a škodu do 30 dnů ode dne vzniku škody uhradit v plné výši nebo zajistit uvedení věci do původního stavu. Výši škody stanoví hospodář školy. V případě vyšší částky u vzniklé škody může být na základě písemné žádosti zákonného zástupce žáka či žáka plnoletého adresované vedení povolen splátkový kalendář pro úhradu vzniklé škody.</li>
+                            <li><strong>k)</strong> chovat se slušně a ukázněně ve školní restauraci nebo bufetu a dodržovat hygienická a společenská pravidla stolování,</li>
+                            <li><strong>l)</strong> v rámci pravidel slušného chování v budovách školy a na pracovišti slušně a srozumitelně zdravit každou dospělou osobu.</li>
+                        </ul>
+                        <p><em>Na zletilého žáka se rovněž vztahují veškeré povinnosti vyplývající z tohoto školního řádu pro zákonné zástupce nezletilých žáků.</em></p>
+                    `
+                }
+            ]
+        },
+        {
+            chapter: "VIII. Povinnosti zákonných zástupců nezletilých žáků",
+            subsections: [
+                {
+                    title: "",
+                    content: `
+                        <p>Zákonný zástupce má povinnost:</p>
+                        <ul>
+                            <li><strong>a)</strong> zajistit, aby žák docházel řádně do školy,</li>
+                            <li><strong>b)</strong> průběžně spolupracovat s třídním učitelem a dalšími pracovníky školy, na vyzvání ředitelky školy se osobně zúčastnit projednání závažných otázek týkajících se vzdělávání žáka,</li>
+                            <li><strong>c)</strong> informovat školu o změně zdravotní způsobilosti, zdravotních obtížích žáka nebo jiných závažných skutečnostech, které by mohly mít vliv na průběh vzdělávání,</li>
+                            <li><strong>d)</strong> dokládat důvody nepřítomnosti žáka ve vyučování v souladu s podmínkami stanovenými v tomto školním řádu,</li>
+                            <li><strong>e)</strong> oznamovat škole údaje, které jsou podstatné pro průběh vzdělávání nebo bezpečnost žáka, a změny v těchto údajích,</li>
+                            <li><strong>f)</strong> řídit se školním řádem a respektovat další vnitřní předpisy školy.</li>
+                        </ul>
+                    `
+                }
+            ]
+        },
+        {
+            chapter: "IX. Zásady chování žáků / Zákazy a omezení",
+            subsections: [
+                {
+                    title: "",
+                    content: `
+                        <p>Žákům je zakázáno:</p>
+                        <ul>
+                            <li><strong>a)</strong> vstupovat do školy či na pracoviště pod vlivem alkoholu či jiných návykových látek,</li>
+                            <li><strong>b)</strong> ve všech prostorách školy i při činnostech organizovaných školou požívat alkoholické a energetické nápoje, přinášet, distribuovat či užívat jakékoliv omamné a psychotropní látky (včetně kratomu), a to v jakémkoliv množství. Nedodržení zákazu je považováno za hrubé porušení školního řádu, jehož následkem může být vyloučení ze studia.</li>
+                            <li><strong>c)</strong> kouřit v prostorách školy, na všech pracovištích i při činnostech organizovaných školou. Zákaz se týká i všech alternativních forem kouření. Nedodržení zákazu je považováno za hrubé porušení školního řádu.</li>
+                            <li><strong>d)</strong> přinášet do školy věci nebezpečné pro život a zdraví, jako např. zbraně a obranné prostředky, výbušniny, třaskaviny či hořlavé tekutiny, jedy apod. Nedodržení zákazu je považováno za hrubé porušení školního řádu, jehož následkem může být vyloučení ze studia.</li>
+                            <li><strong>e)</strong> manipulovat s otevřeným ohněm ve všech prostorách školy,</li>
+                            <li><strong>f)</strong> jakkoliv manipulovat s elektrickými spotřebiči a elektroinstalací, používat neevidované elektrické spotřebiče, nabíjet svá elektronická zařízení (mobilní telefony, notebooky, apod.) a připojovat se jimi do elektrické sítě,</li>
+                            <li><strong>g)</strong> narušovat průběh vyučovací hodiny nevhodným chováním a činnostmi, které se neslučují se školním řádem a nemají žádný vztah k vyučování (vyrušování, napovídání při zkoušení, opisování při písemném zkoušení a používání nepovolených pomůcek),</li>
+                            <li><strong>h)</strong> používat jakákoliv osobní elektronická zařízení při vyučování bez výslovného souhlasu vyučujícího. Mobilní telefony jsou vypnuté nebo v tichém režimu a uložené v taškách či na místě určeném vyučujícím. Povolena jsou zařízení schválená školou a používaná pro specifické vzdělávací účely výhradně dle pokynů vyučujícího.</li>
+                            <li><strong>i)</strong> pořizovat během vyučování či přestávek jakékoliv obrazové či zvukové záznamy (fotografie, audio a video záznamy) bez vědomí a souhlasu vyučujícího. Pořizování snímků, zvukových a obrazových záznamů je upraveno v zákoně č. 89/2012 Sb., občanský zákoník, v platném znění. Dle tohoto zákona mohou být obrazové snímky a obrazové a zvukové záznamy týkající se fyzické osoby nebo jejích projevů osobnostní povahy pořízeny nebo použity pouze s jejím svolením. Porušení tohoto zákazu může mít disciplinární důsledky ve škole, v závažných případech může vést k právním postihům dle občanského zákoníku a trestního zákoníku.</li>
+                            <li><strong>j)</strong> provozovat ve škole jakékoliv hazardní hry,</li>
+                            <li><strong>k)</strong> nosit do školy větší obnos peněz nebo cenné věci,</li>
+                            <li><strong>l)</strong> vylézat z oken, vyklánět se a sedat si do oken, vyhazovat různé předměty či vylévat vodu z oken,</li>
+                            <li><strong>m)</strong> přestávkách svévolně opouštět budovu školy bez vědomí třídního učitele či vyučujícího vykonávajícího dozor,</li>
+                            <li><strong>n)</strong> vpouštět do budovy školy cizí osoby,</li>
+                            <li><strong>o)</strong> používat jakékoliv projevy nesnášenlivosti vůči zaměstnancům, žákům a partnerům školy, zejména projevy fyzického násilí, fyzického a psychického šikanování, kyberšikany, rasové nesnášenlivosti, hrubého chování, vulgárnosti apod. Porušení tohoto zákazu je považováno za zvláště hrubé porušení školního řádu.</li>
+                            <li><strong>p)</strong> propagovat strany a hnutí směřující k potlačování lidských práv či rasové nesnášenlivosti. Ve škole a při činnostech organizovaných školou je zakázána jakákoliv propagace politických stran a hnutí.</li>
+                            <li><strong>q)</strong> parkovat vlastní dopravní prostředky na vyhrazeném parkovišti budovy A bez povolení vedení.</li>
+                        </ul>
+                    `
+                }
+            ]
+        },
+        {
+            chapter: "X. Pravidla pro omlouvání absence",
+            subsections: [
+                {
+                    title: "1. Omlouvání předem předpokládané absence",
+                    content: `
+                        <p><strong>a)</strong> Žádost o uvolnění z vyučování musí být předložena zásadně předem.</p>
+                        <p><strong>b)</strong> Elektronicky avízem v informačním systému Edookit, u nezletilých žáků z účtu zákonného zástupce.</p>
+                        <p><strong>c)</strong> V písemné formě v omluvném listu k rukám třídního učitele, u nezletilých žáků psanou jeho zákonným zástupcem.</p>
+                        <p><strong>d)</strong> V případě pochybností může třídní učitel u zletilých žáků též vyžadovat podpis/potvrzení rodičů žáka nebo osoby, která má vůči žákovi vyživovací povinnost.</p>
+                        <p><strong>e)</strong> V případě žádosti o uvolnění na akci pořádanou zájmovou organizací je nutné doložit potvrzení dané organizace.</p>
+                        <p><strong>f)</strong> Absenci od jednoho do dvou dnů včetně povoluje třídní učitel.</p>
+                        <p><strong>g)</strong> Absenci v délce tří a více dnů povoluje ředitelka školy na základě písemné žádosti a souhlasu třídního učitele, vedoucího učitele odborného výcviku / zástupce ředitelky pro praktickou výuku.</p>
+                        <p><strong>h)</strong> Třídní učitel v případě, že předpokládaná absence zasahuje do odborného výcviku nebo praxe, neprodleně informuje vedoucího učitele odborného výcviku nebo zástupce pro praxi.</p>
+                        <p><strong>i)</strong> Plánované návštěvy u lékaře vykonávají žáci, je-li to možné, mimo vyučování.</p>
+                    `
+                },
+                {
+                    title: "2. Omlouvání předem nepředpokládané absence",
+                    content: `
+                        <p><strong>a)</strong> Zákonný zástupce žáka nebo zletilý žák osobně je povinen bez zbytečného odkladu, tj. první den, nejdéle však do tří dnů nepřítomnosti žáka oznámit třídnímu učiteli důvod nepřítomnosti, a to:</p>
+                        <ul>
+                            <li>elektronicky v informačním systému Edookit, u nezletilých žáků z účtu zákonného zástupce</li>
+                            <li>telefonicky na číslo +420 354 622 605 (sekretariát budovy A)</li>
+                        </ul>
+                        <p><strong>b)</strong> V oznámení o důvodu nepřítomnosti uvede žák nebo zákonný zástupce jméno a třídu, důvod nepřítomnosti a předpokládaný nástup do školy (uvádí se zpravidla den po kontrole u lékaře). V případě prodloužení nepřítomnosti tuto skutečnost neprodleně oznámí.</p>
+                        <p><strong>c)</strong> V případě neúčasti žáka na praktickém vyučování zákonný zástupce, popř. zletilý žák osobně informuje o důvodu absence a předpokládané délce nepřítomnosti:</p>
+                        <ul>
+                            <li>odpovědnou osobu v zařízení, v němž žák vykonává odborný výcvik či praxi,</li>
+                            <li>svého učitele odborného výcviku,</li>
+                            <li>žák oboru Hotelnictví telefonicky sekretariát A, přičemž uvede název zařízení, v němž praxi vykonává.</li>
+                        </ul>
+                        <p><strong>d)</strong> Třídní učitel, zástupce ředitelky pro praktické vyučování nebo vedoucí učitel odborného výcviku je povinen bezodkladně telefonicky kontaktovat zákonného zástupce žáka či zletilého žáka, aby zjistil důvod nepřítomnosti žáka v případě, že došlo k porušení ustanovení dle bodů a) a c).</p>
+                        <p><strong>e)</strong> Jestliže se žák neúčastní po dobu nejméně 5 vyučovacích dnů vyučování a jeho nepřítomnost není omluvena, vyzve ředitelka školy prostřednictvím třídního učitele písemně zletilého žáka nebo zákonného zástupce nezletilého žáka, aby neprodleně doložil důvody žákovy nepřítomnosti, zároveň upozorní, že jinak bude žák posuzován, jako by vzdělávání zanechal. Žák, který do 10 dnů od doručení výzvy do školy nenastoupí nebo nedoloží důvod nepřítomnosti, se posuzuje, jako by vzdělávání zanechal posledním dnem této lhůty. Tímto dnem přestává být žákem školy.</p>
+                        <p><strong>f)</strong> Jakákoliv absence musí být zpětně písemně omluvena v elektronickém systému Edookit nebo v omluvném listu. Omluvný list předkládá žák neprodleně 1. den po nástupu do školy, a to:</p>
+                        <ul>
+                            <li>třídnímu učiteli či zastupujícímu třídnímu učiteli v případě absence na teoretickém vyučování,</li>
+                            <li>svému učiteli odborného výcviku, popř. vedoucímu učiteli odborného výcviku v případě absence na odborném výcviku,</li>
+                            <li>zástupci ředitelky pro praktickou výuku v případě absence na praxi.</li>
+                        </ul>
+                        <p><strong>g)</strong> Pokud žák poruší pravidla pro předkládání písemné omluvenky a pokud omluvenku nedoloží nejdéle 3. den od nástupu po ukončení absence, může být absence vyhodnocena jako neomluvená se všemi důsledky z toho vyplývajícími.</p>
+                        <p><strong>h)</strong> Nepřítomnost nezletilého žáka ve škole omlouvá v souladu s platnými právními předpisy zákonný zástupce žáka, zletilý žák musí důvod své nepřítomnosti doložit (např. potvrzením propustky v případě návštěvy lékaře).</p>
+                        <p><strong>i)</strong> Třídní učitel, vedoucí učitel odborného výcviku či zástupce ředitelky pro praxi si může ověřit nepřítomnost žáka ve výjimečných případech telefonicky u ošetřujícího lékaře, resp. lékaře pro děti a dorost (především v případech časté nepřítomnosti žáka nasvědčující zanedbávání docházky do školy, na odborný výcvik a na praxi).</p>
+                    `
+                },
+                {
+                    title: "3. Způsob hodnocení žáka při absenci",
+                    content: `
+                        <p>Způsob hodnocení žáka, který se nemohl zúčastnit vyučování a v průběhu klasifikačního období je uveden v klasifikačním řádu.</p>
+                    `
+                },
+                {
+                    title: "4. Odborný výcvik a praxe",
+                    content: `
+                        <p>V rámci odborného výcviku a praxe je nežádoucí vykazovat nepřítomnost typu rodinných a osobních důvodů.</p>
+                        <p>Žáci maturitních oborů musí absolvovat praxi v plném rozsahu. Případná nepřítomnost bude nahrazena po dohodě v náhradním termínu, kterým může být i období prázdnin.</p>
+                    `
+                }
+            ]
+        },
+        {
+            chapter: "XI. Vyučování",
+            subsections: [
+                {
+                    title: "",
+                    content: `
+                        <p><strong>1.</strong> Vyučovací hodina trvá 45 minut a začíná zvoněním, žáci zaujmou své pracovní místo.</p>
+                        <p><strong>2.</strong> Hodina odborného výcviku a praxe trvá 60 minut.</p>
+                        <p><strong>3.</strong> Při přechodu žáků do odborných učeben vyčkávají žáci před učebnou na příchod vyučujícího. Škola doporučuje žákům vzít si sebou všechny osobní věci, a tím předcházet případným škodám a ztrátám.</p>
+                        <p><strong>4.</strong> Za tři pozdní příchody na vyučování se vždy uděluje jedna neomluvená hodina.</p>
+                        <p><strong>5.</strong> Nepřítomnost žáka v hodině delší než 25 minut se hodnotí jako zameškaná hodina.</p>
+                        <p><strong>6.</strong> Žáci zdraví vyučujícího při vstupu do učebny a při jeho odchodu povstáním.</p>
+                        <p><strong>7.</strong> V hodinách není dovoleno jíst, během hodiny je dovoleno konzumovat nezakázané nealkoholické nápoje (viz kap. IX - b) k dodržení pitného režimu.</p>
+                        <p><strong>8.</strong> Během vyučovací hodiny smí žák opustit své místo v učebně jen se souhlasem vyučujícího.</p>
+                        <p><strong>9.</strong> Ve všech organizačních záležitostech se žáci obracejí na třídního učitele, v jeho nepřítomnosti na zastupujícího třídního učitele.</p>
+                        <p><strong>10.</strong> V záležitostech odborného výcviku a praxe se žáci obracejí na zástupce ředitelky pro praktickou výuku.</p>
+                        <p><strong>11.</strong> Na hodiny TPP jsou žáci povinni nosit předepsaný oděv pro práci v kuchyni (viz kap. XVIII). Na hodinách TOS, kde probíhá odborný nácvik, se vyžaduje společenské oblečení, u chlapců výhradně dlouhé kalhoty. Na hodinu TOS nebude vpuštěn žák oblečený v teplácích nebo jiném sportovním oblečení.</p>
+                        <p><strong>12.</strong> Na hodiny TV jsou žáci povinni nosit sportovní obuv vhodnou pro cvičení v tělocvičně a sportovní cvičební úbor. Pokud žák nemůže cvičit (např. po nemoci), předloží předem písemnou omluvenku, v odůvodněných případech doplněnou o lékařské potvrzení.</p>
+                        <p><strong>13.</strong> Pokud žák nemá opakovaně cvičební úbor, bez dovolení vyučujícího opustí hodinu TV nebo odmítá v hodinách TV cvičit, je v kompetenci vyučujícího vykázat mu absenci, kterou může třídní učitel vyhodnotit jako neomluvenou.</p>
+                        <p><strong>14.</strong> Ředitelka školy může ze závažných důvodů, zejména zdravotních, uvolnit žáka na základě žádosti zcela nebo částečně z vyučování některého předmětu. Žáka se zdravotním postižením může také uvolnit z provádění určitých činností, popřípadě rozhodnout, že tento žák nebude v některých předmětech hodnocen. Z předmětu TV ředitelka školy uvolní žáka z vyučování na písemné doporučení praktického nebo odborného lékaře. Žák není z předmětu, z něhož byl zcela uvolněn, hodnocen.</p>
+                        <p><strong>15.</strong> Žák nemůže být uvolněn z předmětu rozhodujícího pro odborné zaměření absolventa.</p>
+                        <p><strong>16.</strong> Rozhodnutí o osvobození od předmětů jsou správní rozhodnutí a podléhají správnímu řádu, včetně práva na odvolání k regionálnímu úřadu (krajský úřad).</p>
+                        <p><strong>17.</strong> Provoz učeben TOS, cvičných kuchyní, učebny TA, učebny VT a ostatních odborných učeben se řídí specifickými řády učeben.</p>
+                        <p><strong>18.</strong> Změny v rozvrhu jsou zveřejněny v informačním systému Edookit a na webových stránkách školy. Žák tyto změny sleduje a řídí se upraveným rozvrhem.</p>
+                        <p><strong>19.</strong> V případě volné nebo zrušené hodiny v rozvrhu a polední přestávce se žák nemusí zdržovat v prostoru školy, tudíž škola nenese žádnou odpovědnost za škody a bezpečnost žáků v této době.</p>
+                        <p><strong>20.</strong> V období školního vyučování, kdy má žák již ukončeno vzdělávání za poslední ročník a žák školu nenavštěvuje (pokud nekoná stanovené zkoušky nebo konzultace), nenese škola žádnou odpovědnost za škodu, která vznikne žákovi porušením právních povinností nebo úrazem při teoretickém nebo praktickém vyučování, obdobně jako v době prázdnin.</p>
+                    `
+                }
+            ]
+        },
+        {
+            chapter: "XII. Povinnosti třídní služby",
+            subsections: [
+                {
+                    title: "",
+                    content: `
+                        <p><strong>1.</strong> Povinnostmi třídní služby pověřuje jednotlivé žáky třídní učitel. Jména žáků vykonávajících službu v daném týdnu jsou zveřejněna v informačním systému Edookit.</p>
+                        <p><strong>2.</strong> Třídní služba zejména:</p>
+                        <ul>
+                            <li><strong>a)</strong> dbá na pořádek a čistotu ve třídě, zajišťuje čistotu tabule,</li>
+                            <li><strong>b)</strong> ohlásí vedení školy nepřítomnost vyučujícího, pokud se nedostaví do 5 minut po zahájení vyučování do třídy,</li>
+                            <li><strong>c)</strong> hlásí vyučujícím nepřítomné žáky, o nichž má neustále přehled,</li>
+                            <li><strong>d)</strong> zajišťuje uzavření oken v době přestávek,</li>
+                            <li><strong>e)</strong> dbá na úspory elektrické energie,</li>
+                            <li><strong>f)</strong> při návratu do třídy z jiné učebny kontroluje stav učebny a případné závady (pomalované lavice, stěny, nástěnky apod.) okamžitě hlásí třídnímu učiteli,</li>
+                            <li><strong>g)</strong> po skončení vyučování kontroluje uzavření oken, pořádek ve třídě, zvednutí židlí, aby nic nebránilo úklidu učebny.</li>
+                        </ul>
+                    `
+                }
+            ]
+        },
+        {
+            chapter: "XIII. Přestávky",
+            subsections: [
+                {
+                    title: "",
+                    content: `
+                        <p><strong>1.</strong> Přestávky jsou určeny žákům pro osobní hygienu, relaxaci a přípravu na další vyučovací hodinu, případně přesunu do jiné učebny.</p>
+                        <p><strong>2.</strong> V době přestávky je zakázáno větrat, pokud není v učebně vyučující.</p>
+                        <p><strong>3.</strong> Dobu přestávky mohou žáci využít k nákupu občerstvení v bufetu školy ve stanovených časech. Žák se musí včas dostavit na vyučování.</p>
+                        <p><strong>4.</strong> Polední přestávku mohou žáci využít k pořízení oběda, mohou též opustit budovu školy za účelem pobytu na čerstvém vzduchu. Z hlediska bezpečnosti je nežádoucí, aby žáci opouštěli bezprostřední okolí školy.</p>
+                        <p><strong>5.</strong> Žáci se v době polední přestávky vyvarují chování, které by bezprostředně obtěžovalo obyvatele přilehlých domů, a při pohybu mimo budovu školy dbají pravidel silničního provozu.</p>
+                    `
+                }
+            ]
+        },
+        {
+            chapter: "XIV. Odborný výcvik žáků učňovských oborů a praxe pro žáky maturitních oborů",
+            subsections: [
+                {
+                    title: "1. Vymezení pojmů",
+                    content: `
+                        <p><strong>a)</strong> Ustanovení o odborném výcviku se vztahuje na všechny žáky učebních oborů kuchař, kuchařka, číšník, servírka. Odborný výcvik probíhá v běžném školním roce, jeho náhrady také v době hlavních i ostatních prázdnin.</p>
+                        <p><strong>b)</strong> Ustanovení o praxi se vztahuje na všechny žáky maturitních oborů, probíhá v běžném školním roce, její náhrada zejména v době hlavních prázdnin. Rozsah vyplývá z platných školních vzdělávacích programů.</p>
+                    `
+                },
+                {
+                    title: "2. Odborný výcvik",
+                    content: `
+                        <p><strong>a)</strong> Žáci jsou povinni dostavit se na odborný výcvik přesně podle pokynů zástupce ředitelky pro praktické vyučování, vedoucího učitele odborného výcviku nebo učitelů a instruktorů odborného výcviku.</p>
+                        <p><strong>b)</strong> Rozpis směn je znám předem, uvolňování a výměna směn je možná podle shodných pravidel jako v teoretickém vyučování. O rozmístění jednotlivých žáků na smluvní pracoviště rozhoduje škola.</p>
+                        <p><strong>c)</strong> V případě požadavku pracoviště na tzv. dělené směny žák před nástupem na odborný výcvik nejprve odevzdá zástupci ředitelky pro praktické vyučování nebo vedoucímu učiteli pro odborný výcvik podepsaný souhlas zákonného zástupce.</p>
+                        <p><strong>d)</strong> Pravidla chování na odborném výcviku jsou shodná s ustanovením tohoto školního řádu, vnitřními předpisy provozoven, v nichž je odborný výcvik zajišťován, předpisy zajišťující hygienu a bezpečnost práce a příslušnými ustanoveními zákoníku práce.</p>
+                        <p><strong>e)</strong> Omlouvání absence se řídí kapitolou X. tohoto školního řádu, všechny omluvenky musí být zaznamenány v informačním systému Edookit nebo v omluvném listu žáka podle stanovených pravidel.</p>
+                        <p><strong>f)</strong> V zájmu využití pracovní doby na pracovišti odborného výcviku nesmí absence žáka činit více než 20 % celkového fondu učebních jednotek (dnů) odborného výcviku. V případě vyšší absence bude postupováno dle bodu 1- a).</p>
+                        <p><strong>g)</strong> V odborném výcviku je vyučovací jednotkou vyučovací den. V prvním ročníku nesmí být delší než 6 vyučovacích hodin.</p>
+                        <p><strong>h)</strong> Dopolední vyučování odborného výcviku začíná nejdříve v 7 hodin a odpolední vyučování končí nejpozději ve 20 hodin. Ředitelka školy může určit počátek dopoledního vyučování žáků druhých a vyšších ročníků od 6 hodin a konec odpoledního vyučování ve 22 hodin.</p>
+                        <p><strong>i)</strong> Zpravidla po druhé hodině odborného výcviku se zařazuje přestávka v délce 15 až 25 minut. Délka přestávek se nezapočítává do doby trvání vyučovacího dne.</p>
+                        <p><strong>j)</strong> Evidence odpracovaných směn se vede v DENÍKU ODBORNÉHO VÝCVIKU.</p>
+                        <p><strong>k)</strong> V době odborného výcviku platí pro žáky stravovací povinnost. Výjimku tvoří pouze potvrzení o dietním režimu žáka vydaná lékařem a doložená třídním učitelům.</p>
+                    `
+                },
+                {
+                    title: "3. Praxe",
+                    content: `
+                        <p><strong>a)</strong> Žáci jsou povinni se dostavit na praxi přesně podle pokynů zástupce ředitelky pro praktické vyučování nebo vedoucího učitele odborného výcviku.</p>
+                        <p><strong>b)</strong> Rozpis směn je znám předem, uvolňování a výměna směn je možná podle shodných pravidel jako v teoretickém vyučování. O rozmístění jednotlivých žáků na smluvní pracoviště rozhoduje škola.</p>
+                        <p><strong>c)</strong> Pravidla chování na odborném výcviku jsou shodná s ustanovením tohoto školního řádu, vnitřními předpisy provozoven, v nichž je odborný výcvik zajišťován, předpisy zajišťující hygienu a bezpečnost práce a příslušnými ustanoveními zákoníku práce.</p>
+                        <p><strong>d)</strong> Omlouvání absence se řídí kapitolou X tohoto školního řádu, všechny omluvenky musí být zaznamenány v informačním systému Edookit nebo v omluvném listu žáka podle stanovených pravidel.</p>
+                        <p><strong>e)</strong> Žáci musí odpracovat praxi v plném rozsahu. Případné neodpracování stanoveného rozsahu musí být konzultováno se zástupcem ředitelky pro praktickou výuku, který stanoví rozsah a dobu náhrady.</p>
+                        <p><strong>f)</strong> V praxi je vyučovací jednotkou vyučovací den. Vyučovací den má 6 hodin po 60 minutách.</p>
+                        <p><strong>g)</strong> Dopolední vyučování praxe začíná nejdříve v 7 hodin a odpolední vyučování končí nejpozději ve 20 hodin. Ředitelka školy může určit počátek dopoledního vyučování žáků druhých a vyšších ročníků od 6 hodin a konec odpoledního vyučování ve 22 hodin.</p>
+                        <p><strong>h)</strong> Evidence odpracovaných směn se vede v EVIDENČNÍM LISTU PRAXE. Evidenční list musí být náležitě vyplněný, potvrzený učitelem nebo instruktorem odborného výcviku a musí obsahovat návrh klasifikace. Žák nejpozději do 3 dnů po ukončení odborné praxe předloží evidenční list zástupci ředitelky pro praktickou výuku ke kontrole. Pokud tak neučiní, předpokládá se, že praxi nevykonal.</p>
+                        <p><strong>i)</strong> Pokud žák bez omluvy praxi nesplní ve stanoveném rozsahu nebo neodevzdá ve stanoveném termínu evidenční list praxe, nemůže být klasifikován (v 1. a 2. ročníku z předmětu TOS, ve 3. a 4. ročníku z praxe).</p>
+                    `
+                }
+            ]
+        },
+        {
+            chapter: "XV. Osobní problémy žáků",
+            subsections: [
+                {
+                    title: "",
+                    content: `
+                        <p><strong>1.</strong> V případě osobních problémů škola doporučuje, aby se žák obrátil zejména na:</p>
+                        <ul>
+                            <li>třídního učitele,</li>
+                            <li>výchovného poradce,</li>
+                            <li>školního metodika prevence.</li>
+                        </ul>
+                        <p><strong>2.</strong> Jméno výchovného poradce a školního metodika prevence žákům sdělí třídní učitel vždy na začátku nového školního roku.</p>
+                        <p><strong>3.</strong> Škola vždy doporučuje všem žákům řešit osobní problémy včas a v počátcích, kdy vznikají.</p>
+                    `
+                }
+            ]
+        },
+        {
+            chapter: "XVI. Výchovná opatření",
+            subsections: [
+                {
+                    title: "",
+                    content: `
+                        <p>Výchovnými opatřeními jsou pochvaly nebo jiná ocenění a kázeňská opatření.</p>
+                        <p><strong>1.</strong> Žákovi může být udělena:</p>
+                        <ul>
+                            <li>pochvala třídního učitele,</li>
+                            <li>pochvala ředitelky školy.</li>
+                        </ul>
+                        <p><strong>2.</strong> Třídní učitel může na základě vlastního rozhodnutí nebo na základě podnětu ostatních vyučujících žákovi po projednání s ředitelem školy udělit pochvalu nebo jiné ocenění za výrazný projev školní iniciativy nebo déletrvající úspěšnou práci.</p>
+                        <p><strong>3.</strong> Ředitel školy může na základě vlastního rozhodnutí nebo na základě podnětu jiné právnické či fyzické osoby udělit po projednání v pedagogické radě žákovi pochvalu nebo jiné ocenění za mimořádný projev lidskosti, občanské nebo školní iniciativy, záslužný nebo statečný čin nebo za dlouhodobou úspěšnou práci.</p>
+                        <p><strong>4.</strong> Kázeňské opatření se ukládá za závažná nebo méně závažná, ale opakovaná provinění proti školnímu řádu. Podle míry závažnosti se ukládá:</p>
+                        <ul>
+                            <li>napomenutí třídního učitele,</li>
+                            <li>důtka třídního učitele,</li>
+                            <li>důtka ředitelky školy,</li>
+                            <li>podmíněné vyloučení ze studia,</li>
+                            <li>vyloučení ze studia.</li>
+                        </ul>
+                        <p><strong>5.</strong> Na základě rozhodnutí ředitelky školy může být k nápravě přestupku uplatněno i tzv. alternativní opatření.</p>
+                        <p><strong>6.</strong> Podrobnosti udílení výchovných opatření jsou uvedeny v klasifikačním řádu, který je nedílnou součástí tohoto školního řádu.</p>
+                    `
+                }
+            ]
+        },
+        {
+            chapter: "XVII. Zajištění podmínek BOZ a BOZP",
+            subsections: [
+                {
+                    title: "",
+                    content: `
+                        <p><strong>1.</strong> Všechny osoby účastné na vyučování jsou povinny dodržovat pravidla bezpečnosti a ochrany vlastního zdraví i zdraví ostatních osob a řídit se protipožárními předpisy a evakuačním plánem budovy.</p>
+                        <p><strong>2.</strong> Žáci i zaměstnanci školy mají povinnost se účastnit pravidelných školení v dané problematice a dbát bezpečnostních pokynů vedení školy. Žáci jsou pravidelně proškolováni (v teoretickém i praktickém vyučování), obsahy školení jsou zapisovány do záznamového listu a stvrzeny podpisem žáka a školitele.</p>
+                        <p><strong>3.</strong> Žáci jsou povinni dbát na ochranu svého zdraví i zdraví a životy svých spolužáků. Neprodleně informovat třídního učitele, vyučujícího nebo učitele odborného výcviku o případech zranění, úrazu, fyzického napadení nebo jiné formy útisku vlastní osoby nebo jiné osoby, jehož byl žák přítomen.</p>
+                        <p><strong>4.</strong> Každý úraz či nevolnost má žák za povinnost neprodleně hlásit dozírajícímu, případně jinému učiteli nebo vedení školy.</p>
+                        <p><strong>5.</strong> Při přecházení žáků na místa vyučování či jiných akcí mimo budovu školy se žáci řídí pravidly silničního provozu a pokyny doprovázejících osob. Při pohybu po městě a na komunikacích dodržuje žák pravidla silničního provozu.</p>
+                        <p><strong>6.</strong> Podrobnosti k zajištění podmínek BOZ a BOZP jsou obsaženy v „metodickém pokynu k zajištění bezpečnosti a ochrany zdraví žáků ve škole a školských zařízeních“, který je součástí vstupního školení.</p>
+                        <p><strong>7.</strong> TU jsou povinni na začátku každého školního roku prokazatelně seznámit žáky se školním a klasifikačním řádem, proškolit své žáky v rámci BOZ a BOZP a evidovat záznamy o vstupním školení o bezpečnosti, ochraně zdraví a požární ochraně.</p>
+                        <p><strong>8.</strong> Pravidla dodržování dohledů pedagogů se týkají zajištění bezpečnosti a výchovného působení na žáky ve škole. Pedagogové mají za úkol dohlížet na žáky během vyučování, přestávek, přesunů mezi učebnami a v prostorách šaten a chodeb dle předem stanovených rozpisů. Dohled by měl být vykonáván tak, aby se předcházelo rizikům a škodám na zdraví, majetku a životním prostředí.</p>
+                        <p><strong>9.</strong> Vzhledem k tomu, že škola nedisponuje vlastní tělocvičnou, je vyučující tělesné výchovy odpovědný za zajištění bezpečnosti žáků při přesunu na pronajaté sportoviště a zpět.</p>
+                    `
+                }
+            ]
+        },
+        {
+            chapter: "XVIII. Pravidla pro osobní vzhled a úpravu žáků",
+            subsections: [
+                {
+                    title: "1. Pokyny a doporučení pro vzhled a úpravu dívek",
+                    content: `
+                        <p><strong>a)</strong> Vlasy jsou čisté a upravené, případné obarvení v přírodních odstínech s jemným melírem. S ohledem na reprezentaci v oboru a na dodržování hygienických a bezpečnostních zásad není vhodné volit výrazně barevné odstíny či extravagantní účesy (např. dredy či kohoutí číro). Dlouhé vlasy musí být na pracovišti stažené do culíku nebo sepnuté sponou či skřipcem.</p>
+                        <p><strong>b)</strong> Líčení obličeje se doporučuje decentní. Nedoporučují se výrazné barevné odstíny kontaktních čoček.</p>
+                        <p><strong>c)</strong> Oděv je vždy čistý a upravený. Tepláky a výrazně roztrhané kalhoty jsou s ohledem na zvolený obor a reprezentaci školy nepřípustné. Nevhodné jsou také kalhoty s nízkým sedem v kombinaci s krátkými tričky a topy. Při výuce jsou nepřípustné pokrývky hlavy (kapuce, kšiltovky, módní šátky apod.).</p>
+                        <p><strong>d)</strong> Vstup v extrémně krátkých sukních a leginách na odbornou přípravu a do hodin odborných předmětů (TOS a TPP) je zakázán.</p>
+                        <p><strong>e)</strong> V době odborného výcviku a praxe musí být řetízky a přívěsky skryty pod košilí. Z důvodu bezpečnosti práce jsou na pracovištích (praktických i školních) zcela zakázány prstýnky, náramky, gumičky a jiné ozdoby na rukou a dlouhé náušnice.</p>
+                        <p><strong>f)</strong> Ruce jsou vždy čisté, nehty na rukou krátké, upravené, nenápadné, bez ozdob. Vzhledem k hygienickým předpisům nejsou přípustné nalepené umělé nehty.</p>
+                        <p><strong>g)</strong> Viditelný piercing musí být odstraněn, případně vhodně zakryt. Stejně tak je nutné zakrýt i viditelné tetování.</p>
+                    `
+                },
+                {
+                    title: "2. Pokyny a doporučení pro vzhled a úpravu chlapců",
+                    content: `
+                        <p><strong>a)</strong> Vlasy jsou čisté a upravené, nejlépe krátkého střihu. S ohledem na reprezentaci v oboru a na dodržování hygienických a bezpečnostních zásad není vhodné volit výrazně barevné odstíny či extravagantní účesy (např. dredy či kohoutí číro, culíky).</p>
+                        <p><strong>b)</strong> Žák je důkladně oholen, případné vousy má řádně upravené. Nedoporučují se výrazné barevné odstíny kontaktních čoček.</p>
+                        <p><strong>c)</strong> Oděv je vždy čistý a upravený. Tepláky a výrazně roztrhané kalhoty jsou s ohledem na zvolený obor a reprezentaci školy nepřípustné. Nevhodné jsou také kalhoty s nízkým sedem. Při výuce jsou nepřípustné pokrývky hlavy (kapuce, kšiltovky, módní šátky apod.).</p>
+                        <p><strong>d)</strong> Vstup v krátkých kalhotách na odbornou přípravu a do hodin odborných předmětů (TOS a TPP) je zakázán.</p>
+                        <p><strong>e)</strong> V době odborného výcviku a praxe musí být řetízky a přívěsky skryty pod košilí. Z důvodu bezpečnosti práce jsou na pracovištích (praktických i školních) zcela zakázány prstýnky, náramky, gumičky a jiné ozdoby na rukou. Žák se vyvaruje nošení náušnic a jakýchkoliv úprav ušních boltců.</p>
+                        <p><strong>f)</strong> Ruce jsou vždy čisté, nehty na rukou krátké, čisté, upravené, neobarvené.</p>
+                        <p><strong>g)</strong> Viditelný piercing musí být odstraněn, případně vhodně zakryt. Stejně tak je nutné zakrýt i viditelné tetování.</p>
+                    `
+                },
+                {
+                    title: "3. Závaznost a opatření při nerespektování",
+                    content: `
+                        <p><strong>3.</strong> Výše uvedené pokyny jsou součástí odborné přípravy na Hotelové škole Mariánské Lázně. Na hodinách odborné přípravy (stolničení, TPP, apod.), v době odborného výcviku na pracovištích školy, na pracovištích smluvních partnerů a na odborných akcích školy jsou pro všechny žáky školy považovány za závazné.</p>
+                        <p><strong>4.</strong> Nerespektováním bodu 2 se žáci školy vystavují následujícím opatřením: vykázání z hodin odborné přípravy pro nepřipravenost, nevpuštění na pracoviště odborného výcviku školy nebo smluvního partnera, vyloučení z účasti na odborných akcích školy či smluvních partnerů.</p>
+                    `
+                },
+                {
+                    title: "5. Pracovní oblečení – žákyně oboru hotelnictví a učebního oboru servírka",
+                    content: `
+                        <ul>
+                            <li>bílá halenka – hladká bez vzoru</li>
+                            <li>schválený vzor vestičky, případně vestozásterý u žáků vyšších ročníků</li>
+                            <li>dlouhé černé společenské kalhoty</li>
+                            <li>černé bavlněné ponožky, případně silonové ponožky tělové nebo černé barvy</li>
+                            <li>pohodlná černá obuv s protiskluzovou podrážkou</li>
+                            <li>bílý plášť pro přípravné činnosti</li>
+                            <li>další vybavení: propisovací tužka, číšnický otvírák, zápalky nebo zapalovač, kapesník</li>
+                            <li>vše vždy čisté a udržované, oděv vyžehlený</li>
+                        </ul>
+                    `
+                },
+                {
+                    title: "6. Pracovní oblečení – žák oboru hotelnictví a učebního oboru číšník",
+                    content: `
+                        <ul>
+                            <li>bílá košile s dlouhým rukávem</li>
+                            <li>schválený vzor vestičky, případně vestozásterý u žáků vyšších ročníků</li>
+                            <li>schválený vzor motýlka</li>
+                            <li>dlouhé černé společenské kalhoty</li>
+                            <li>černé bavlněné ponožky</li>
+                            <li>hladké společenské černé boty s protiskluznou podrážkou</li>
+                            <li>bílý plášť na přípravné činnosti</li>
+                            <li>další vybavení: propisovací tužka, číšnický otvírák, zápalky nebo zapalovač, kapesník</li>
+                            <li>vše vždy čisté a udržované, oděv vyžehlený</li>
+                        </ul>
+                    `
+                },
+                {
+                    title: "7. Pracovní oblečení – žáci oboru hotelnictví (TPP, praxe v kuchyni) a učebního oboru kuchař – kuchařka",
+                    content: `
+                        <ul>
+                            <li>pokrývka hlavy (šátek, pirátka, lodička v bílé barvě)</li>
+                            <li>rondon, pro výdej jídel a slavnostní příležitosti pouze bílý</li>
+                            <li>dlouhé kuchařské kalhoty</li>
+                            <li>kuchařská zástěra – doporučena bílá</li>
+                            <li>bílá pracovní protiskluzná pevná obuv s atestem BOZP</li>
+                            <li>bílé ponožky</li>
+                            <li>čistá utěrka – 2 ks</li>
+                            <li>kapesník</li>
+                            <li>vše vždy čisté a udržované, oděv vyžehlený</li>
+                        </ul>
+                        <p><em>V případě sporu o výklad výše uvedených bodů kapitoly XVIII., zejména v otázce osobního vzhledu žáků, rozhoduje ředitelka školy se svými zástupci pro teoretickou a praktickou výuku a vedoucím učitelem odborného výcviku.</em></p>
+                    `
+                }
+            ]
+        },
+        {
+            chapter: "XIX. Závěrečná ustanovení",
+            subsections: [
+                {
+                    title: "",
+                    content: `
+                        <p><strong>1.</strong> Nedílnou součástí tohoto školního řádu je klasifikační řád.</p>
+                        <p><strong>2.</strong> Tento školní řád nabývá účinnosti dnem 1. září 2025.</p>
+                        <p><strong>3.</strong> Školní řád schválila školská rada dne 28. srpna 2025.</p>
+                        <p style="margin-top:1.5rem;">V Mariánských Lázních dne 28. srpna 2025</p>
+                        <p><strong>Ing. Lucie FRIČLOVÁ</strong><br>ředitelka školy</p>
+                        <p><em>Seznam příloh: Příloha č. 1 : Klasifikační řád</em></p>
+                    `
+                }
+            ]
+        }
+    ];
+
+    // ------------------------------------------------------------------
+    // 2. VYKRESLENÍ OBSAHU
+    // ------------------------------------------------------------------
+    const contentContainer = document.getElementById('content');
+    const tocContainer = document.getElementById('toc');
+
+    function renderContent() {
+        let html = '';
+        let tocHtml = '<ul>';
+
+        schoolData.forEach((chapter, idx) => {
+            const chapterId = `chap-${idx}`;
+            html += `<div class="chapter" id="${chapterId}">`;
+            html += `<h2>${chapter.chapter}</h2>`;
+
+            tocHtml += `<li><a href="#${chapterId}" data-chapter="${idx}">${chapter.chapter}</a>`;
+            if (chapter.subsections.length > 1 || (chapter.subsections.length === 1 && chapter.subsections[0].title)) {
+                tocHtml += '<ul>';
+                chapter.subsections.forEach((sub, subIdx) => {
+                    if (sub.title) {
+                        const subId = `${chapterId}-sub-${subIdx}`;
+                        tocHtml += `<li><a href="#${subId}" data-chapter="${idx}" data-sub="${subIdx}">${sub.title}</a></li>`;
+                    }
+                });
+                tocHtml += '</ul>';
+            }
+            tocHtml += '</li>';
+
+            chapter.subsections.forEach((sub, subIdx) => {
+                const subId = `${chapterId}-sub-${subIdx}`;
+                const hasTitle = sub.title && sub.title.length > 0;
+                html += `<div class="subsection" id="${subId}" data-chapter="${idx}" data-sub="${subIdx}">`;
+                if (hasTitle) {
+                    html += `<h3>${sub.title}</h3>`;
+                }
+                html += `<div class="sub-content">${sub.content}</div>`;
+                html += `</div>`;
+            });
+
+            html += `</div>`;
+        });
+
+        tocHtml += '</ul>';
+        contentContainer.innerHTML = html;
+        tocContainer.innerHTML = tocHtml;
+
+        // Po vykreslení uložíme originální HTML do data atributu
+        document.querySelectorAll('.subsection').forEach(el => {
+            const contentDiv = el.querySelector('.sub-content');
+            if (contentDiv && !el.dataset.originalHtml) {
+                el.dataset.originalHtml = contentDiv.innerHTML;
+            }
+        });
+    }
+
+    renderContent();
+
+    // ------------------------------------------------------------------
+    // 3. FULLTEXTOVÉ VYHLEDÁVÁNÍ (průběžné, bez tlačítka)
+    // ------------------------------------------------------------------
+    const searchInput = document.getElementById('search-input');
+    const clearBtn = document.getElementById('clear-search');
+    const searchInfo = document.getElementById('search-info');
+    const searchResults = document.getElementById('search-results');
+    const resultsList = document.getElementById('results-list');
+
+    // Pomocná funkce pro získání názvu sekce (kapitola + podtitul)
+    function getSectionTitle(subsectionEl) {
+        const chapterEl = subsectionEl.closest('.chapter');
+        const chapterTitle = chapterEl ? chapterEl.querySelector('h2')?.textContent || '' : '';
+        const subTitleEl = subsectionEl.querySelector('h3');
+        const subTitle = subTitleEl ? subTitleEl.textContent : '';
+        if (subTitle) {
+            return `${chapterTitle} – ${subTitle}`;
+        }
+        return chapterTitle;
+    }
+
+    function performSearch(query) {
+        const trimmed = query.trim();
+        if (!trimmed) {
+            clearSearch();
+            return;
+        }
+
+        const lowerQuery = trimmed.toLowerCase();
+        let matchCount = 0;
+        const matches = []; // pro seznam odkazů
+
+        // Projdeme všechny podsekce
+        const subsections = document.querySelectorAll('.subsection');
+        subsections.forEach(el => {
+            const contentDiv = el.querySelector('.sub-content');
+            if (!contentDiv) return;
+
+            // Obnovíme originální HTML
+            const originalHtml = el.dataset.originalHtml || contentDiv.innerHTML;
+            contentDiv.innerHTML = originalHtml;
+
+            const text = contentDiv.innerText || '';
+            if (text.toLowerCase().includes(lowerQuery)) {
+                // Zvýrazníme
+                const highlighted = highlightText(originalHtml, trimmed);
+                contentDiv.innerHTML = highlighted;
+                el.classList.remove('hidden-subsection');
+                matchCount++;
+                // Uložíme pro seznam
+                const sectionId = el.id;
+                const title = getSectionTitle(el);
+                matches.push({ id: sectionId, title: title });
+            } else {
+                el.classList.add('hidden-subsection');
+            }
+        });
+
+        // Skryjeme / zobrazíme kapitoly
+        document.querySelectorAll('.chapter').forEach(ch => {
+            const visibleSubs = ch.querySelectorAll('.subsection:not(.hidden-subsection)');
+            if (visibleSubs.length === 0) {
+                ch.classList.add('hidden-chapter');
+            } else {
+                ch.classList.remove('hidden-chapter');
+            }
+        });
+
+        // Informace a seznam odkazů
+        if (matchCount === 0) {
+            searchInfo.textContent = `Žádná sekce neobsahuje „${trimmed}“.`;
+            searchResults.classList.remove('visible');
+        } else {
+            searchInfo.textContent = `Nalezeno ${matchCount} sekcí obsahujících „${trimmed}“.`;
+            // Sestavíme seznam odkazů
+            resultsList.innerHTML = '';
+            matches.forEach(m => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = `#${m.id}`;
+                a.textContent = m.title || 'Bez názvu';
+                a.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.getElementById(m.id);
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        // Zvýrazníme aktivní odkaz v sidebaru?
+                        document.querySelectorAll('#toc a').forEach(link => link.classList.remove('active'));
+                        // Najdeme odpovídající odkaz v toc
+                        const tocLink = document.querySelector(`#toc a[href="#${m.id}"]`);
+                        if (tocLink) tocLink.classList.add('active');
+                    }
+                });
+                li.appendChild(a);
+                resultsList.appendChild(li);
+            });
+            searchResults.classList.add('visible');
+        }
+    }
+
+    function highlightText(html, query) {
+        // Použijeme DOM traversal pro bezpečné zvýraznění
+        const temp = document.createElement('div');
+        temp.innerHTML = html;
+        const lowerQuery = query.toLowerCase();
+
+        function walk(node) {
+            if (node.nodeType === 3) { // text
+                const text = node.nodeValue;
+                if (text.toLowerCase().includes(lowerQuery)) {
+                    const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+                    const parts = text.split(regex);
+                    const frag = document.createDocumentFragment();
+                    parts.forEach(part => {
+                        if (part && part.toLowerCase() === lowerQuery) {
+                            const mark = document.createElement('mark');
+                            mark.className = 'highlight';
+                            mark.textContent = part;
+                            frag.appendChild(mark);
+                        } else if (part) {
+                            frag.appendChild(document.createTextNode(part));
+                        }
+                    });
+                    node.parentNode.replaceChild(frag, node);
+                }
+            } else {
+                for (let child of node.childNodes) {
+                    walk(child);
+                }
+            }
+        }
+
+        walk(temp);
+        return temp.innerHTML;
+    }
+
+    function clearSearch() {
+        // Obnovíme všechny podsekce
+        document.querySelectorAll('.subsection').forEach(el => {
+            const contentDiv = el.querySelector('.sub-content');
+            if (contentDiv && el.dataset.originalHtml) {
+                contentDiv.innerHTML = el.dataset.originalHtml;
+            }
+            el.classList.remove('hidden-subsection');
+        });
+        document.querySelectorAll('.chapter').forEach(ch => {
+            ch.classList.remove('hidden-chapter');
+        });
+        searchInput.value = '';
+        searchInfo.textContent = '';
+        searchResults.classList.remove('visible');
+        resultsList.innerHTML = '';
+    }
+
+    // Průběžné vyhledávání při psaní
+    searchInput.addEventListener('input', function() {
+        performSearch(this.value);
+    });
+
+    // Tlačítko zrušit
+    clearBtn.addEventListener('click', clearSearch);
+
+    // ------------------------------------------------------------------
+    // 4. AKTIVNÍ ODKAZY V SIDEBARU
+    // ------------------------------------------------------------------
+    document.querySelectorAll('#toc a').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href').substring(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                document.querySelectorAll('#toc a').forEach(a => a.classList.remove('active'));
+                this.classList.add('active');
+            }
+        });
+    });
+
+    console.log('Školní řád načten – vyhledávání je průběžné a zobrazuje seznam odkazů.');
+</script>
+</body>
+</html>

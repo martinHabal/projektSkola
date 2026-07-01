@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Losovač otázek - Maturita</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2c3e50;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --light: #ecf0f1;
+            --dark: #34495e;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: #333;
+            line-height: 1.4;
+            height: 100vh;
+            padding: 0;
+            overflow: hidden;
+        }
+        
+        .container {
+            width: 100%;
+            height: 100vh;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .main-content {
+            display: flex;
+            flex: 1;
+            gap: 20px;
+            overflow: hidden;
+        }
+        
+        .left-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-width: 0;
+        }
+        
+        .right-panel {
+            width: 350px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .section {
+            padding: 15px;
+            border-radius: 8px;
+            background-color: white;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .section.full-height {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+        
+        .section.history-section {
+            flex: 2; /* Historie bude vyšší */
+        }
+        
+        h2 {
+            color: var(--primary);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+            font-size: 1.3rem;
+        }
+        
+        button {
+            padding: 10px 15px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-danger {
+            background-color: var(--danger);
+        }
+        
+        .btn-success {
+            background-color: var(--success);
+        }
+        
+        .btn-warning {
+            background-color: var(--warning);
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary);
+        }
+        
+        .btn-info {
+            background-color: #17a2b8;
+        }
+        
+        .question-list {
+            flex: 1;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 8px;
+            margin-bottom: 12px;
+            background-color: var(--light);
+        }
+        
+        .question-item {
+            padding: 10px 8px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.2s;
+            font-size: 14px;
+        }
+        
+        .question-item:hover {
+            background-color: #e3e9f1;
+        }
+        
+        .question-item:last-child {
+            border-bottom: none;
+        }
+        
+        .question-item.inactive {
+            background-color: #f8d7da;
+            text-decoration: line-through;
+            color: #721c24;
+        }
+        
+        .question-item.drawn {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .question-number {
+            font-weight: bold;
+            margin-right: 8px;
+            min-width: 25px;
+        }
+        
+        .question-text {
+            flex: 1;
+        }
+        
+        .question-actions {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .result {
+            text-align: center;
+            padding: 20px;
+            margin: 15px 0;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 8px;
+            font-size: 22px;
+            font-weight: bold;
+            color: white;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .result-number {
+            font-size: 2.8rem;
+            margin-bottom: 8px;
+        }
+        
+        .result-text {
+            font-size: 1.2rem;
+        }
+        
+        .highlight {
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 15px;
+        }
+        
+        .stat-card {
+            background-color: var(--light);
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--dark);
+        }
+        
+        .empty-list {
+            color: #95a5a6;
+            font-style: italic;
+            text-align: center;
+            padding: 15px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .history-item {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .history-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: var(--success);
+            transition: width 0.5s;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.8rem;
+        }
+        
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+        
+        .legend-available {
+            background-color: var(--light);
+        }
+        
+        .legend-drawn {
+            background-color: #fff3cd;
+        }
+        
+        .legend-inactive {
+            background-color: #f8d7da;
+        }
+        
+        .file-input-container {
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .file-input-label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 14px;
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            overflow: hidden;
+        }
+        
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        .file-input-button {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .file-input-button:hover {
+            background-color: #2980b9;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .reset-buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 12px;
+        }
+        
+        .timer-section {
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            flex-shrink: 0;
+            transition: all 0.5s ease;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+        
+        .timer-section.normal {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+        }
+        
+        .timer-section.warning {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+        }
+        
+        .timer-section.danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+        
+        .timer-display {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 12px 0;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .timer-controls {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .timer-input-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            justify-content: center;
+        }
+        
+        .timer-input-group label {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .timer-input-group input {
+            width: 60px;
+            padding: 6px;
+            border: none;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 1rem;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            background: var(--warning);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 6px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+            z-index: 1000;
+            animation: slideIn 0.5s ease-out;
+            font-size: 14px;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .export-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+   
+      <%- include('./partials/header') %>
+    <div class="container">
+        <div class="main-content">
+            <div class="left-panel">
+                <div class="section">
+                    <h2>Načíst otázky</h2>
+                    
+                    <div class="file-input-container">
+                        <label class="file-input-label">Vyberte CSV soubor s otázkami:</label>
+                        <div class="file-input-wrapper">
+                            <input type="file" id="csvFile" accept=".csv">
+                            <div class="file-input-button">Vybrat soubor</div>
+                        </div>
+                        <div id="fileName" style="font-size: 14px; color: var(--dark); font-style: italic;"></div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button id="clearQuestions" class="btn-danger">Vymazat všechny otázky</button>
+                    </div>
+                </div>
+                
+                <div class="section full-height">
+                    <h2>Seznam otázek</h2>
+                    <div class="question-list" id="questionList"></div>
+                    <div class="progress-bar">
+                        <div class="progress" id="progressBar"></div>
+                    </div>
+                    <div class="stats">
+                        <div class="stat-card">
+                            <div class="stat-value" id="totalQuestions">0</div>
+                            <div class="stat-label">Celkem otázek</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="activeQuestions">0</div>
+                            <div class="stat-label">Aktivní</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="drawnQuestions">0</div>
+                            <div class="stat-label">Vylosované</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="inactiveQuestions">0</div>
+                            <div class="stat-label">Neaktivní</div>
+                        </div>
+                    </div>
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-color legend-available"></div>
+                            <span>Aktivní</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color legend-drawn"></div>
+                            <span>Vylosované</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color legend-inactive"></div>
+                            <span>Neaktivní</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="right-panel">
+                <div class="section">
+                    <h2>Losování</h2>
+                    <div class="result" id="result">
+                        <div class="result-number">?</div>
+                        <div class="result-text">Zatím nebyla vylosována žádná otázka</div>
+                    </div>
+                    <div class="controls">
+                        <button id="startLosovani" class="btn-success">Start losování</button>
+                    </div>
+                    <div class="reset-buttons">
+                        <button id="fullReset" class="btn-danger">Kompletní reset</button>
+                    </div>
+                    <div class="stats">
+                        <div class="stat-card">
+                            <div class="stat-value" id="drawnCount">0</div>
+                            <div class="stat-label">Počet losování</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="lastDrawn">-</div>
+                            <div class="stat-label">Poslední losování</div>
+                        </div>
+                    </div>
+                    
+                    <div class="export-section">
+                        <button id="exportProcess" class="btn-info">Exportovat proces</button>
+                    </div>
+                </div>
+                
+                <div class="section full-height history-section">
+                    <h2>Historie losování</h2>
+                    <div class="history-list" id="historyList"></div>
+                </div>
+                
+                <div class="timer-section" id="timerSection">
+                    <h2>Časovač pro losování</h2>
+                    <div class="timer-input-group">
+                        <label for="timerMinutes">Minuty:</label>
+                        <input type="number" id="timerMinutes" min="0" max="59" value="5">
+                        <label for="timerSeconds">Sekundy:</label>
+                        <input type="number" id="timerSeconds" min="0" max="59" value="0">
+                    </div>
+                    <div class="timer-display" id="timerDisplay">05:00</div>
+                    <div class="timer-controls">
+                        <button id="pauseTimer" class="btn-warning">Pozastavit časovač</button>
+                        <button id="resumeTimer" class="btn-success">Pokračovat</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data model
+        let questions = [];
+        let drawnHistory = [];
+        let lastDrawnQuestion = null;
+        let isLosovaniRunning = false;
+        
+        // Timer variables
+        let timerInterval = null;
+        let timerTimeLeft = 0;
+        let timerIsRunning = false;
+        let timerIsPaused = false;
+
+        // Klíče pro localStorage
+        const STORAGE_KEYS = {
+            QUESTIONS: 'maturita_questions',
+            HISTORY: 'maturita_history',
+            LAST_DRAWN: 'maturita_last_drawn',
+            TIMER_TIME: 'maturita_timer_time',
+            TIMER_RUNNING: 'maturita_timer_running',
+            TIMER_PAUSED: 'maturita_timer_paused',
+            LOSOVANI_RUNNING: 'maturita_losovani_running'
+        };
+
+        // DOM elements
+        const csvFileInput = document.getElementById('csvFile');
+        const fileNameDisplay = document.getElementById('fileName');
+        const clearQuestionsBtn = document.getElementById('clearQuestions');
+        const questionList = document.getElementById('questionList');
+        const totalQuestionsEl = document.getElementById('totalQuestions');
+        const activeQuestionsEl = document.getElementById('activeQuestions');
+        const drawnQuestionsEl = document.getElementById('drawnQuestions');
+        const inactiveQuestionsEl = document.getElementById('inactiveQuestions');
+        const progressBar = document.getElementById('progressBar');
+        const startLosovaniBtn = document.getElementById('startLosovani');
+        const fullResetBtn = document.getElementById('fullReset');
+        const exportProcessBtn = document.getElementById('exportProcess');
+        const resultDiv = document.getElementById('result');
+        const resultNumber = resultDiv.querySelector('.result-number');
+        const resultText = resultDiv.querySelector('.result-text');
+        const drawnCountEl = document.getElementById('drawnCount');
+        const lastDrawnEl = document.getElementById('lastDrawn');
+        const historyList = document.getElementById('historyList');
+        
+        // Timer elements
+        const timerSection = document.getElementById('timerSection');
+        const timerMinutesInput = document.getElementById('timerMinutes');
+        const timerSecondsInput = document.getElementById('timerSeconds');
+        const timerDisplay = document.getElementById('timerDisplay');
+        const pauseTimerBtn = document.getElementById('pauseTimer');
+        const resumeTimerBtn = document.getElementById('resumeTimer');
+
+        // Funkce pro práci s localStorage
+        function saveToStorage() {
+            try {
+                localStorage.setItem(STORAGE_KEYS.QUESTIONS, JSON.stringify(questions));
+                localStorage.setItem(STORAGE_KEYS.HISTORY, JSON.stringify(drawnHistory));
+                localStorage.setItem(STORAGE_KEYS.LAST_DRAWN, JSON.stringify(lastDrawnQuestion));
+                localStorage.setItem(STORAGE_KEYS.TIMER_TIME, JSON.stringify(timerTimeLeft));
+                localStorage.setItem(STORAGE_KEYS.TIMER_RUNNING, JSON.stringify(timerIsRunning));
+                localStorage.setItem(STORAGE_KEYS.TIMER_PAUSED, JSON.stringify(timerIsPaused));
+                localStorage.setItem(STORAGE_KEYS.LOSOVANI_RUNNING, JSON.stringify(isLosovaniRunning));
+            } catch (e) {
+                console.error('Chyba při ukládání do localStorage:', e);
+            }
+        }
+
+        function loadFromStorage() {
+            try {
+                const savedQuestions = localStorage.getItem(STORAGE_KEYS.QUESTIONS);
+                const savedHistory = localStorage.getItem(STORAGE_KEYS.HISTORY);
+                const savedLastDrawn = localStorage.getItem(STORAGE_KEYS.LAST_DRAWN);
+                const savedTimerTime = localStorage.getItem(STORAGE_KEYS.TIMER_TIME);
+                const savedTimerRunning = localStorage.getItem(STORAGE_KEYS.TIMER_RUNNING);
+                const savedTimerPaused = localStorage.getItem(STORAGE_KEYS.TIMER_PAUSED);
+                const savedLosovaniRunning = localStorage.getItem(STORAGE_KEYS.LOSOVANI_RUNNING);
+
+                if (savedQuestions) {
+                    questions = JSON.parse(savedQuestions);
+                }
+                if (savedHistory) {
+                    drawnHistory = JSON.parse(savedHistory);
+                }
+                if (savedLastDrawn) {
+                    lastDrawnQuestion = JSON.parse(savedLastDrawn);
+                }
+                if (savedTimerTime) {
+                    timerTimeLeft = JSON.parse(savedTimerTime);
+                    updateTimerDisplay();
+                    updateTimerColor();
+                }
+                if (savedTimerRunning) {
+                    timerIsRunning = JSON.parse(savedTimerRunning);
+                    if (timerIsRunning && !savedTimerPaused) {
+                        startTimer();
+                    }
+                }
+                if (savedTimerPaused) {
+                    timerIsPaused = JSON.parse(savedTimerPaused);
+                }
+                if (savedLosovaniRunning) {
+                    isLosovaniRunning = JSON.parse(savedLosovaniRunning);
+                    if (isLosovaniRunning) {
+                        startLosovaniBtn.classList.add('hidden');
+                    }
+                }
+            } catch (e) {
+                console.error('Chyba při načítání z localStorage:', e);
+                // Pokud je problém s daty, resetujeme je
+                questions = [];
+                drawnHistory = [];
+                lastDrawnQuestion = null;
+                timerTimeLeft = 5 * 60; // 5 minut default
+                timerIsRunning = false;
+                timerIsPaused = false;
+                isLosovaniRunning = false;
+            }
+        }
+
+        // Timer functions
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timerTimeLeft / 60);
+            const seconds = timerTimeLeft % 60;
+            timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function updateTimerColor() {
+            // Odstraníme všechny třídy barev
+            timerSection.classList.remove('normal', 'warning', 'danger');
+            
+            // Přidáme příslušnou třídu podle zbývajícího času
+            if (timerTimeLeft > 30) {
+                timerSection.classList.add('normal'); // Zelená - normální čas
+            } else if (timerTimeLeft > 5) {
+                timerSection.classList.add('warning'); // Oranžová - 30-6 sekund
+            } else {
+                timerSection.classList.add('danger'); // Červená - 5-0 sekund
+            }
+        }
+
+        function startTimer() {
+            if (timerIsRunning) return;
+            
+            // Pokud timer není nastavený, načteme hodnoty z inputů
+            if (timerTimeLeft <= 0) {
+                const minutes = parseInt(timerMinutesInput.value) || 0;
+                const seconds = parseInt(timerSecondsInput.value) || 0;
+                timerTimeLeft = minutes * 60 + seconds;
+            }
+            
+            if (timerTimeLeft <= 0) {
+                alert('Nastavte prosím časovač na hodnotu větší než 0.');
+                return;
+            }
+            
+            timerIsRunning = true;
+            timerIsPaused = false;
+            updateTimerColor();
+            
+            timerInterval = setInterval(() => {
+                timerTimeLeft--;
+                updateTimerDisplay();
+                updateTimerColor();
+                
+                if (timerTimeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    timerIsRunning = false;
+                    timerIsPaused = false;
+                    
+                    // Automaticky označíme aktuální otázku jako vylosovanou
+                    if (lastDrawnQuestion !== null) {
+                        questions[lastDrawnQuestion].drawn = true;
+                        updateQuestionList();
+                    }
+                    
+                    showNotification('Čas vypršel!<br>Byla vylosována nová otázka.');
+                    // Automaticky vylosujeme další otázku
+                    drawQuestion();
+                    // Restartujeme timer
+                    const minutes = parseInt(timerMinutesInput.value) || 0;
+                    const seconds = parseInt(timerSecondsInput.value) || 0;
+                    timerTimeLeft = minutes * 60 + seconds;
+                    updateTimerDisplay();
+                    updateTimerColor();
+                    
+                    // Pokud je losování aktivní, pokračujeme s časovačem
+                    if (isLosovaniRunning) {
+                        startTimer();
+                    }
+                }
+                
+                saveToStorage();
+            }, 1000);
+            
+            saveToStorage();
+        }
+
+        function pauseTimer() {
+            if (!timerIsRunning || timerIsPaused) return;
+            
+            clearInterval(timerInterval);
+            timerIsPaused = true;
+            showNotification('Časovač byl pozastaven.');
+            saveToStorage();
+        }
+
+        function resumeTimer() {
+            if (!timerIsPaused) return;
+            
+            timerIsRunning = true;
+            timerIsPaused = false;
+            showNotification('Časovač pokračuje.');
+            
+            timerInterval = setInterval(() => {
+                timerTimeLeft--;
+                updateTimerDisplay();
+                updateTimerColor();
+                
+                if (timerTimeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    timerIsRunning = false;
+                    timerIsPaused = false;
+                    
+                    // Automaticky označíme aktuální otázku jako vylosovanou
+                    if (lastDrawnQuestion !== null) {
+                        questions[lastDrawnQuestion].drawn = true;
+                        updateQuestionList();
+                    }
+                    
+                    showNotification('Čas vypršel!<br>Byla vylosována nová otázka.');
+                    // Automaticky vylosujeme další otázku
+                    drawQuestion();
+                    // Restartujeme timer
+                    const minutes = parseInt(timerMinutesInput.value) || 0;
+                    const seconds = parseInt(timerSecondsInput.value) || 0;
+                    timerTimeLeft = minutes * 60 + seconds;
+                    updateTimerDisplay();
+                    updateTimerColor();
+                    
+                    // Pokud je losování aktivní, pokračujeme s časovačem
+                    if (isLosovaniRunning) {
+                        startTimer();
+                    }
+                }
+                
+                saveToStorage();
+            }, 1000);
+            
+            saveToStorage();
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.innerHTML = `<strong>${message}</strong>`;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+
+        // Funkce pro automatické losování
+        function startLosovani() {
+            if (questions.length === 0) {
+                alert('Seznam otázek je prázdný! Nejprve načtěte otázky.');
+                return;
+            }
+            
+            // Get available questions (active and not drawn)
+            const availableQuestions = questions
+                .map((q, index) => ({...q, index}))
+                .filter(q => q.active && !q.drawn);
+            
+            if (availableQuestions.length === 0) {
+                alert('Všechny aktivní otázky již byly vylosovány! Použijte tlačítko "Kompletní reset" pro opětovné zpřístupnění všech otázek nebo aktivujte některé neaktivní otázky.');
+                return;
+            }
+            
+            isLosovaniRunning = true;
+            
+            // Skryjeme tlačítko Start losování
+            startLosovaniBtn.classList.add('hidden');
+            
+            // OKAMŽITĚ vylosujeme první otázku
+            drawQuestion();
+            
+            // Až poté spustíme časovač pro další losování
+            startTimer();
+            
+            saveToStorage();
+        }
+
+        // Funkce pro načtení CSV
+        function loadQuestionsFromCSV(file) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const content = e.target.result;
+                const lines = content.split('\n');
+                const newQuestions = [];
+                
+                lines.forEach((line, index) => {
+                    // Odstraníme přebytečné bílé znaky
+                    line = line.trim();
+                    
+                    // Přeskočíme prázdné řádky
+                    if (!line) return;
+                    
+                    // Zkusíme rozdělit podle středníku (CSV formát)
+                    let parts = line.split(';');
+                    
+                    // Pokud není středník, zkusíme čárku
+                    if (parts.length === 1) {
+                        parts = line.split(',');
+                    }
+                    
+                    // Pokud stále máme jen jednu část, použijeme celý řádek jako text otázky
+                    let questionText = line;
+                    
+                    // Pokud máme více částí, předpokládáme, že první je číslo a druhá text
+                    if (parts.length > 1) {
+                        // Použijeme druhou část jako text otázky (předpokládáme formát: číslo;text)
+                        questionText = parts.slice(1).join(';').trim();
+                        
+                        // Pokud je text v uvozovkách, odstraníme je
+                        if (questionText.startsWith('"') && questionText.endsWith('"')) {
+                            questionText = questionText.substring(1, questionText.length - 1);
+                        }
+                    }
+                    
+                    // Přidáme otázku pouze pokud není prázdná
+                    if (questionText) {
+                        newQuestions.push({
+                            text: questionText,
+                            active: true,
+                            drawn: false
+                        });
+                    }
+                });
+                
+                if (newQuestions.length > 0) {
+                    // Přidáme nové otázky k existujícím
+                    questions = [...questions, ...newQuestions];
+                    updateQuestionList();
+                    alert(`Úspěšně načteno ${newQuestions.length} otázek z CSV souboru.`);
+                } else {
+                    alert('CSV soubor neobsahuje žádné platné otázky.');
+                }
+                
+                // Resetujeme file input
+                csvFileInput.value = '';
+                fileNameDisplay.textContent = '';
+            };
+            
+            reader.onerror = function() {
+                alert('Chyba při čtení souboru. Zkuste to prosím znovu.');
+                csvFileInput.value = '';
+                fileNameDisplay.textContent = '';
+            };
+            
+            reader.readAsText(file);
+        }
+
+        // Funkce pro export procesu
+        function exportProcess() {
+            if (questions.length === 0) {
+                alert('Nejdříve načtěte nějaké otázky.');
+                return;
+            }
+            
+            let exportContent = "EXPORT PROCESU LOSOVÁNÍ OTÁZEK\n";
+            exportContent += "================================\n\n";
+            
+            // Základní informace
+            exportContent += `Datum exportu: ${new Date().toLocaleString()}\n`;
+            exportContent += `Celkem otázek: ${questions.length}\n`;
+            exportContent += `Aktivních otázek: ${questions.filter(q => q.active && !q.drawn).length}\n`;
+            exportContent += `Vylosovaných otázek: ${questions.filter(q => q.drawn).length}\n`;
+            exportContent += `Neaktivních otázek: ${questions.filter(q => !q.active).length}\n`;
+            exportContent += `Počet losování: ${drawnHistory.length}\n\n`;
+            
+            // Seznam všech otázek s jejich stavy
+            exportContent += "SEZNAM OTÁZEK:\n";
+            exportContent += "--------------\n";
+            questions.forEach((question, index) => {
+                let status = "";
+                if (!question.active) {
+                    status = " [NEAKTIVNÍ]";
+                } else if (question.drawn) {
+                    status = " [VYLOSOVANÁ]";
+                } else {
+                    status = " [AKTIVNÍ]";
+                }
+                exportContent += `${index + 1}. ${question.text}${status}\n`;
+            });
+            
+            exportContent += "\n";
+            
+            // Historie losování
+            exportContent += "HISTORIE LOSOVÁNÍ:\n";
+            exportContent += "-------------------\n";
+            if (drawnHistory.length === 0) {
+                exportContent += "Žádná historie losování\n";
+            } else {
+                drawnHistory.forEach(item => {
+                    const date = new Date(item.timestamp).toLocaleString();
+                    exportContent += `${date} - Otázka ${item.questionNumber + 1}: ${questions[item.questionNumber].text}\n`;
+                });
+            }
+            
+            // Vytvoření a stažení souboru
+            const blob = new Blob([exportContent], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `losovani_otazek_${new Date().toISOString().split('T')[0]}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Functions
+        function updateQuestionList() {
+            questionList.innerHTML = '';
+            
+            if (questions.length === 0) {
+                questionList.innerHTML = '<div class="empty-list">Seznam otázek je prázdný</div>';
+            } else {
+                questions.forEach((question, index) => {
+                    const div = document.createElement('div');
+                    let className = 'question-item';
+                    
+                    if (!question.active) {
+                        className += ' inactive';
+                    } else if (question.drawn) {
+                        className += ' drawn';
+                    }
+                    
+                    div.className = className;
+                    div.innerHTML = `
+                        <div class="question-number">${index + 1}.</div>
+                        <div class="question-text">${question.text}</div>
+                        <div class="question-actions">
+                            <button class="toggle-active ${question.active ? 'btn-success' : 'btn-secondary'}" data-index="${index}">
+                                ${question.active ? '✓' : '✗'}
+                            </button>
+                        </div>
+                    `;
+                    questionList.appendChild(div);
+                });
+                
+                // Add event listeners
+                document.querySelectorAll('.toggle-active').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const index = parseInt(this.getAttribute('data-index'));
+                        toggleQuestionActive(index);
+                    });
+                });
+            }
+            
+            updateStats();
+            saveToStorage(); // Uložíme změny
+        }
+
+        function updateStats() {
+            const total = questions.length;
+            const active = questions.filter(q => q.active && !q.drawn).length;
+            const drawn = questions.filter(q => q.drawn).length;
+            const inactive = questions.filter(q => !q.active).length;
+            const progress = total > 0 ? (drawn / total) * 100 : 0;
+            
+            totalQuestionsEl.textContent = total;
+            activeQuestionsEl.textContent = active;
+            drawnQuestionsEl.textContent = drawn;
+            inactiveQuestionsEl.textContent = inactive;
+            progressBar.style.width = `${progress}%`;
+            
+            drawnCountEl.textContent = drawnHistory.length;
+            lastDrawnEl.textContent = lastDrawnQuestion !== null ? lastDrawnQuestion + 1 : '-';
+        }
+
+        function updateHistoryList() {
+            historyList.innerHTML = '';
+            
+            if (drawnHistory.length === 0) {
+                historyList.innerHTML = '<div class="empty-list">Žádná historie losování</div>';
+            } else {
+                // Show all items (no limit)
+                const allHistory = [...drawnHistory].reverse();
+                
+                allHistory.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'history-item';
+                    const date = new Date(item.timestamp).toLocaleTimeString();
+                    div.innerHTML = `
+                        <span>Otázka ${item.questionNumber + 1}</span>
+                        <span>${date}</span>
+                    `;
+                    historyList.appendChild(div);
+                });
+            }
+        }
+
+        function toggleQuestionActive(index) {
+            questions[index].active = !questions[index].active;
+            updateQuestionList();
+        }
+
+        function clearQuestions() {
+            if (questions.length === 0) {
+                return;
+            }
+            
+            if (confirm('Opravdu chcete vymazat všechny otázky? Tato akce smaže celý seznam otázek.')) {
+                questions = [];
+                drawnHistory = [];
+                lastDrawnQuestion = null;
+                isLosovaniRunning = false;
+                if (timerIsRunning) {
+                    clearInterval(timerInterval);
+                    timerIsRunning = false;
+                    timerIsPaused = false;
+                }
+                // Zobrazíme tlačítko Start losování
+                startLosovaniBtn.classList.remove('hidden');
+                updateQuestionList();
+                updateHistoryList();
+            }
+        }
+
+        function drawQuestion() {
+            if (questions.length === 0) {
+                alert('Seznam otázek je prázdný!');
+                return;
+            }
+            
+            // Get available questions (active and not drawn)
+            const availableQuestions = questions
+                .map((q, index) => ({...q, index}))
+                .filter(q => q.active && !q.drawn);
+            
+            if (availableQuestions.length === 0) {
+                // Zastavíme automatické losování i časovač
+                if (isLosovaniRunning) {
+                    isLosovaniRunning = false;
+                    
+                    if (timerIsRunning) {
+                        clearInterval(timerInterval);
+                        timerIsRunning = false;
+                        timerIsPaused = false;
+                    }
+                }
+                // Zobrazíme tlačítko Start losování
+                startLosovaniBtn.classList.remove('hidden');
+                alert('Všechny aktivní otázky již byly vylosovány! Použijte tlačítko "Kompletní reset" pro opětovné zpřístupnění všech otázek nebo aktivujte některé neaktivní otázky.');
+                return;
+            }
+            
+            // Random selection
+            const randomIndex = Math.floor(Math.random() * availableQuestions.length);
+            const selectedQuestion = availableQuestions[randomIndex];
+            
+            // Update last drawn
+            lastDrawnQuestion = selectedQuestion.index;
+            
+            // Mark question as drawn (automatické označení vylosované otázky)
+            questions[selectedQuestion.index].drawn = true;
+            
+            // Add to history
+            drawnHistory.push({
+                questionNumber: selectedQuestion.index,
+                timestamp: new Date()
+            });
+            
+            // Display result with animation
+            resultNumber.textContent = selectedQuestion.index + 1;
+            resultText.textContent = selectedQuestion.text;
+            resultDiv.classList.add('highlight');
+            
+            setTimeout(() => {
+                resultDiv.classList.remove('highlight');
+            }, 1500);
+            
+            updateStats();
+            updateHistoryList();
+            saveToStorage(); // Uložíme změny
+        }
+
+        function fullReset() {
+            if (confirm('Opravdu chcete provést kompletní reset? Tato akce:\n\n- Resetuje všechny stavy otázek (drawn)\n- Vymaže historii losování\n- Zachová načtené otázky a jejich aktivitu')) {
+                // Reset drawn state for all questions
+                questions.forEach(question => {
+                    question.drawn = false;
+                });
+                
+                // Clear history
+                drawnHistory = [];
+                lastDrawnQuestion = null;
+                
+                // Stop losování and timer
+                isLosovaniRunning = false;
+                
+                if (timerIsRunning) {
+                    clearInterval(timerInterval);
+                    timerIsRunning = false;
+                    timerIsPaused = false;
+                }
+                
+                // Zobrazíme tlačítko Start losování
+                startLosovaniBtn.classList.remove('hidden');
+                
+                // Reset result display
+                resultNumber.textContent = '?';
+                resultText.textContent = 'Zatím nebyla vylosována žádná otázka';
+                
+                updateQuestionList();
+                updateHistoryList();
+            }
+        }
+
+        // Event listeners
+        csvFileInput.addEventListener('change', function() {
+            if (this.files.length === 0) {
+                fileNameDisplay.textContent = '';
+                return;
+            }
+            
+            const file = this.files[0];
+            fileNameDisplay.textContent = `Vybraný soubor: ${file.name}`;
+            loadQuestionsFromCSV(file);
+        });
+        
+        clearQuestionsBtn.addEventListener('click', clearQuestions);
+        startLosovaniBtn.addEventListener('click', startLosovani);
+        fullResetBtn.addEventListener('click', fullReset);
+        exportProcessBtn.addEventListener('click', exportProcess);
+        
+        // Timer event listeners
+        pauseTimerBtn.addEventListener('click', pauseTimer);
+        resumeTimerBtn.addEventListener('click', resumeTimer);
+        
+        timerMinutesInput.addEventListener('change', function() {
+            if (!timerIsRunning) {
+                const minutes = parseInt(this.value) || 0;
+                const seconds = parseInt(timerSecondsInput.value) || 0;
+                timerTimeLeft = minutes * 60 + seconds;
+                updateTimerDisplay();
+                updateTimerColor();
+            }
+        });
+        
+        timerSecondsInput.addEventListener('change', function() {
+            if (!timerIsRunning) {
+                const minutes = parseInt(timerMinutesInput.value) || 0;
+                const seconds = parseInt(this.value) || 0;
+                timerTimeLeft = minutes * 60 + seconds;
+                updateTimerDisplay();
+                updateTimerColor();
+            }
+        });
+
+        // Initialize - načteme data z localStorage
+        loadFromStorage();
+        updateQuestionList();
+        updateHistoryList();
+        
+        // Pokud máme uloženou poslední vylosovanou otázku, zobrazíme ji
+        if (lastDrawnQuestion !== null && questions[lastDrawnQuestion]) {
+            resultNumber.textContent = lastDrawnQuestion + 1;
+            resultText.textContent = questions[lastDrawnQuestion].text;
+        }
+        
+        // Inicializace časovače
+        if (timerTimeLeft <= 0) {
+            const minutes = parseInt(timerMinutesInput.value) || 0;
+            const seconds = parseInt(timerSecondsInput.value) || 0;
+            timerTimeLeft = minutes * 60 + seconds;
+            updateTimerDisplay();
+            updateTimerColor();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,163 @@
+nav {
+  background-color: #f8f9fa;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+  font-family: cursive;
+  /* position: fixed; */
+  float: left;
+  left: 0;
+  top: 0px;
+  bottom: 0;
+  width: 250px;
+  overflow-y: auto;
+  /* z-index: 1000; */
+}
+
+nav ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+nav li {
+  position: relative;
+  border-bottom: 1px solid #e1e1e1;
+}
+
+nav a {
+  display: block;
+  padding: 12px 15px;
+  color: #333;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+nav a:hover {
+  background-color: #e9ecef;
+  color: #0056b3;
+  padding-left: 20px;
+}
+
+/* Obsah stránky - odsazení kvůli navigaci */
+body {
+  /* margin-left: 250px; */
+}
+
+/* Aktivní položka */
+nav a.active {
+  background-color: #007bff;
+  color: white;
+  font-weight: 500;
+  border-left: 4px solid #0056b3;
+}
+
+li.zapocet {
+  background-color: #e2f5cf;
+}
+
+li.zkouska {
+  background-color: #e8b5e2;
+}
+
+/* Responzivní chování */
+@media (max-width: 992px) {
+  nav {
+    width: 200px;
+    font-family: "Segoe UI", "Roboto",
+      "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji",
+      "Segoe UI Emoji", "Segoe UI Symbol";
+  }
+
+  body {
+    margin-left: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  nav {
+    width: 180px;
+    font-family: "Segoe UI", "Roboto",
+      "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji",
+      "Segoe UI Emoji", "Segoe UI Symbol";
+  }
+
+  body {
+    margin-left: 180px;
+  }
+
+  nav a {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 576px) {
+  nav {
+    position: static;
+    width: 100%;
+    height: auto;
+    max-height: 200px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-family: "Segoe UI", "Roboto",
+      "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji",
+      "Segoe UI Emoji", "Segoe UI Symbol";
+  }
+
+  body {
+    margin-left: 0;
+  }
+
+  nav ul {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  nav li {
+    border-bottom: none;
+    border-right: 1px solid #e1e1e1;
+    flex: 1 0 auto;
+  }
+
+  nav a:hover {
+    padding-left: 15px;
+  }
+
+  nav a.active {
+    border-left: none;
+    border-bottom: 4px solid #0056b3;
+  }
+}
+
+/* Styly pro rozbalovací menu na velmi malých obrazovkách */
+@media (max-width: 400px) {
+  nav {
+    max-height: none;
+    font-family: "Segoe UI", "Roboto",
+      "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji",
+      "Segoe UI Emoji", "Segoe UI Symbol";
+  }
+
+  nav.collapsible ul {
+    display: none;
+  }
+
+  nav.collapsible.active ul {
+    display: flex;
+  }
+
+  nav.collapsible::before {
+    content: "☰ Menu";
+    display: block;
+    padding: 12px;
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  nav.collapsible.active::before {
+    content: "✕ Zavřít";
+  }
+}

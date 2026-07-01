@@ -5,6 +5,7 @@ import pool from './db/db.js';
 import 'dotenv/config';
 import mysql from 'mysql2/promise';
 import routerLogin from './routes/login.js';
+import routerOther from './routes/others.js';
 // import { runMigrations } from './db/migrations/migrate.js';
 // import { seedAdmin } from './db/seeders/admin.js';
 // ---------- ROUTY ----------
@@ -23,14 +24,13 @@ app.use(session({
 
 //import modulu get a post
 
-// import routerPost from './routes/post/router.js';
-// app.use('/', routerPost);
 // Nastavení EJS
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/', routerLogin);
+app.use('/', routerOther);
 
 
 
