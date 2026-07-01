@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="cs">
-<head>
+<!-- <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Výkaz pracovní doby pedagogického pracovníka</title>
+    </head> -->
     <style>
         * {
             box-sizing: border-box;
@@ -412,7 +413,7 @@
             flex-wrap: wrap;
         }
         
-        button {
+        .container button {
             padding: clamp(10px, 2vw, 12px) clamp(20px, 3vw, 25px);
             border: none;
             border-radius: 5px;
@@ -770,8 +771,10 @@
             }
         }
     </style>
-</head>
+
+<%- include('./partials/head') %>
 <body>
+    <%- include('./partials/header') %>
     <div class="container">
         <h1>Výkaz pracovní doby pedagogického pracovníka</h1>
         

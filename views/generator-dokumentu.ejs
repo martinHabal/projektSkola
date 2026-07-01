@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>📄 Generátor školních formulářů</title>
+    <!-- html2pdf (pro PDF) & FileSaver (pro Word) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: #f4f7fc;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            padding: 2rem 1rem;
+            color: #1e293b;
+        }
+        .app {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        h1 {
+            font-weight: 600;
+            font-size: 2rem;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #0f172a;
+            border-bottom: 3px solid #d0e2ff;
+            padding-bottom: 0.5rem;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+        }
+        @media (max-width: 1000px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+
+        /* panel formulářů */
+        .form-panel {
+            background: white;
+            border-radius: 24px;
+            padding: 1.75rem 1.5rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+            border: 1px solid #e9eef3;
+            height: fit-content;
+        }
+        .form-panel h2 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #334155;
+            margin-bottom: 0.3rem;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.65rem 0.9rem;
+            border: 1px solid #d1d9e6;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            transition: 0.2s;
+            background: #fafcff;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: 2px solid #3b82f6;
+            border-color: transparent;
+            background: white;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+        }
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.7rem;
+            margin-top: 1.5rem;
+        }
+        .btn {
+            background: white;
+            border: 1px solid #d1d9e6;
+            padding: 0.6rem 1.4rem;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #1e293b;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: #f8faff;
+        }
+        .btn-primary {
+            background: #1e293b;
+            border: 1px solid #1e293b;
+            color: white;
+        }
+        .btn-primary:hover { background: #0f172a; }
+        .btn-outline { background: transparent; }
+        .btn-outline:hover { background: #eef2f6; }
+        .btn-success {
+            background: #0b3b2c;
+            border-color: #0b3b2c;
+            color: white;
+        }
+        .btn-success:hover { background: #064e3b; }
+        .btn-download {
+            background: #1e3a5f;
+            border-color: #1e3a5f;
+            color: white;
+        }
+        .btn-download:hover { background: #0b2a48; }
+
+        /* náhled dokumentu */
+        .preview-panel {
+            background: #eef3f9;
+            border-radius: 24px;
+            padding: 1.75rem 1.5rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+            border: 1px solid #dde6ef;
+        }
+        .preview-panel h2 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1e293b;
+        }
+        .document-wrapper {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem 2.8rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            border: 1px solid #dbe4ed;
+            min-height: 500px;
+            transition: 0.2s;
+            font-family: 'Times New Roman', Times, serif;
+        }
+        .document-content {
+            font-size: 1.05rem;
+            line-height: 1.65;
+            color: #0b1a2b;
+            white-space: pre-wrap;
+        }
+        .document-content h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 0.5rem 0 1rem 0;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+        .document-content p {
+            margin: 0.8rem 0;
+        }
+        .placeholder-text {
+            color: #94a3b8;
+            font-style: italic;
+        }
+        .badge {
+            display: inline-block;
+            background: #e2eaf3;
+            padding: 0.15rem 0.8rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #1e3a5f;
+            margin-left: 0.5rem;
+        }
+        .action-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-top: 1.5rem;
+            justify-content: flex-end;
+        }
+        .footer-note {
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            color: #64748b;
+            text-align: right;
+        }
+
+        /* malé úpravy */
+        .inline-flex { display: inline-flex; align-items: center; gap: 0.4rem; }
+        .mt-2 { margin-top: 0.6rem; }
+        select { appearance: auto; }
+    </style>
+</head>
+<%- include('./partials/head') %>
+<body>
+   
+      <%- include('./partials/header') %>
+<div class="app">
+    <h1>📋 Generátor školních formulářů</h1>
+
+    <div class="grid">
+        <!-- LEVÝ PANEL – proměnné -->
+        <div class="form-panel">
+            <h2>🧑‍🏫 Údaje pro dokument</h2>
+            <div class="form-group">
+                <label>👤 Jméno žáka / studenta</label>
+                <input type="text" id="studentName" value="Adam Novák" placeholder="např. Adam Novák" />
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>📅 Třída</label>
+                    <input type="text" id="classGroup" value="9.A" placeholder="9.A" />
+                </div>
+                <div class="form-group">
+                    <label>📆 Datum</label>
+                    <input type="date" id="documentDate" value="2026-07-01" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label>👨‍🏫 Jméno učitele (třídní / vyučující)</label>
+                <input type="text" id="teacherName" value="Mgr. Helena Novotná" placeholder="Mgr. Helena Novotná" />
+            </div>
+            <div class="form-group">
+                <label>🏫 Název školy</label>
+                <input type="text" id="schoolName" value="ZŠ a MŠ Pod Lípou, Praha" placeholder="ZŠ a MŠ ..." />
+            </div>
+            <div class="form-group">
+                <label>📋 Výběr formuláře (šablony)</label>
+                <select id="templateSelect">
+                    <option value="pochvala_tridni">Pochvala třídního učitele</option>
+                    <option value="napomenuti_tridni">Napomenutí třídního učitele</option>
+                    <option value="dutka_tridni">Důtka třídního učitele</option>
+                    <option value="pochvala_reditel">Pochvala ředitele školy</option>
+                    <option value="dutka_reditel">Důtka ředitele školy</option>
+                    <option value="zprava_klasifikace">Zpráva ke klasifikaci</option>
+                    <option value="bezpecnost_akce">Bezpečnostní pokyn k akci</option>
+                    <option value="vyuctovani_akce">Vyúčtování školní akce</option>
+                    <option value="cestovni_prikaz">Cestovní příkaz</option>
+                    <option value="propustka">Propustka z vyučování</option>
+                    <option value="zadanka_dovolena">Žádanka o dovolenou / volno</option>
+                    <option value="zaznam_urazu">Záznam o úrazu žáka</option>
+                    <option value="souhlas_gdpr">Souhlas GDPR / zpracování osobních údajů</option>
+                    <option value="souhlas_foto">Souhlas s fotografováním / zveřejněním</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>✏️ Dodatečný text / poznámka (nepovinné)</label>
+                <input type="text" id="customNote" value="" placeholder="např. důvod, akce, specifikace..." />
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-primary" id="generateBtn">🔄 Generovat dokument</button>
+                <button class="btn btn-outline" id="resetDefaultsBtn">↺ Výchozí hodnoty</button>
+            </div>
+            <div style="margin-top: 1rem; font-size: 0.8rem; color: #475569; border-top: 1px dashed #d1d9e6; padding-top: 0.8rem;">
+                ⚡ Proměnné: <span class="badge">{jméno}</span> <span class="badge">{třída}</span> <span class="badge">{učitel}</span> <span class="badge">{škola}</span> <span class="badge">{datum}</span> <span class="badge">{poznámka}</span>
+            </div>
+        </div>
+
+        <!-- PRAVÝ PANEL – náhled + akce -->
+        <div class="preview-panel">
+            <h2>📄 Náhled dokumentu</h2>
+            <div class="document-wrapper" id="documentWrapper">
+                <div class="document-content" id="documentContent">
+                    <p class="placeholder-text">Vyplňte proměnné a klikněte na „Generovat dokument“.</p>
+                </div>
+            </div>
+
+            <div class="action-bar">
+                <button class="btn btn-outline" id="printBtn">🖨️ Tisk</button>
+                <button class="btn btn-success" id="pdfBtn">📎 Stáhnout PDF</button>
+                <button class="btn btn-download" id="wordBtn">📄 Stáhnout Word (.doc)</button>
+            </div>
+            <div class="footer-note">
+                * Dokument se vygeneruje na základě vybrané šablony a vyplněných údajů.
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // DOM odkazy
+        const studentName = document.getElementById('studentName');
+        const classGroup = document.getElementById('classGroup');
+        const documentDate = document.getElementById('documentDate');
+        const teacherName = document.getElementById('teacherName');
+        const schoolName = document.getElementById('schoolName');
+        const templateSelect = document.getElementById('templateSelect');
+        const customNote = document.getElementById('customNote');
+        const generateBtn = document.getElementById('generateBtn');
+        const resetDefaultsBtn = document.getElementById('resetDefaultsBtn');
+        const documentContent = document.getElementById('documentContent');
+
+        // --- knihovna šablon ---
+        function getTemplate(key) {
+            const templates = {
+                pochvala_tridni: `📜 POCHVALA TŘÍDNÍHO UČITELE
+
+Vážený/á {jméno},
+
+tímto Vás chválím za vzorné plnění školních povinností,
+aktivní přístup a reprezentaci třídy {třída}.
+
+Těší mě Vaše píle a ochota pomáhat spolužákům.
+
+{poznámka}
+
+V {škola}, dne {datum}
+
+                            {učitel}
+                            třídní učitel/ka`,
+
+                napomenuti_tridni: `📌 NAPOMENUTÍ TŘÍDNÍHO UČITELE
+
+{jméno}, třída {třída}
+
+Tímto Vám uděluji napomenutí za opakované drobné přestupky
+proti školnímu řádu. Vyzývám Vás k nápravě.
+
+{poznámka}
+
+Datum: {datum}
+
+                            {učitel}
+                            třídní učitel/ka`,
+
+                dutka_tridni: `⚠️ DŮTKA TŘÍDNÍHO UČITELE
+
+{jméno}, {třída}
+
+Uděluji Vám důtku za závažnější porušení školního řádu.
+Jedná se o vážné upozornění, doufám v nápravu.
+
+{poznámka}
+
+V {škola}, {datum}
+
+                            {učitel}
+                            třídní učitel/ka`,
+
+                pochvala_reditel: `🏆 POCHVALA ŘEDITELE ŠKOLY
+
+{jméno}, třída {třída}
+
+jako ředitel/ka školy Vám uděluji pochvalu za mimořádné výsledky
+a reprezentaci školy na veřejnosti. Děkujeme za Vaši píli.
+
+{poznámka}
+
+V {škola}, {datum}
+
+                            ředitel/ka školy
+                            {učitel}`,
+
+                dutka_reditel: `⚠️ DŮTKA ŘEDITELE ŠKOLY
+
+{jméno}, {třída}
+
+Touto cestou Vám uděluji důtku ředitele školy za vážné porušení
+školního řádu. Opatření bylo projednáno pedagogickou radou.
+
+{poznámka}
+
+V {škola}, {datum}
+
+                            ředitel/ka školy
+                            {učitel}`,
+
+                zprava_klasifikace: `📊 ZPRÁVA KE KLASIFIKACI (podklad pro pedagogickou radu)
+
+Žák: {jméno}, třída {třída}
+Předmět: (doplní vyučující)
+Hodnocení: prospěch / chování
+
+Poznámky k prospěchu: {poznámka}
+
+Datum: {datum}
+Vypracoval/a: {učitel}
+{škola}`,
+
+                bezpecnost_akce: `🛡️ BEZPEČNOSTNÍ POKYN K AKCI
+
+Název akce: {poznámka}
+Datum: {datum}
+Místo: (upřesní vedoucí)
+Vedoucí akce: {učitel}
+Třída: {třída}
+
+Poučení žáků bylo provedeno, rizika minimalizována.
+Žáci {jméno} a ostatní byli seznámeni s pravidly BOZ.
+
+V {škola}, {datum}
+
+                            {učitel}`,
+
+                vyuctovani_akce: `💰 VYÚČTOVÁNÍ ŠKOLNÍ AKCE
+
+Akce: {poznámka}
+Třída: {třída}
+Datum: {datum}
+Odpovědná osoba: {učitel}
+
+Příjmy: ..........
+Výdaje: ..........
+Přebitek / schodek: ..........
+
+V {škola}, {datum}
+
+                            {učitel}`,
+
+                cestovni_prikaz: `🧳 CESTOVNÍ PŘÍKAZ
+
+Jméno: {učitel}
+Cíl cesty: {poznámka}
+Datum: {datum}
+Účel: služební cesta (školní akce)
+Dopravní prostředek: (auto/vlak/MHD)
+
+Schvaluji: {učitel}
+V {škola}, {datum}`,
+
+                propustka: `🔓 PROPUSTKA Z VYUČOVÁNÍ
+
+Žák: {jméno}, třída {třída}
+Důvod uvolnění: {poznámka}
+Čas uvolnění: ..........
+Podpis zákonného zástupce: ..........
+
+V {škola}, {datum}
+
+                            {učitel}`,
+
+                zadanka_dovolena: `📅 ŽÁDANKA O DOVOLENOU / VOLNO
+
+Žadatel: {učitel}
+Datum: {datum}
+Důvod: {poznámka}
+Požadované dny: ..........
+
+Schváleno: .............
+V {škola}, {datum}`,
+
+                zaznam_urazu: `⛑️ ZÁZNAM O ÚRAZU ŽÁKA
+
+Jméno žáka: {jméno}, třída {třída}
+Datum úrazu: {datum}
+Místo úrazu: {škola}
+Popis události: {poznámka}
+Zaznamenal/a: {učitel}
+
+V {škola}, {datum}
+
+                            {učitel}`,
+
+                souhlas_gdpr: `📋 SOUHLAS SE ZPRACOVÁNÍM OSOBNÍCH ÚDAJŮ (GDPR)
+
+Jméno žáka: {jméno}, třída {třída}
+Zákonný zástupce: (doplní)
+Účel zpracování: vedení školní evidence, klasifikace, komunikace.
+
+Uděluji souhlas se zpracováním osobních údajů dle platných předpisů.
+
+V {škola}, {datum}
+
+                            {učitel}`,
+
+                souhlas_foto: `📸 SOUHLAS S FOTOGRAFOVÁNÍM / ZVEŘEJNĚNÍM
+
+Jméno žáka: {jméno}, třída {třída}
+Souhlasím s pořízením a zveřejněním fotografií na webu školy a v propagačních materiálech.
+
+{poznámka}
+
+V {škola}, {datum}
+
+                            zákonný zástupce: ..........
+                            {učitel} (pověřená osoba)`
+            };
+            return templates[key] || `⚠️ Šablona nenalezena. Vyberte platný formulář.`;
+        }
+
+        // --- náhrada proměnných ---
+        function fillTemplate(templateText, data) {
+            let result = templateText;
+            const map = {
+                '{jméno}': data.student || '______',
+                '{třída}': data.class || '______',
+                '{datum}': data.date || '______',
+                '{učitel}': data.teacher || '______',
+                '{škola}': data.school || '______',
+                '{poznámka}': data.note || '(bez poznámky)'
+            };
+            for (const [key, value] of Object.entries(map)) {
+                result = result.replaceAll(key, value || '______');
+            }
+            return result;
+        }
+
+        // --- generování dokumentu ---
+        function generateDocument() {
+            const data = {
+                student: studentName.value.trim() || '______',
+                class: classGroup.value.trim() || '______',
+                date: documentDate.value ? new Date(documentDate.value).toLocaleDateString('cs-CZ') : '______',
+                teacher: teacherName.value.trim() || '______',
+                school: schoolName.value.trim() || '______',
+                note: customNote.value.trim() || '(bez poznámky)'
+            };
+
+            const templateKey = templateSelect.value;
+            const rawTemplate = getTemplate(templateKey);
+            const filled = fillTemplate(rawTemplate, data);
+
+            // Vložíme do náhledu
+            documentContent.innerHTML = filled.replace(/\n/g, '<br>');
+        }
+
+        // --- reset na výchozí hodnoty (příklad) ---
+        function resetDefaults() {
+            studentName.value = 'Adam Novák';
+            classGroup.value = '9.A';
+            documentDate.value = '2026-07-01';
+            teacherName.value = 'Mgr. Helena Novotná';
+            schoolName.value = 'ZŠ a MŠ Pod Lípou, Praha';
+            customNote.value = '';
+            templateSelect.value = 'pochvala_tridni';
+            generateDocument();
+        }
+
+        // --- PDF export (html2pdf) ---
+        function exportPDF() {
+            const wrapper = document.getElementById('documentWrapper');
+            const opt = {
+                margin:       0.5,
+                filename:     'dokument.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, letterRendering: true },
+                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(wrapper).save();
+        }
+
+        // --- export Word (jako .doc s html) ---
+        function exportWord() {
+            const content = documentContent.innerHTML;
+            const style = `
+                <style>
+                    body { font-family: 'Times New Roman', Times, serif; font-size: 1.1rem; line-height: 1.6; padding: 2rem; }
+                    .doc-content { max-width: 700px; margin: 0 auto; }
+                </style>
+            `;
+            const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">${style}</head><body><div class="doc-content">${content}</div></body></html>`;
+            const blob = new Blob([html], { type: 'application/msword' });
+            saveAs(blob, 'dokument.doc');
+        }
+
+        // --- tisk ---
+        function printDocument() {
+            const wrapper = document.getElementById('documentWrapper');
+            const printWindow = window.open('', '_blank', 'width=800,height=600');
+            const style = `<style>
+                body { font-family: 'Times New Roman', Times, serif; padding: 2rem; max-width: 700px; margin: 0 auto; }
+                .doc-content { font-size: 1.1rem; line-height: 1.6; }
+            </style>`;
+            printWindow.document.write(`<!DOCTYPE html><html><head><title>Tisk dokumentu</title>${style}</head><body><div class="doc-content">${documentContent.innerHTML}</div></body></html>`);
+            printWindow.document.close();
+            printWindow.focus();
+            printWindow.print();
+        }
+
+        // --- inicializace + eventy ---
+        generateBtn.addEventListener('click', generateDocument);
+        resetDefaultsBtn.addEventListener('click', resetDefaults);
+        document.getElementById('printBtn').addEventListener('click', printDocument);
+        document.getElementById('pdfBtn').addEventListener('click', exportPDF);
+        document.getElementById('wordBtn').addEventListener('click', exportWord);
+
+        // při načtení vygenerovat výchozí
+        window.addEventListener('DOMContentLoaded', () => {
+            resetDefaults();
+        });
+
+        // automatická aktualizace při změně selectu (volitelné)
+        templateSelect.addEventListener('change', generateDocument);
+        // ale necháme uživatele klikat na tlačítko, aby měl kontrolu
+        // pro plynulost můžeme přidat i input události (ale necháme na tlačítku)
+        // pro pohodlí: při změně klíčových políček se automaticky negeneruje, aby nedošlo k přepsání.
+        // Přidáme ale posluchače na tlačítko, takže OK.
+    })();
+</script>
+</body>
+</html>

@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>📚 Správa školních dokumentů</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+            background: #f1f5f9;
+            color: #0f172a;
+            padding: 2rem 1.5rem;
+        }
+
+        .app {
+            max-width: 1440px;
+            margin: 0 auto;
+        }
+
+        /* Hlavička */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 1.2rem 2rem;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .badge-count {
+            background: #e2e8f0;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #1e293b;
+        }
+
+        /* Tlačítka */
+        .btn {
+            padding: 0.6rem 1.4rem;
+            border-radius: 40px;
+            border: 1px solid #d1d9e6;
+            background: white;
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #1e293b;
+        }
+
+        .btn-primary {
+            background: #1e293b;
+            border-color: #1e293b;
+            color: white;
+        }
+        .btn-primary:hover { background: #0f172a; }
+
+        .btn-success {
+            background: #0b3b2c;
+            border-color: #0b3b2c;
+            color: white;
+        }
+        .btn-success:hover { background: #064e3b; }
+
+        .btn-outline:hover { background: #eef2f6; }
+        .btn-danger { color: #b91c1c; border-color: #fca5a5; }
+        .btn-danger:hover { background: #fef2f2; }
+
+        /* Vyhledávání a filtrování */
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            align-items: center;
+        }
+
+        .toolbar input,
+        .toolbar select {
+            padding: 0.55rem 1rem;
+            border: 1px solid #d1d9e6;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            background: #fafcff;
+            flex: 1 1 200px;
+            min-width: 140px;
+        }
+
+        .toolbar input:focus,
+        .toolbar select:focus {
+            outline: 2px solid #3b82f6;
+            border-color: transparent;
+        }
+
+        .toolbar .filter-group {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        /* Mřížka dokumentů */
+        .doc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Karta dokumentu */
+        .doc-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem 1.5rem 1.2rem;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .doc-card:hover {
+            border-color: #b9c9dd;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            transform: translateY(-2px);
+        }
+
+        .doc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 0.8rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .doc-icon {
+            font-size: 1.8rem;
+            line-height: 1;
+            margin-right: 0.3rem;
+        }
+
+        .doc-title {
+            font-weight: 600;
+            font-size: 1.05rem;
+            color: #0f172a;
+            flex: 1;
+        }
+
+        .doc-category {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            padding: 0.2rem 0.7rem;
+            border-radius: 40px;
+            background: #eef2f6;
+            color: #334155;
+            white-space: nowrap;
+        }
+
+        .doc-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 1rem;
+            font-size: 0.8rem;
+            color: #475569;
+            margin: 0.4rem 0 0.8rem 0;
+            border-top: 1px dashed #e2e8f0;
+            padding-top: 0.6rem;
+        }
+
+        .doc-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .doc-preview {
+            font-size: 0.9rem;
+            color: #334155;
+            background: #f8fafc;
+            padding: 0.7rem 1rem;
+            border-radius: 12px;
+            border-left: 3px solid #94a3b8;
+            margin: 0.4rem 0 0.8rem 0;
+            line-height: 1.5;
+            max-height: 80px;
+            overflow: hidden;
+            position: relative;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 0.85rem;
+        }
+
+        .doc-preview::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 30px;
+            background: linear-gradient(transparent, #f8fafc);
+        }
+
+        .doc-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            flex-wrap: wrap;
+            border-top: 1px solid #eef2f6;
+            padding-top: 0.8rem;
+        }
+
+        .doc-actions .btn {
+            padding: 0.3rem 1rem;
+            font-size: 0.8rem;
+            border-radius: 30px;
+        }
+
+        .btn-small {
+            padding: 0.25rem 0.9rem;
+            font-size: 0.78rem;
+            border-radius: 30px;
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem 1rem;
+            color: #64748b;
+            background: white;
+            border-radius: 24px;
+            border: 1px dashed #cbd5e1;
+        }
+
+        .empty-state h3 { font-weight: 500; margin-bottom: 0.3rem; }
+
+        /* Modální okno pro detail */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 28px;
+            max-width: 720px;
+            width: 100%;
+            max-height: 85vh;
+            padding: 2rem 2.2rem;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.2);
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1.4rem;
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #64748b;
+            padding: 0.2rem 0.6rem;
+            border-radius: 40px;
+        }
+        .modal-close:hover { background: #f1f5f9; }
+
+        .modal h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .modal .doc-full-content {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            background: #fafcff;
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            margin: 1rem 0 1.5rem 0;
+            white-space: pre-wrap;
+        }
+
+        .modal .doc-full-content p { margin: 0.5rem 0; }
+
+        .modal-actions {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        /* responzivita */
+        @media (max-width: 600px) {
+            .doc-grid { grid-template-columns: 1fr; }
+            .header { flex-direction: column; align-items: stretch; }
+            .toolbar { flex-direction: column; align-items: stretch; }
+            .modal { padding: 1.5rem; }
+        }
+
+        /* přepínač zobrazení */
+        .view-toggle {
+            display: flex;
+            gap: 0.3rem;
+            background: #eef2f6;
+            padding: 0.2rem;
+            border-radius: 40px;
+        }
+        .view-toggle button {
+            background: transparent;
+            border: none;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 0.8rem;
+            cursor: pointer;
+            color: #475569;
+        }
+        .view-toggle button.active {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            color: #0f172a;
+        }
+
+        /* Statistika */
+        .stats {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            background: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 40px;
+            border: 1px solid #e2e8f0;
+            font-size: 0.9rem;
+        }
+        .stats strong { color: #0f172a; }
+    </style>
+</head>
+<%- include('./partials/head') %>
+<body>
+   
+      <%- include('./partials/header') %>
+<div class="app">
+    <!-- Hlavička -->
+    <header class="header">
+        <h1>
+            <span>📚</span> Dokumenty školy
+            <span class="badge-count" id="docCount">0</span>
+        </h1>
+        <div class="header-actions">
+            <div class="stats">
+                <span>📄 <strong id="totalCount">0</strong> celkem</span>
+                <span>📁 <strong id="categoryCount">0</strong> kategorií</span>
+            </div>
+            <button class="btn btn-primary" id="addDocBtn">➕ Nový dokument</button>
+        </div>
+    </header>
+
+    <!-- Nástroje -->
+    <div class="toolbar">
+        <input type="text" id="searchInput" placeholder="🔍 Hledat v názvu, obsahu..." />
+        <div class="filter-group">
+            <select id="categoryFilter">
+                <option value="all">Všechny kategorie</option>
+                <option value="výchovná">Výchovná</option>
+                <option value="organizační">Organizační</option>
+                <option value="hlášení">Hlášení & výkazy</option>
+                <option value="gdpr">GDPR & souhlasy</option>
+                <option value="metodický">Metodické postupy</option>
+                <option value="ostatní">Ostatní</option>
+            </select>
+            <div class="view-toggle">
+                <button class="active" data-view="grid" id="viewGrid">🖼️ Karty</button>
+                <button data-view="list" id="viewList">📋 Seznam</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mřížka dokumentů -->
+    <div class="doc-grid" id="docGrid">
+        <!-- Karty se generují JS -->
+    </div>
+
+    <!-- MODAL PRO DETAIL -->
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal">
+            <button class="modal-close" id="modalClose">✕</button>
+            <h2 id="modalTitle">Název dokumentu</h2>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin: 0.2rem 0 0.8rem 0;">
+                <span id="modalCategory" class="doc-category">kategorie</span>
+                <span id="modalDate" style="font-size:0.85rem; color:#64748b;">📅 datum</span>
+            </div>
+            <div class="doc-full-content" id="modalContent"></div>
+            <div class="modal-actions">
+                <button class="btn btn-success" id="modalPrint">🖨️ Tisk</button>
+                <button class="btn btn-outline" id="modalEdit">✏️ Upravit</button>
+                <button class="btn btn-danger" id="modalDelete">🗑️ Smazat</button>
+                <button class="btn btn-outline" id="modalCloseBtn">Zavřít</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // --- DATA (výchozí ukázkové dokumenty) ---
+        let documents = [
+            {
+                id: 'doc1',
+                title: 'Pochvala třídního učitele',
+                category: 'výchovná',
+                date: '2026-06-15',
+                content: `📜 POCHVALA TŘÍDNÍHO UČITELE\n\nVážený/á Adam Novák,\ntímto Vás chválím za vzorné plnění školních povinností,\naktivní přístup a reprezentaci třídy 9.A.\n\nTěší mě Vaše píle a ochota pomáhat spolužákům.\n\nV ZŠ a MŠ Pod Lípou, Praha, dne 15. 6. 2026\n\nMgr. Helena Novotná\ntřídní učitelka`,
+                icon: '🏆'
+            },
+            {
+                id: 'doc2',
+                title: 'Napomenutí třídního učitele',
+                category: 'výchovná',
+                date: '2026-06-10',
+                content: `📌 NAPOMENUTÍ TŘÍDNÍHO UČITELE\n\nAdam Novák, třída 9.A\n\nTímto Vám uděluji napomenutí za opakované drobné přestupky\nproti školnímu řádu. Vyzývám Vás k nápravě.\n\nDatum: 10. 6. 2026\n\nMgr. Helena Novotná\ntřídní učitelka`,
+                icon: '⚠️'
+            },
+            {
+                id: 'doc3',
+                title: 'Důtka ředitele školy',
+                category: 'výchovná',
+                date: '2026-05-28',
+                content: `⚠️ DŮTKA ŘEDITELE ŠKOLY\n\nAdam Novák, 9.A\n\nTouto cestou Vám uděluji důtku ředitele školy za vážné porušení\nškolního řádu. Opatření bylo projednáno pedagogickou radou.\n\nV ZŠ a MŠ Pod Lípou, Praha, 28. 5. 2026\n\nředitel/ka školy\nMgr. Helena Novotná`,
+                icon: '🚫'
+            },
+            {
+                id: 'doc4',
+                title: 'Bezpečnostní pokyn – školní výlet',
+                category: 'organizační',
+                date: '2026-06-20',
+                content: `🛡️ BEZPEČNOSTNÍ POKYN K AKCI\n\nNázev akce: Školní výlet - Český ráj\nDatum: 20. 6. 2026\nVedoucí akce: Mgr. Helena Novotná\nTřída: 9.A\n\nPoučení žáků bylo provedeno, rizika minimalizována.\nŽáci byli seznámeni s pravidly BOZ.\n\nV ZŠ a MŠ Pod Lípou, Praha, 20. 6. 2026\n\nMgr. Helena Novotná`,
+                icon: '🥾'
+            },
+            {
+                id: 'doc5',
+                title: 'Vyúčtování školní akce – výlet',
+                category: 'organizační',
+                date: '2026-06-22',
+                content: `💰 VYÚČTOVÁNÍ ŠKOLNÍ AKCE\n\nAkce: Školní výlet - Český ráj\nTřída: 9.A\nDatum: 20. 6. 2026\nOdpovědná osoba: Mgr. Helena Novotná\n\nPříjmy: 12 500 Kč\nVýdaje: 11 800 Kč\nPřebitek: 700 Kč\n\nV ZŠ a MŠ Pod Lípou, Praha, 22. 6. 2026\n\nMgr. Helena Novotná`,
+                icon: '🧾'
+            },
+            {
+                id: 'doc6',
+                title: 'Záznam o úrazu žáka',
+                category: 'hlášení',
+                date: '2026-06-18',
+                content: `⛑️ ZÁZNAM O ÚRAZU ŽÁKA\n\nJméno žáka: Adam Novák, třída 9.A\nDatum úrazu: 18. 6. 2026\nMísto úrazu: tělocvična školy\nPopis události: Při hodině TV došlo k podvrtnutí kotníku.\nZaznamenal/a: Mgr. Helena Novotná\n\nV ZŠ a MŠ Pod Lípou, Praha, 18. 6. 2026\n\nMgr. Helena Novotná`,
+                icon: '🩹'
+            },
+            {
+                id: 'doc7',
+                title: 'Souhlas se zpracováním osobních údajů',
+                category: 'gdpr',
+                date: '2026-06-01',
+                content: `📋 SOUHLAS SE ZPRACOVÁNÍM OSOBNÍCH ÚDAJŮ (GDPR)\n\nJméno žáka: Adam Novák, třída 9.A\nZákonný zástupce: Jana Nováková\nÚčel zpracování: vedení školní evidence, klasifikace, komunikace.\n\nUděluji souhlas se zpracováním osobních údajů dle platných předpisů.\n\nV ZŠ a MŠ Pod Lípou, Praha, 1. 6. 2026\n\nMgr. Helena Novotná`,
+                icon: '🔐'
+            },
+            {
+                id: 'doc8',
+                title: 'Souhlas s fotografováním a zveřejněním',
+                category: 'gdpr',
+                date: '2026-06-05',
+                content: `📸 SOUHLAS S FOTOGRAFOVÁNÍM / ZVEŘEJNĚNÍM\n\nJméno žáka: Adam Novák, třída 9.A\nSouhlasím s pořízením a zveřejněním fotografií na webu školy a v propagačních materiálech.\n\nV ZŠ a MŠ Pod Lípou, Praha, 5. 6. 2026\n\nzákonný zástupce: Jana Nováková\nMgr. Helena Novotná (pověřená osoba)`,
+                icon: '📷'
+            },
+            {
+                id: 'doc9',
+                title: 'Metodický postup – hodnocení žáků',
+                category: 'metodický',
+                date: '2026-05-10',
+                content: `📘 METODICKÝ POSTUP – HODNOCENÍ ŽÁKŮ\n\nCíl: Sjednotit přístup k hodnocení na 1. stupni ZŠ.\n\n1. Hodnocení prospěchu – známky 1–5 dle váhy ověření.\n2. Hodnocení chování – body za přestupky / pochvaly.\n3. Sebehodnocení žáka – zařadit 1x za pololetí.\n4. Slovní hodnocení – doporučeno u žáků s IVP.\n\nPlatnost od: 1. 9. 2026\nSchválil: Mgr. Helena Novotná, ředitelka školy`,
+                icon: '📘'
+            },
+            {
+                id: 'doc10',
+                title: 'Metodický postup – BOZ na akcích',
+                category: 'metodický',
+                date: '2026-05-05',
+                content: `📘 METODICKÝ POSTUP – BOZ NA ŠKOLNÍCH AKCÍCH\n\n1. Před akcí: písemný souhlas zákonného zástupce, poučení žáků.\n2. Během akce: vedoucí má seznam žáků, lékárničku, mobilní kontakt.\n3. Po akci: vyhodnocení, záznam o případném úrazu.\n\nPovinné dokumenty: bezpečnostní pokyn, vyúčtování.\n\nSchválil: Mgr. Helena Novotná, 5. 5. 2026`,
+                icon: '📘'
+            },
+            {
+                id: 'doc11',
+                title: 'Cestovní příkaz – služební cesta',
+                category: 'organizační',
+                date: '2026-06-25',
+                content: `🧳 CESTOVNÍ PŘÍKAZ\n\nJméno: Mgr. Helena Novotná\nCíl cesty: Školení BOZ, Hradec Králové\nDatum: 25. 6. 2026\nÚčel: služební cesta\nDopravní prostředek: vlak\n\nSchvaluji: Mgr. Helena Novotná\nV ZŠ a MŠ Pod Lípou, Praha, 25. 6. 2026`,
+                icon: '🚗'
+            },
+            {
+                id: 'doc12',
+                title: 'Propustka z vyučování',
+                category: 'organizační',
+                date: '2026-06-17',
+                content: `🔓 PROPUSTKA Z VYUČOVÁNÍ\n\nŽák: Adam Novák, třída 9.A\nDůvod uvolnění: návštěva lékaře\nČas uvolnění: 10:30\nPodpis zákonného zástupce: Jana Nováková\n\nV ZŠ a MŠ Pod Lípou, Praha, 17. 6. 2026\n\nMgr. Helena Novotná`,
+                icon: '🚪'
+            }
+        ];
+
+        let currentView = 'grid';
+        let currentFilter = 'all';
+        let searchQuery = '';
+        let editingId = null;
+
+        // DOM
+        const docGrid = document.getElementById('docGrid');
+        const searchInput = document.getElementById('searchInput');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const viewGridBtn = document.getElementById('viewGrid');
+        const viewListBtn = document.getElementById('viewList');
+        const addDocBtn = document.getElementById('addDocBtn');
+        const modalOverlay = document.getElementById('detailModal');
+        const modalClose = document.getElementById('modalClose');
+        const modalCloseBtn = document.getElementById('modalCloseBtn');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalCategory = document.getElementById('modalCategory');
+        const modalDate = document.getElementById('modalDate');
+        const modalContent = document.getElementById('modalContent');
+        const modalPrint = document.getElementById('modalPrint');
+        const modalEdit = document.getElementById('modalEdit');
+        const modalDelete = document.getElementById('modalDelete');
+        const docCount = document.getElementById('docCount');
+        const totalCount = document.getElementById('totalCount');
+        const categoryCount = document.getElementById('categoryCount');
+
+        // --- pomocné funkce ---
+        function formatDate(dateStr) {
+            if (!dateStr) return 'bez data';
+            const d = new Date(dateStr);
+            return d.toLocaleDateString('cs-CZ');
+        }
+
+        function getCategoryLabel(cat) {
+            const map = {
+                'výchovná': 'Výchovná',
+                'organizační': 'Organizační',
+                'hlášení': 'Hlášení & výkazy',
+                'gdpr': 'GDPR & souhlasy',
+                'metodický': 'Metodické postupy',
+                'ostatní': 'Ostatní'
+            };
+            return map[cat] || cat;
+        }
+
+        function getCategoryColor(cat) {
+            const map = {
+                'výchovná': '#f59e0b',
+                'organizační': '#3b82f6',
+                'hlášení': '#ef4444',
+                'gdpr': '#8b5cf6',
+                'metodický': '#10b981',
+                'ostatní': '#6b7280'
+            };
+            return map[cat] || '#6b7280';
+        }
+
+        // --- filtrování a řazení ---
+        function getFilteredDocs() {
+            return documents.filter(doc => {
+                const matchSearch = doc.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                   doc.content.toLowerCase().includes(searchQuery.toLowerCase());
+                const matchCategory = currentFilter === 'all' || doc.category === currentFilter;
+                return matchSearch && matchCategory;
+            });
+        }
+
+        // --- renderování ---
+        function render() {
+            const filtered = getFilteredDocs();
+            const total = documents.length;
+            const cats = new Set(documents.map(d => d.category));
+            docCount.textContent = filtered.length;
+            totalCount.textContent = total;
+            categoryCount.textContent = cats.size;
+
+            if (filtered.length === 0) {
+                docGrid.innerHTML = `
+                    <div class="empty-state">
+                        <h3>📭 Žádné dokumenty nenalezeny</h3>
+                        <p>Zkuste upravit filtr nebo přidejte nový dokument.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            if (currentView === 'grid') {
+                docGrid.className = 'doc-grid';
+                docGrid.innerHTML = filtered.map(doc => `
+                    <div class="doc-card" data-id="${doc.id}">
+                        <div class="doc-header">
+                            <span class="doc-icon">${doc.icon || '📄'}</span>
+                            <span class="doc-title">${doc.title}</span>
+                            <span class="doc-category" style="background:${getCategoryColor(doc.category)}20; color:${getCategoryColor(doc.category)};">
+                                ${getCategoryLabel(doc.category)}
+                            </span>
+                        </div>
+                        <div class="doc-meta">
+                            <span>📅 ${formatDate(doc.date)}</span>
+                            <span>📂 ${getCategoryLabel(doc.category)}</span>
+                        </div>
+                        <div class="doc-preview">${doc.content.substring(0, 120)}${doc.content.length > 120 ? '...' : ''}</div>
+                        <div class="doc-actions">
+                            <button class="btn btn-small btn-outline view-doc" data-id="${doc.id}">👁️ Detail</button>
+                            <button class="btn btn-small btn-outline edit-doc" data-id="${doc.id}">✏️</button>
+                            <button class="btn btn-small btn-danger delete-doc" data-id="${doc.id}">🗑️</button>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Eventy pro karty
+                document.querySelectorAll('.view-doc').forEach(btn => {
+                    btn.addEventListener('click', () => openDetail(btn.dataset.id));
+                });
+                document.querySelectorAll('.edit-doc').forEach(btn => {
+                    btn.addEventListener('click', () => editDocument(btn.dataset.id));
+                });
+                document.querySelectorAll('.delete-doc').forEach(btn => {
+                    btn.addEventListener('click', () => deleteDocument(btn.dataset.id));
+                });
+
+            } else {
+                // List view
+                docGrid.className = 'doc-grid';
+                docGrid.style.display = 'block';
+                docGrid.innerHTML = `
+                    <div style="background:white; border-radius:20px; border:1px solid #e2e8f0; overflow:hidden;">
+                        <table style="width:100%; border-collapse:collapse; font-size:0.9rem;">
+                            <thead style="background:#f8fafc; border-bottom:1px solid #e2e8f0;">
+                                <tr>
+                                    <th style="padding:0.8rem 1rem; text-align:left;">Název</th>
+                                    <th style="padding:0.8rem 1rem; text-align:left;">Kategorie</th>
+                                    <th style="padding:0.8rem 1rem; text-align:left;">Datum</th>
+                                    <th style="padding:0.8rem 1rem; text-align:right;">Akce</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${filtered.map(doc => `
+                                    <tr style="border-bottom:1px solid #f1f5f9;" data-id="${doc.id}">
+                                        <td style="padding:0.7rem 1rem;"><strong>${doc.icon || '📄'} ${doc.title}</strong></td>
+                                        <td style="padding:0.7rem 1rem;"><span class="doc-category" style="background:${getCategoryColor(doc.category)}20; color:${getCategoryColor(doc.category)};">${getCategoryLabel(doc.category)}</span></td>
+                                        <td style="padding:0.7rem 1rem; color:#475569;">${formatDate(doc.date)}</td>
+                                        <td style="padding:0.7rem 1rem; text-align:right;">
+                                            <button class="btn btn-small btn-outline view-doc" data-id="${doc.id}">👁️</button>
+                                            <button class="btn btn-small btn-outline edit-doc" data-id="${doc.id}">✏️</button>
+                                            <button class="btn btn-small btn-danger delete-doc" data-id="${doc.id}">🗑️</button>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+                docGrid.style.display = 'grid';
+
+                // Eventy pro list
+                document.querySelectorAll('.view-doc').forEach(btn => {
+                    btn.addEventListener('click', () => openDetail(btn.dataset.id));
+                });
+                document.querySelectorAll('.edit-doc').forEach(btn => {
+                    btn.addEventListener('click', () => editDocument(btn.dataset.id));
+                });
+                document.querySelectorAll('.delete-doc').forEach(btn => {
+                    btn.addEventListener('click', () => deleteDocument(btn.dataset.id));
+                });
+            }
+        }
+
+        // --- Detail dokumentu ---
+        function openDetail(id) {
+            const doc = documents.find(d => d.id === id);
+            if (!doc) return;
+            modalTitle.textContent = doc.title;
+            modalCategory.textContent = getCategoryLabel(doc.category);
+            modalCategory.style.background = getCategoryColor(doc.category) + '20';
+            modalCategory.style.color = getCategoryColor(doc.category);
+            modalDate.textContent = '📅 ' + formatDate(doc.date);
+            modalContent.textContent = doc.content;
+            modalOverlay.classList.add('active');
+            // uložíme id pro akce
+            modalOverlay.dataset.docId = id;
+        }
+
+        function closeModal() {
+            modalOverlay.classList.remove('active');
+        }
+
+        // --- Editace dokumentu ---
+        function editDocument(id) {
+            const doc = documents.find(d => d.id === id);
+            if (!doc) return;
+            const newTitle = prompt('Upravit název:', doc.title);
+            if (newTitle !== null && newTitle.trim() !== '') doc.title = newTitle.trim();
+            const newContent = prompt('Upravit obsah:', doc.content);
+            if (newContent !== null && newContent.trim() !== '') doc.content = newContent.trim();
+            const newCategory = prompt('Upravit kategorii (výchovná, organizační, hlášení, gdpr, metodický, ostatní):', doc.category);
+            if (newCategory !== null && ['výchovná','organizační','hlášení','gdpr','metodický','ostatní'].includes(newCategory.trim())) {
+                doc.category = newCategory.trim();
+            }
+            render();
+        }
+
+        // --- Smazání dokumentu ---
+        function deleteDocument(id) {
+            if (!confirm('Opravdu chcete smazat tento dokument?')) return;
+            documents = documents.filter(d => d.id !== id);
+            closeModal();
+            render();
+        }
+
+        // --- Přidání nového dokumentu ---
+        function addDocument() {
+            const title = prompt('Zadejte název dokumentu:', 'Nový dokument');
+            if (!title || title.trim() === '') return;
+            const content = prompt('Zadejte obsah dokumentu:', 'Obsah...');
+            if (content === null) return;
+            const category = prompt('Kategorie (výchovná, organizační, hlášení, gdpr, metodický, ostatní):', 'ostatní');
+            let cat = 'ostatní';
+            if (category && ['výchovná','organizační','hlášení','gdpr','metodický','ostatní'].includes(category.trim())) {
+                cat = category.trim();
+            }
+            const newDoc = {
+                id: 'doc' + Date.now(),
+                title: title.trim(),
+                content: content.trim() || 'Obsah dokumentu',
+                category: cat,
+                date: new Date().toISOString().split('T')[0],
+                icon: '📄'
+            };
+            documents.push(newDoc);
+            render();
+        }
+
+        // --- Tisk dokumentu z modalu ---
+        function printModalDoc() {
+            const id = modalOverlay.dataset.docId;
+            const doc = documents.find(d => d.id === id);
+            if (!doc) return;
+            const win = window.open('', '_blank', 'width=600,height=500');
+            win.document.write(`
+                <!DOCTYPE html>
+                <html><head><meta charset="UTF-8"><title>${doc.title}</title>
+                <style>body { font-family: 'Times New Roman', Times, serif; padding: 2rem; max-width: 700px; margin: 0 auto; line-height:1.6; }</style>
+                </head><body><h2>${doc.title}</h2><p style="color:#475569;">${formatDate(doc.date)} • ${getCategoryLabel(doc.category)}</p><hr><pre style="white-space:pre-wrap; font-family:inherit;">${doc.content}</pre></body></html>
+            `);
+            win.document.close();
+            win.print();
+        }
+
+        // --- Eventy ---
+        searchInput.addEventListener('input', () => {
+            searchQuery = searchInput.value;
+            render();
+        });
+
+        categoryFilter.addEventListener('change', () => {
+            currentFilter = categoryFilter.value;
+            render();
+        });
+
+        viewGridBtn.addEventListener('click', () => {
+            currentView = 'grid';
+            viewGridBtn.classList.add('active');
+            viewListBtn.classList.remove('active');
+            render();
+        });
+
+        viewListBtn.addEventListener('click', () => {
+            currentView = 'list';
+            viewListBtn.classList.add('active');
+            viewGridBtn.classList.remove('active');
+            render();
+        });
+
+        addDocBtn.addEventListener('click', addDocument);
+
+        modalClose.addEventListener('click', closeModal);
+        modalCloseBtn.addEventListener('click', closeModal);
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) closeModal();
+        });
+
+        modalPrint.addEventListener('click', printModalDoc);
+
+        modalEdit.addEventListener('click', () => {
+            const id = modalOverlay.dataset.docId;
+            if (id) {
+                closeModal();
+                editDocument(id);
+            }
+        });
+
+        modalDelete.addEventListener('click', () => {
+            const id = modalOverlay.dataset.docId;
+            if (id) {
+                closeModal();
+                deleteDocument(id);
+            }
+        });
+
+        // Klávesová zkratka Escape pro zavření modalu
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // --- inicializace ---
+        render();
+    })();
+</script>
+</body>
+</html>

@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="cs">
-<head>
+<!-- <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Losovač otázek - Maturita</title>
+    </head> -->
     <style>
         :root {
             --primary: #3498db;
@@ -91,7 +92,7 @@
             font-size: 1.3rem;
         }
         
-        button {
+        .container button {
             padding: 10px 15px;
             background-color: var(--primary);
             color: white;
@@ -473,8 +474,8 @@
             display: none;
         }
     </style>
-</head>
 
+<%- include('./partials/head') %>
 <body>
    
       <%- include('./partials/header') %>

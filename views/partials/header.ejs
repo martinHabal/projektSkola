@@ -1,4 +1,4 @@
-<header id="myDiv">
+<header id="header">
   <h1>Školní intranet Hotelové školy Mariánské Lázně - <%= username || 'Nepřihlášen' %></h1>
   <div class="header-right">
    
@@ -18,9 +18,9 @@
     <button class="tooltip" data-tooltip="Makroekonomie" onclick="window.location.href='/makro-uvod'" style="background-color: #95c2f2;">
       <span class="material-icons">monitor_heart</span>
     </button> -->
-    <!-- <button class="tooltip" data-tooltip="Manažerské modelování" onclick="window.location.href='/mam-uvod'" style="background-color: #95c2f2;">
+    <button class="tooltip" data-tooltip="Dashboard" onclick="window.location.href='/dashboard'" style="background-color: #95c2f2;">
       <span class="material-icons">roundabout_right</span>
-    </button> -->
+    </button>
     <button class="tooltip" data-tooltip="Maturita" onclick="window.location.href='/maturita'" style="background-color: #95c2f2;">
       <span class="material-icons">work</span>
     </button>
@@ -30,21 +30,21 @@
     <button class="tooltip" data-tooltip="Výkaz" onclick="window.location.href='/vykaz'" style="background-color: #95c2f2;">
       <span class="material-icons">bar_chart</span>
     </button>
-    <button class="tooltip" data-tooltip="Výkaz info" onclick="window.location.href='/vykaz-info'" style="background-color: #95c2f2;">
+    <!-- <button class="tooltip" data-tooltip="Výkaz info" onclick="window.location.href='/vykaz-info'" style="background-color: #95c2f2;">
       <span class="material-icons">data_thresholding</span>
-    </button>
-    <button class="tooltip" data-tooltip="Výkaz tabulka - státnice" onclick="window.location.href='/vykaz-tabulka'" style="background-color: #95c2f2;;">
+    </button> -->
+    <button class="tooltip" data-tooltip="Výkaz tabulka" onclick="window.location.href='/vykaz-tabulka'" style="background-color: #95c2f2;;">
       <span class="material-icons">view_kanban</span>
     </button>
-    <!-- <button class="tooltip" data-tooltip="Makroekonomie - státnice" onclick="window.location.href='/makro-statnice-uvod'" style="background-color: #38d0c0;">
+    <button class="tooltip" data-tooltip="Organizace roku" onclick="window.location.href='/kalendar'" style="background-color: #38d0c0;">
       <span class="material-icons">monitor_heart</span>
     </button>
-    <button class="tooltip" data-tooltip="Management - státnice" onclick="window.location.href='/management-uvod'" style="background-color: #38d0c0;">
+    <button class="tooltip" data-tooltip="Generátor dokumentů" onclick="window.location.href='/generator-dokumentu'" style="background-color: #38d0c0;">
       <span class="material-icons">manage_accounts</span>
     </button>
-    <button class="tooltip" data-tooltip="Podniková ekonomika - státnice" onclick="window.location.href='/podnikovka-uvod'" style="background-color: #38d0c0;">
+    <button class="tooltip" data-tooltip="Dokumenty školy" onclick="window.location.href='/dokumenty-skoly'" style="background-color: #38d0c0;">
       <span class="material-icons">business</span>
-    </button> -->
+    </button>
   </div>
   <!-- <button class="tooltip" data-tooltip="Poslat zprávu" onclick="window.location.href='/fip-upload'"><span class="material-icons">home</span></button> -->
 
@@ -66,7 +66,7 @@
 
 <script>
   let clickCount = 0;
-const div = document.getElementById("myDiv");
+const div = document.getElementById("header");
 const popup = document.getElementById("popup");
 
 div.addEventListener("click", () => {

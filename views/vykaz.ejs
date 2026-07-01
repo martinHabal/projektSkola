@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="cs">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Přehled učitelů</title>
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -48,9 +45,57 @@
       color: #333;
       font-weight: bold;
     }
+    .spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #3498db;
+    border-radius: 50%;
+    display: inline-block;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
   </style>
-</head>
+
+<%- include('./partials/head') %>
 <body>
+    <%- include('./partials/header') %>
+
+    <!-- Místo, kde chcete zobrazit spinner -->
+<div id="loading-spinner" style="text-align: center; padding: 50px;">
+    <div class="spinner"></div>
+    <p style="margin-top: 15px; color: #666;">Načítám data...</p>
+</div>
+
+<!-- Sem se vykreslí data po načtení -->
+<div id="data-content" style="display: none;">
+    <!-- Váš obsah -->
+</div>
+
+<script>
+    // Po načtení stránky
+document.addEventListener('DOMContentLoaded', async function() {
+    const spinner = document.getElementById('loading-spinner');
+    const content = document.getElementById('data-content');
+    
+    try {
+        // Vaše API volání zde...
+        // (váš existující kód pro načítání dat)
+        
+        // Po načtení dat:
+        spinner.style.display = 'none';  // Schovat spinner
+        content.style.display = 'block'; // Zobrazit data
+        
+    } catch (error) {
+        spinner.innerHTML = '<p style="color: red;">❌ Chyba při načítání</p>';
+    }
+});
+
+</script>
   <h1>Přehled hodin učitelů za měsíc září</h1>
   <table>
     <thead>

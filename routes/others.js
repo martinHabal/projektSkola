@@ -14,10 +14,14 @@ const maturitaRoutes = {
     description: 'Informace o školním řádu',
     // username: req.session.user.username 
   }),
-//   '/vykaz': (req, res) => res.render('vykaz', {
-//     title: 'Výkaz',
-//     description: 'Výkaz',
-//   }),
+  '/generator-dokumentu': (req, res) => res.render('generator-dokumentu', {
+    title: 'generator',
+    description: 'generator dokumentů',
+  }),
+  '/dokumenty-skoly': (req, res) => res.render('dokumenty-skoly', {
+    title: 'Dokumenty školy',
+    description: 'Seznam dokumentů školy',
+  }),
   '/vykaz-info': (req, res) => res.render('vykaz-info', {
     title: 'Výkaz - informace',
     description: 'Informace o statistickém zpracování dat',
@@ -133,7 +137,7 @@ const maturitaRoutes = {
     const credentials = btoa('test_vykaz:Test_088'); // tvoje přihlašovací údaje
     fetchLessonsForMonth(2025, 10, credentials);
     //konec fetch
-    // tak jo, 86 jako predtim, no nic pokracovani priste
+    
   },
 '/kalendar': async (req, res) => {
     try {
