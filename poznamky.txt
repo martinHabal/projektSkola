@@ -1,1 +1,8 @@
 proste zacnu tema uctama a DB hlavne
+pak dashboard s loginama, navstevama apod.. FE resit az nakonec
+
+
+//login - admin -> OK
+//s tim AI se to fakt neda, musim postupne a pak doplnovat funkce
+//zacnu tak ze seed zadam rucne, jinak se nikam neposunu
+//nejdriv proste jednoduchej login, admina necham na jindy

@@ -18,5 +18,9 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.9"
+  },
+   "imports": {
+    "#db/*": "./db/*.js"
+    
   }
 }

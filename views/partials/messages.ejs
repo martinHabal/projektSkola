@@ -1,0 +1,21 @@
+<% if (message) { %>
+    <div class="alert alert-<%= message.type || 'info' %>">
+        <i class="fas <%= message.icon || 'fa-info-circle' %>"></i>
+        <span><%= message.text %></span>
+        <button type="button" class="close-btn">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+<% } %>
+
+<% if (messages && messages.length > 0) { %>
+    <% messages.forEach(msg => { %>
+        <div class="alert alert-<%= msg.type || 'info' %>">
+            <i class="fas <%= msg.icon || 'fa-info-circle' %>"></i>
+            <span><%= msg.text %></span>
+            <button type="button" class="close-btn">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    <% }) %>
+<% } %>
