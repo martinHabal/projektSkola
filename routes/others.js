@@ -27,11 +27,23 @@ const maturitaRoutes = {
     description: 'Informace o statistickém zpracování dat',
     // username: req.session.user.username 
   }),
+  '/dashboard-vykaz': (req, res) => res.render('dashboard-vykaz', {
+    title: 'Výkaz - tabulka',
+    description: 'Informace o mikroekonomii - státnice',
+    // username: req.session.user.username 
+  }),
   '/vykaz-tabulka': (req, res) => res.render('vykaz-tabulka', {
     title: 'Výkaz - tabulka',
     description: 'Informace o mikroekonomii - státnice',
     // username: req.session.user.username 
   }),
+//   '/vykaz-system': (req, res) => res.render('vykaz-system', {
+//     title: 'Výkaz - systém',
+//     description: 'Informace o systému výkazů',
+//     // username: req.session.user.username 
+//   }),
+
+  
   '/vykaz': (req, res) => {
     // Funkce, která načte všechna data za zadaný měsíc
     async function fetchLessonsForMonth(year, month, credentials) {
