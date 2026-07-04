@@ -5,6 +5,7 @@ import pool from './db/db.js';
 import 'dotenv/config';
 import mysql from 'mysql2/promise';
 import routerLogin from './routes/login.js';
+import routerVykaz from './routes/vykaz.js';
 import routerOther from './routes/others.js';
 // import { runMigrations } from './db/migrations/migrate.js';
 // import { seedAdmin } from './db/seeders/admin.js';
@@ -40,6 +41,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/', routerLogin);
+app.use('/', routerVykaz);
 app.use('/', routerOther);
 
 

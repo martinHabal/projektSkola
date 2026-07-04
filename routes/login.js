@@ -45,6 +45,7 @@ router.post("/login", async (req, res) => {
     };
 
     res.redirect("/dashboard");
+    console.log(req.session.user);
   } catch (error) {
     console.error(error);
     res.render("login", { error: "Chyba serveru" });
@@ -67,32 +68,8 @@ router.get("/dashboard", (req, res) => {
   });
 });
 
-//pak prehodit do others
-router.get("/vykaz-system", async (req, res) => {
-  try {
-    // Dotaz na uživatele
- 
-    const [users] = await pool.query(`
-             SELECT * FROM users LEFT JOIN uvazky ON users.id = uvazky.uvazky_id WHERE username = 'admin';
-        `);
 
-console.log(users)
 
-    res.render("vykaz-system", {
-      title: "Seznam učitelů (prepared statement)",
-      users: users[0], // Předpokládáme, že je pouze jeden admin
-      stats: null,
-      totalUsers: users.length,
-      filter: "Pouze učitelé",
-    });
-  } catch (error) {
-    console.error("Chyba při načítání uživatelů:", error);
-    res.status(500).render("error", {
-      title: "Chyba",
-      message: "Nepodařilo se načíst uživatele",
-      error: process.env.NODE_ENV === "development" ? error : {},
-    });
-  }
-});
+
 
 export default router;
