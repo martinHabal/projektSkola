@@ -931,6 +931,7 @@
                 <div class="actions-section">
                     <button class="btn-print" id="btn-print" disabled>Tisk výkazu</button>
                     <button class="btn-email" id="btn-email" disabled>Odeslat e-mailem</button>
+                    <button class="btn-save" id="btn-save" enabled>Uložit výkaz</button>
                 </div>
 
                 <!-- Modal pro odeslání e-mailem -->
@@ -994,11 +995,11 @@
                     </div>
                 </div>
             </div>
-<script type="module">
-    import { NumberInputHandler } from './class/UvazkyInputHandler.js';
+            <script type="module">
+                import { NumberInputHandler } from './class/UvazkyInputHandler.js';
 
-    // Odesilani hodin vykazu
-    //samozrejme to musim zkulturnit, ale prozatim tohle funguje
+                // Odesilani hodin vykazu
+                //samozrejme to musim zkulturnit, ale prozatim tohle funguje
                 document.addEventListener('DOMContentLoaded', function () {
                     const handler = new NumberInputHandler('#schedule-mon', {
                         inputDay: '#schedule-mon',
@@ -1154,71 +1155,10 @@
                     console.log('  - numberHandler.getCurrentValue() - získání hodnoty');
                     console.log('  - numberHandler.destroy() - zničení handleru');
                 });
-                document.addEventListener('DOMContentLoaded', function () {
-                    const handler = new NumberInputHandler('#schedule-sat', {
-                        inputDay: '#schedule-sat',
-                        minValue: 0,
-                        maxValue: 100,
-                        debounceDelay: 300,
-                        endpoint: '/api/process-number',
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        onSuccess: function (data, value) {
-                            console.log(`Úspěch! Hodnota ${value} zpracována:`, data);
-                            // Zde můžete přidat vlastní logiku pro úspěch
-                        },
-                        onError: function (error) {
-                            console.error('Chyba v callbacku:', error);
-                            // Zde můžete přidat vlastní logiku pro chybu
-                        }
-                    });
 
-                    // Ukázka ovládání přes konzoli
-                    window.numberHandler = handler;
-                    console.log('Handler dostupný jako window.numberHandler');
-                    console.log('Příkazy:');
-                    console.log('  - numberHandler.sendCurrentValue() - okamžité odeslání');
-                    console.log('  - numberHandler.setValue(42) - nastavení hodnoty');
-                    console.log('  - numberHandler.getCurrentValue() - získání hodnoty');
-                    console.log('  - numberHandler.destroy() - zničení handleru');
-                });
-                document.addEventListener('DOMContentLoaded', function () {
-                    const handler = new NumberInputHandler('#schedule-sun', {
-                        inputDay: '#schedule-sun',
-                        minValue: 0,
-                        maxValue: 100,
-                        debounceDelay: 300,
-                        endpoint: '/api/process-number',
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        onSuccess: function (data, value) {
-                            console.log(`Úspěch! Hodnota ${value} zpracována:`, data);
-                            // Zde můžete přidat vlastní logiku pro úspěch
-                        },
-                        onError: function (error) {
-                            console.error('Chyba v callbacku:', error);
-                            // Zde můžete přidat vlastní logiku pro chybu
-                        }
-                    });
-
-                    // Ukázka ovládání přes konzoli
-                    window.numberHandler = handler;
-                    console.log('Handler dostupný jako window.numberHandler');
-                    console.log('Příkazy:');
-                    console.log('  - numberHandler.sendCurrentValue() - okamžité odeslání');
-                    console.log('  - numberHandler.setValue(42) - nastavení hodnoty');
-                    console.log('  - numberHandler.getCurrentValue() - získání hodnoty');
-                    console.log('  - numberHandler.destroy() - zničení handleru');
-                });
-</script>
+            </script>
             <script>
-                
+
                 // Aktuální datum
                 const currentDate = new Date();
                 let currentMonth = currentDate.getMonth();
@@ -1381,6 +1321,107 @@
                             prepareForPrint();
                             window.print();
                         }
+                    });
+                    // Event listener pro tlačítko ulozit
+                    document.getElementById('btn-save').addEventListener('click', function () {
+                        // Funkce pro získání dat z tabulky
+                        function tableToObjectArray(tableId) {
+                            // Získáme tabulku podle ID
+                            const table = document.getElementById(tableId);
+                            if (!table) {
+                                console.error('Tabulka s tímto ID nebyla nalezena.');
+                                return [];
+                            }
+
+                            // Získáme všechny řádky tabulky (kromě hlavičky)
+                            const rows = table.querySelectorAll('tbody tr');
+                            const result = [];
+
+                            // Získáme názvy sloupců z hlavičky
+                            const headers = [];
+                            const headerCells = table.querySelectorAll('thead th');
+                            headerCells.forEach(th => {
+                                headers.push(th.textContent.trim());
+                            });
+
+                            // Pro každý řádek vytvoříme objekt
+                            rows.forEach(row => {
+                                const cells = row.querySelectorAll('td');
+                                const obj = {};
+
+                                // Pro každou buňku v řádku přiřadíme hodnotu k příslušnému klíči
+                                cells.forEach((cell, index) => {
+                                    if (index < headers.length) {
+                                        const key = headers[index];
+                                        let value;
+
+                                        // Zkontrolujeme, zda buňka obsahuje input nebo select prvek
+                                        const input = cell.querySelector('input');
+                                        const select = cell.querySelector('select');
+
+                                        if (input) {
+                                            // Zpracování input prvků
+                                            value = input.value.trim();
+
+                                            if (input.type === 'checkbox') {
+                                                value = input.checked;
+                                            } else if (input.type === 'number') {
+                                                const numValue = parseFloat(value);
+                                                if (!isNaN(numValue)) {
+                                                    value = numValue;
+                                                }
+                                            }
+                                        } else if (select) {
+                                            // Zpracování select prvků - načteme aktuálně vybranou hodnotu
+                                            value = select.value;
+
+                                            // Pokud je select multiple, vrátíme pole vybraných hodnot
+                                            if (select.multiple) {
+                                                value = Array.from(select.selectedOptions).map(option => option.value);
+                                            }
+
+                                            // Pokusíme se převést na číslo, pokud je to možné
+                                            if (typeof value === 'string' && value !== '') {
+                                                const cleanValue = value.replace(/\s/g, '').replace(/,/g, '.');
+                                                if (!isNaN(cleanValue) && cleanValue !== '') {
+                                                    value = parseFloat(cleanValue);
+                                                }
+                                            }
+                                        } else {
+                                            // Pokud žádný prvek neexistuje, vezmeme textový obsah buňky
+                                            value = cell.textContent.trim();
+
+                                            // Pokusíme se převést číselné hodnoty
+                                            if (value !== '') {
+                                                const cleanValue = value.replace(/\s/g, '').replace(/,/g, '.');
+                                                if (!isNaN(cleanValue) && cleanValue !== '') {
+                                                    value = parseFloat(cleanValue);
+                                                }
+                                            }
+                                        }
+
+                                        obj[key] = value;
+                                    }
+                                });
+
+                                result.push(obj);
+                            });
+
+                            return result;
+                        }
+
+                        const data = tableToObjectArray('workTable');
+                        console.log(data);
+
+                        fetch(`/api/uloz-vykaz`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                data: data
+                            })
+                        });
                     });
 
                     // Event listener pro tlačítko odeslání e-mailem
@@ -1666,7 +1707,7 @@
                     const daysInMonth = new Date(year, month + 1, 0).getDate();
 
                     let html = `
-                <table>
+                <table id="workTable">
                     <thead>
                         <tr>
                             <th>Datum</th>
@@ -2061,7 +2102,7 @@
 
                 //DASLI SCRIPTY
 
-                
+
             </script>
     </body>
 
