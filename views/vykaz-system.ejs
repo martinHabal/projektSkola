@@ -441,16 +441,16 @@
         opacity: 0.6;
     }
 
-    .btn-email {
+    .btn-save {
         background-color: #9b59b6;
         color: white;
     }
 
-    .btn-email:hover {
+    .btn-save:hover {
         background-color: #8e44ad;
     }
 
-    .btn-email:disabled {
+    .btn-save:disabled {
         background-color: #bdc3c7;
         cursor: not-allowed;
         opacity: 0.6;
@@ -784,8 +784,8 @@
 
                 <!-- Sekce pro zadání jména uživatele a výběr měsíce -->
                 <div class="user-info-section">
-                    <h3>Zadejte své jméno:</h3>
-                    <input disabled type="text" id="user-name" class="user-info-input"
+                    <h3>Učitel: <%- users.first_name %> <%- users.last_name %></h3>
+                    <input style="display: none;" disabled type="text" id="user-name" class="user-info-input"
                         placeholder="<%- users.first_name %> <%- users.last_name %>">
 
                     <div class="month-selector">
@@ -808,8 +808,8 @@
                 </div>
 
                 <div class="schedule-management">
-                    <h3>Standardní týdenní rozvrh</h3>
-                    <p>Celkem hodin týdně: <%- users.uvazek %></p><br />
+                  <p id="total-hodiny">Váš standardní týdenní rozvrh je <span id="total-value"><%- users.total_hodiny %></span> hodin</p>
+                 
                     <div class="schedule-controls" style="display: flex;">
                         <div class="schedule-day">
                             <span>Po:</span>
@@ -848,7 +848,42 @@
                         </div> -->
                     </div>
                 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    function calculateTotalHours() {
+        const inputs = document.querySelectorAll('.day-schedule-input');
+        let total = 0;
+        
+        inputs.forEach(input => {
+            const value = parseFloat(input.value) || 0;
+            if (value < 0) input.value = 0;
+            if (value > 24) input.value = 24;
+            total += parseFloat(input.value) || 0;
+        });
+        
+        // Pouze aktualizuje hodnotu uvnitř spanu
+        const totalValue = document.getElementById('total-value');
+        if (totalValue) {
+            totalValue.textContent = total;
+        }
+    }
 
+    const inputs = document.querySelectorAll('.day-schedule-input');
+    inputs.forEach(input => {
+        input.addEventListener('input', calculateTotalHours);
+        input.addEventListener('change', function() {
+            let value = parseFloat(this.value);
+            if (isNaN(value)) value = 0;
+            if (value < 0) this.value = 0;
+            if (value > 24) this.value = 24;
+            calculateTotalHours();
+        });
+    });
+
+    calculateTotalHours();
+
+});
+    </script>
                 <div class="instructions">
                     <p><strong>Instrukce:</strong> Tabulka zobrazuje všechny dny v měsíci s automatickým označením
                         víkendů, státních svátků a školních prázdnin. Odpracované hodiny se načítají ze standardního
@@ -888,7 +923,7 @@
                         <div class="preview-container">
                             <!-- Náhled neoducených hodin -->
                             <div id="missed-preview" class="preview-box">
-                                <h3>Náhled neoducených hodin</h3>
+                                <h3>Náhled neodučených hodin</h3>
                                 <div id="preview-content" class="preview-content">
                                     <div class="no-missed-days">Žádné neoducené hodiny</div>
                                 </div>
@@ -930,8 +965,8 @@
                 <!-- Sekce s akcemi -->
                 <div class="actions-section">
                     <button class="btn-print" id="btn-print" disabled>Tisk výkazu</button>
-                    <button class="btn-email" id="btn-email" disabled>Odeslat e-mailem</button>
-                    <button class="btn-save" id="btn-save" enabled>Uložit výkaz</button>
+                    <!-- <button class="btn-email" id="btn-email" disabled>Odeslat e-mailem</button> -->
+                    <button class="btn-save" id="btn-save" disabled>Uložit výkaz</button>
                 </div>
 
                 <!-- Modal pro odeslání e-mailem -->
@@ -975,7 +1010,7 @@
                                     <th>Odpracované hodiny</th>
                                     <th>Suplované hodiny</th>
                                     <th>Neodučené hodiny</th>
-                                    <th>Důvod neoducení</th>
+                                    <th>Důvod neodučení</th>
                                 </tr>
                             </thead>
                             <tbody id="print-table-body">
@@ -1293,7 +1328,7 @@
 
                     // Tlačítka jsou disabled defaultně
                     document.getElementById('btn-print').disabled = true;
-                    document.getElementById('btn-email').disabled = true;
+                    document.getElementById('btn-save').disabled = true;
 
                     // Event listener pro jméno uživatele
                     document.getElementById('user-name').addEventListener('input', function () {
@@ -1312,7 +1347,7 @@
                     document.getElementById('confirm-correctness').addEventListener('change', function () {
                         const isChecked = this.checked;
                         document.getElementById('btn-print').disabled = !isChecked;
-                        document.getElementById('btn-email').disabled = !isChecked;
+                        document.getElementById('btn-save').disabled = !isChecked;
                     });
 
                     // Event listener pro tlačítko tisku
