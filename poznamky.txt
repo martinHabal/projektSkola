@@ -6,3 +6,7 @@ pak dashboard s loginama, navstevama apod.. FE resit az nakonec
 //s tim AI se to fakt neda, musim postupne a pak doplnovat funkce
 //zacnu tak ze seed zadam rucne, jinak se nikam neposunu
 //nejdriv proste jednoduchej login, admina necham na jindy
+
+//rozvrh bude zacinat skolnim rokem a svatky, vikendy prazdniny si holt necham kazdej rok vygenerovat do jsonu
+//ten localstorage dam pryc, radsi pokazdy request na DB
+//do profilu se nacte pocet hodin z API edookitu toho uzivatele -> budetam kontrola zda mu to sedi

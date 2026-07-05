@@ -123,7 +123,38 @@ router.post("/api/process-number", async (req, res) => {
 router.post("/api/uloz-vykaz", async (req, res) => {
   const { data } = req.body;
 
-  console.log(data)
+//   console.log(data)
+ const dataMaped = data
+    .filter(zaznam => zaznam.Datum !== "CELKEM")
+    .map(zaznam => {
+        const [den, mesic, rok] = zaznam.Datum
+            .split(".")
+            .map(s => s.trim())
+            .filter(Boolean);
+
+        return {
+            ...zaznam,
+            Datum: `${rok}-${mesic.padStart(2, "0")}-${den.padStart(2, "0")}`
+        };
+    });
+
+//   const dataMaped = data.map(zaznam => {
+//     if (zaznam.Datum === "CELKEM") {
+//         return zaznam;
+//     }
+
+//     const [den, mesic, rok] = zaznam.Datum
+//         .split(".")
+//         .map(s => s.trim())
+//         .filter(Boolean);
+
+//     return {
+//         ...zaznam,
+//         Datum: `${rok}-${Number(mesic)}-${Number(den)}`
+//     };
+// });
+
+console.log(dataMaped);
 
   async function insertWorkLogs(employeeId = 1) {
    
@@ -139,16 +170,18 @@ router.post("/api/uloz-vykaz", async (req, res) => {
                 VALUES ?
             `;
 
-            const values = data.map(log => [
-                req.session.user.id,
-                log.work_date || '2026-07-04',
-                log.day_name || null,
-                log.day_type || 'pracovní den',
-                log.hours_worked || 0,
-                log.hours_subbed || 0,
-                log.hours_missed || 0,
-                log.reason_missed || null
+            const values = dataMaped.map(log => [
+                 req.session.user.id,
+    log.Datum || null,
+    log.Den || null,
+    log["Typ dne"] || "Pracovní den",
+    log["Odpracované hodiny"] || 0,
+    log["Suplované hodiny"] === "-" ? 0 : (log["Suplované hodiny"] || 0),
+    log["Neodučené hodiny"] === "-" ? 0 : (log["Neodučené hodiny"] || 0),
+    log["Důvod neoducení"] === "-" ? null : (log["Důvod neoducení"] || null)
             ]);
+
+            console.log(values)
 
             const [result] = await pool.query(sql, [values]);
 
