@@ -273,7 +273,7 @@
                         <div class="kpi-sub">průměr 22 žáků / třída</div>
                     </div>
                     <div class="kpi-card">
-                        <div class="kpi-label"><i class="fas fa-calendar-check kpi-icon"></i> Dny přítomnosti</div>
+                        <div class="kpi-label"><i class="fas fa-calendar-check kpi-icon"></i> Mimoškolní aktivity (hodin)</div>
                         <div class="kpi-value">189</div>
                         <div class="kpi-sub">z 200 plánovaných</div>
                     </div>
@@ -291,7 +291,7 @@
 
                     <!-- Sloupcový graf: měsíční přehled -->
                     <div class="chart-card">
-                        <h3><i class="fas fa-chart-bar"></i> Měsíční hodiny (přímé + nepřímé)</h3>
+                        <h3><i class="fas fa-chart-bar"></i> Struktura hodin měsíčně</h3>
                         <div class="chart-wrapper">
                             <canvas id="monthlyBarChart"></canvas>
                         </div>
@@ -300,7 +300,7 @@
 
                 <!-- Podrobná tabulka výkazů -->
                 <div class="table-section">
-                    <h3><i class="fas fa-table"></i> Detailní přehled aktivit</h3>
+                    <h3><i class="fas fa-table"></i> Mimoškolní aktivity</h3>
                     <div class="table-responsive">
                         <table>
                             <thead>
@@ -447,15 +447,21 @@
                             labels: ['Září', 'Říj', 'Lis', 'Pro', 'Led', 'Úno', 'Bře', 'Dub', 'Kvě', 'Čer'],
                             datasets: [
                                 {
-                                    label: 'Přímá výuka',
+                                    label: 'Celkem hodin',
                                     data: [68, 72, 70, 64, 60, 66, 74, 70, 68, 62],
                                     backgroundColor: '#3b82f6',
                                     borderRadius: 4,
                                 },
                                 {
-                                    label: 'Nepřímá',
+                                    label: 'Suplované',
                                     data: [22, 28, 30, 26, 34, 30, 38, 40, 36, 32],
                                     backgroundColor: '#8b5cf6',
+                                    borderRadius: 4,
+                                },
+                                {
+                                    label: 'Odpadnuté',
+                                    data: [10, 12, 14, 16, 18, 20, 22, 24, 26, 28],
+                                    backgroundColor: '#f59e0b',
                                     borderRadius: 4,
                                 }
                             ]

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nový uživatel</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 500px; margin: 50px auto; padding: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        button { background: #3b82f6; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #2563eb; }
+        .error { color: red; margin-top: 10px; }
+        .success { color: green; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h2>Přidat nového uživatele</h2>
+    
+    <% if (error) { %>
+        <div class="error"><%= error %></div>
+    <% } %>
+    
+    <% if (success) { %>
+        <div class="success"><%= success %></div>
+    <% } %>
+
+    <form action="/users/create" method="POST">
+        <div class="form-group">
+            <label>Jméno:</label>
+            <input type="text" name="name" required>
+        </div>
+        <div class="form-group">
+            <label>Příjmení:</label>
+            <input type="text" name="surname" required>
+        </div>
+
+        <div class="form-group">
+            <label>Login:</label>
+            <input type="text" name="login" required>
+        </div>
+
+        <div class="form-group">
+            <label>Heslo:</label>
+            <input type="password" name="password" required minlength="6">
+        </div>
+
+        <div class="form-group">
+            <label>Role:</label>
+            <select name="role">
+                <option value="user">Uživatel</option>
+                <option value="admin">Admin</option>
+            </select>
+        </div>
+
+        <button type="submit">Vytvořit uživatele</button>
+    </form>
+</body>
+</html>

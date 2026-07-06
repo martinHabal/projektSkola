@@ -36,15 +36,16 @@ router.get("/vykaz-system", async (req, res) => {
 
 // routa pro nastaveni poctu hodin vykazu
 // ty vikendy tam musi byt pro jine akce, den otevrenych dveri apod.
+
+
 router.post("/api/process-number", async (req, res) => {
     const { value, timestamp, inputDay } = req.body;
-    console.log(req.session);
+    console.log(req.session.user);
     console.log(`Přijata hodnota: ${value} v čase: ${timestamp}`);
     console.log(inputDay);
+    
     let dayOfWeek;
-    switch (
-    inputDay //ten vikend bude zvlast ve specialnich pripadech
-    ) {
+    switch (inputDay) {
         case "#schedule-mon":
             dayOfWeek = "po";
             break;
@@ -60,64 +61,41 @@ router.post("/api/process-number", async (req, res) => {
         case "#schedule-fri":
             dayOfWeek = "pa";
             break;
-        // case '#schedule-sat':
-        //     dayOfWeek = "so"
-        //     break;
-        // case '#schedule-sun':
-        //     dayOfWeek = "ne"
-        //     break;
         default:
             console.log("Neznámý den");
+            return res.status(400).json({ error: "Neznámý den" });
     }
-    if (dayOfWeek === "po") {
-        const [po] = await pool.query(
-            `
-             UPDATE uvazky SET po = ? WHERE id = 5;`,
-            [value, req.session.user.id],
+
+    const userId = req.session.user.id;
+    let result;
+
+    // Nejprve zkontrolujeme, zda záznam existuje
+    const [existing] = await pool.query(
+        `SELECT id FROM uvazky WHERE id = ?`,
+        [userId]
+    );
+
+    if (existing.length === 0) {
+        // Záznam neexistuje - vytvoříme ho
+        await pool.query(
+            `INSERT INTO uvazky (id, ${dayOfWeek}) VALUES (?, ?)`,
+            [userId, value]
         );
-    } else if (dayOfWeek === "ut") {
-        const [ut] = await pool.query(
-            `
-             UPDATE uvazky SET ut = ? WHERE id = 5;`,
-            [value, req.session.user.id],
-        );
-    } else if (dayOfWeek === "st") {
-        const [st] = await pool.query(
-            `
-             UPDATE uvazky SET st = ? WHERE id = 5;`,
-            [value, req.session.user.id],
-        );
-    } else if (dayOfWeek === "ct") {
-        const [ct] = await pool.query(
-            `
-             UPDATE uvazky SET ct = ? WHERE id = 5;`,
-            [value, req.session.user.id],
-        );
-    } else if (dayOfWeek === "pa") {
-        const [pa] = await pool.query(
-            `
-             UPDATE uvazky SET pa = ? WHERE id = 5;`,
-            [value, req.session.user.id],
-        );
+    } else {
+        // Záznam existuje - updatujeme ho
+        const query = `UPDATE uvazky SET ${dayOfWeek} = ? WHERE id = ?`;
+        await pool.query(query, [value, userId]);
     }
-    //else if (dayOfWeek === "so") {
-    //     const [so] = await pool.query(`
-    //          UPDATE uvazky SET so = ? WHERE uvazky_id = 5;`, [value, req.session.user.id]);
-    // } else if (dayOfWeek === "ne") {
-    //     const [ne] = await pool.query(`
-    //          UPDATE uvazky SET ne = ? WHERE uvazky_id = 5;`, [value, req.session.user.id]);
-    // }
-    // const [po] = await pool.query(`
-    //          UPDATE uvazky SET po = ? WHERE uvazky_id = 5;`, [value, req.session.user.id]);
-    // Zde můžete přidat vlastní logiku
-    const result = {
+
+    const response = {
         received: value,
-        processed: value * 2, // Příklad zpracování
+        processed: value * 2,
         timestamp: new Date().toISOString(),
         status: "success",
+        day: dayOfWeek
     };
 
-    res.json(result);
+    res.json(response);
 });
 
 //SAVE VYKAZ
