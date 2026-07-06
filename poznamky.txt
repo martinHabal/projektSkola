@@ -10,3 +10,7 @@ pak dashboard s loginama, navstevama apod.. FE resit az nakonec
 //rozvrh bude zacinat skolnim rokem a svatky, vikendy prazdniny si holt necham kazdej rok vygenerovat do jsonu
 //ten localstorage dam pryc, radsi pokazdy request na DB
 //do profilu se nacte pocet hodin z API edookitu toho uzivatele -> budetam kontrola zda mu to sedi
+
+//AI dam ze zacatku do toho skolniho radu, dotazy ve smyslu jestli se zak provinil kdyz fotil ve tride
+
+//tisk budu mit pro jednotlive usera a pak i vedouci pracovnik muze kdykoliv vytisknout

@@ -167,5 +167,77 @@ router.post("/api/uloz-vykaz", async (req, res) => {
     res.json({ message: "Výkaz uložen" });
 });
 
+
+//TISK
+// Route pro výkaz práce
+router.get('/work-report', async (req, res) => {
+    try {
+        // Parametry z URL
+        const employeeId = req.session.user.id || 1;
+        const month = req.query.month || new Date().getMonth() + 1;
+        const year = req.query.year || new Date().getFullYear();
+
+        // 1. Získání jména zaměstnance
+        const [employee] = await pool.query(
+            `SELECT username FROM users WHERE id = ?`,
+            [employeeId]
+        );
+
+        const employeeName = employee.length > 0 ? employee[0].username : 'Neznámý zaměstnanec';
+
+        // 2. Získání pracovních záznamů
+        const [records] = await pool.query(
+            `SELECT 
+                created_at,
+                DAYNAME(date) as dayName,
+                CASE 
+                    WHEN DAYOFWEEK(date) IN (1, 7) THEN 'Víkend'
+                    WHEN DATE(date) IN (SELECT holiday_date FROM holidays) THEN 'Svátek'
+                    ELSE 'Pracovní'
+                END as dayType,
+                worked_hours as workedHours,
+                substitute_hours as substituteHours,
+                untaught_hours as untaughtHours,
+                reason,
+                is_weekend as isWeekend,
+                weekend_work as weekendWork
+            FROM work_records
+            WHERE employee_id = ?
+                AND MONTH(date) = ?
+                AND YEAR(date) = ?
+            ORDER BY date ASC`,
+            [employeeId, month, year]
+        );
+
+        // 3. Výpočet souhrnů
+        let totalWorkedHours = 0;
+        let totalSubstituteHours = 0;
+        let totalUntaughtHours = 0;
+
+        records.forEach(row => {
+            totalWorkedHours += Number(row.workedHours) || 0;
+            totalSubstituteHours += Number(row.substituteHours) || 0;
+            totalUntaughtHours += Number(row.untaughtHours) || 0;
+        });
+
+        // 4. Vykreslení šablony
+        res.render('vykaz-tisk', {
+            data: records,
+            employeeName: employeeName,
+            period: `${month}. ${year}`,
+            totalWorkedHours: totalWorkedHours,
+            totalSubstituteHours: totalSubstituteHours,
+            totalUntaughtHours: totalUntaughtHours
+        });
+
+    } catch (error) {
+        console.error('Chyba:', error);
+        res.status(500).send('Chyba při načítání dat: ' + error.message);
+    }
+});
+
+
+
+
 export default router;
 // UPDATE uvazky SET po = ? WHERE user_id = ?;`, [value, req.session.user.id]);

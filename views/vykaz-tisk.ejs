@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Výkaz práce</title>
+    <style>
+        /* Reset a základní nastavení pro tisk */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Times New Roman', Arial, sans-serif;
+            font-size: 11pt;
+            background: white;
+            padding: 20px;
+            margin: 0 auto;
+            max-width: 210mm;
+        }
+
+        /* Hlavička */
+        .header {
+            border-bottom: 2px solid #333;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .header-left {
+            flex: 1;
+        }
+
+        .header-left h1 {
+            font-size: 18pt;
+            font-weight: bold;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+
+        .header-left .subtitle {
+            font-size: 12pt;
+            color: #555;
+        }
+
+        .header-right {
+            text-align: right;
+            min-width: 200px;
+        }
+
+        .header-right .info-line {
+            margin-bottom: 3px;
+            font-size: 10pt;
+        }
+
+        .info-line strong {
+            font-weight: bold;
+        }
+
+        /* Tabulka */
+        .table-container {
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10pt;
+        }
+
+        table th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+            text-align: center;
+            border: 1px solid #333;
+            padding: 8px 5px;
+        }
+
+        table td {
+            border: 1px solid #333;
+            padding: 6px 5px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        /* Specifikké sloupce */
+        .col-date { width: 10%; }
+        .col-day { width: 10%; }
+        .col-type { width: 12%; }
+        .col-hours { width: 10%; }
+        .col-substitute { width: 10%; }
+        .col-untaught { width: 10%; }
+        .col-reason { width: 38%; }
+
+        /* Styly pro buňky */
+        .weekend {
+            background-color: #fff3f3;
+            font-weight: bold;
+        }
+
+        .holiday {
+            background-color: #f0f8ff;
+        }
+
+        .reason-cell {
+            text-align: left;
+            padding-left: 8px;
+            font-size: 9pt;
+        }
+
+        /* Souhrnná řádek */
+        .summary-row td {
+            font-weight: bold;
+            background-color: #f9f9f9;
+            border-top: 2px solid #333;
+        }
+
+        .summary-label {
+            text-align: right;
+            padding-right: 10px;
+        }
+
+        /* Patička */
+        .footer {
+            margin-top: 30px;
+            border-top: 2px solid #333;
+            padding-top: 20px;
+        }
+
+        .signature-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .signature-box {
+            flex: 1;
+            margin-right: 20px;
+        }
+
+        .signature-box:last-child {
+            margin-right: 0;
+        }
+
+        .signature-box .label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 10pt;
+        }
+
+        .signature-line {
+            border-bottom: 1px solid #333;
+            width: 100%;
+            height: 30px;
+            margin-top: 5px;
+        }
+
+        .signature-date {
+            margin-top: 5px;
+            font-size: 9pt;
+            color: #666;
+        }
+
+        /* Poznámky */
+        .notes {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            font-size: 9pt;
+        }
+
+        .notes strong {
+            font-weight: bold;
+        }
+
+        /* Tiskové styly */
+        @media print {
+            body {
+                padding: 15px;
+                font-size: 10pt;
+            }
+
+            table {
+                font-size: 9pt;
+            }
+
+            .header-left h1 {
+                font-size: 16pt;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+        }
+
+        /* Responzivní úpravy */
+        @media screen and (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+            }
+
+            .header-right {
+                text-align: left;
+                margin-top: 10px;
+            }
+
+            .signature-section {
+                flex-direction: column;
+            }
+
+            .signature-box {
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
+        }
+
+        /* Tlačítko pro tisk */
+        .print-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+
+        .print-button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <!-- Hlavička -->
+    <div class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <h1>VÝKAZ PRÁCE</h1>
+                <div class="subtitle">Měsíční výkaz odpracované doby</div>
+            </div>
+            <div class="header-right">
+                <div class="info-line">
+                    <strong>Vytvořeno:</strong> <%= new Date().toLocaleDateString('cs-CZ', { 
+                        day: '2-digit', 
+                        month: '2-digit', 
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    }) %>
+                </div>
+                <div class="info-line">
+                    <strong>Zaměstnanec:</strong> <%= employeeName %>
+                </div>
+                <div class="info-line">
+                    <strong>Období:</strong> <%= period %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabulka výkazu -->
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th class="col-date">Datum</th>
+                    <th class="col-day">Den</th>
+                    <th class="col-type">Typ dne</th>
+                    <th class="col-hours">Odprac. hod.</th>
+                    <th class="col-substitute">Supl. hod.</th>
+                    <th class="col-untaught">Neoduč. hod.</th>
+                    <th class="col-reason">Důvod neodučení / práce o víkendu</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (data && data.length > 0) { %>
+                    <% data.forEach(function(row) { %>
+                        <tr class="<%= row.isWeekend ? 'weekend' : '' %> <%= row.isHoliday ? 'holiday' : '' %>">
+                            <td><%= new Date(row.date).toLocaleDateString('cs-CZ') %></td>
+                            <td><%= row.dayName %></td>
+                            <td><%= row.dayType %></td>
+                            <td><%= row.workedHours || 0 %></td>
+                            <td><%= row.substituteHours || 0 %></td>
+                            <td><%= row.untaughtHours || 0 %></td>
+                            <td class="reason-cell">
+                                <%= row.reason || '-' %>
+                                <% if (row.isWeekend && row.weekendWork) { %>
+                                    <span style="color: #c0392b; font-weight: bold;"> (Víkendová práce)</span>
+                                <% } %>
+                            </td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 20px; color: #999;">
+                            Žádná data k zobrazení
+                        </td>
+                    </tr>
+                <% } %>
+
+                <!-- Souhrnný řádek -->
+                <tr class="summary-row">
+                    <td colspan="3" class="summary-label">CELKEM:</td>
+                    <td><%= totalWorkedHours || 0 %></td>
+                    <td><%= totalSubstituteHours || 0 %></td>
+                    <td><%= totalUntaughtHours || 0 %></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Patička s podpisy -->
+    <div class="footer">
+        <div class="signature-section">
+            <div class="signature-box">
+                <div class="label">Vypracoval(a):</div>
+                <div class="signature-line"></div>
+                <div class="signature-date">Datum: ____________________</div>
+            </div>
+            <div class="signature-box">
+                <div class="label">Schválil(a):</div>
+                <div class="signature-line"></div>
+                <div class="signature-date">Datum: ____________________</div>
+            </div>
+        </div>
+
+        <!-- Poznámky -->
+        <div class="notes">
+            <strong>Poznámky:</strong>
+            <ul style="margin: 5px 0 0 20px; list-style: none;">
+                <li>• <strong>Typ dne:</strong> Pracovní, Víkend, Svátek, Dovolená, Nemoc, Školení</li>
+                <li>• <strong>Víkendová práce</strong> je označena červeným zvýrazněním a textem v poznámce</li>
+                <li>• <strong>Suplované hodiny</strong> - hodiny odučené za nepřítomného kolegu</li>
+                <li>• <strong>Neodučené hodiny</strong> - hodiny, které nebyly odučeny (důvod v poznámce)</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Tlačítko pro tisk -->
+    <button class="print-button no-print" onclick="window.print()">
+        🖨️ Tisknout výkaz
+    </button>
+
+    <script>
+        // Automatický tisk po načtení (volitelné)
+        // window.onload = function() {
+        //     window.print();
+        // };
+    </script>
+</body>
+</html>

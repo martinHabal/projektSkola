@@ -791,30 +791,32 @@
                     <div class="month-selector">
                         <label for="month">Měsíc:</label>
                         <select id="month">
-                            <option value="0">Leden</option>
-                            <option value="1">Únor</option>
-                            <option value="2">Březen</option>
-                            <option value="3">Duben</option>
-                            <option value="4">Květen</option>
-                            <option value="5">Červen</option>
-                            <option value="6">Červenec</option>
-                            <option value="7">Srpen</option>
-                            <option value="8">Září</option>
-                            <option value="9">Říjen</option>
-                            <option value="10">Listopad</option>
-                            <option value="11">Prosinec</option>
+                            <option value="0">Září</option>
+                            <option value="1">Říjen</option>
+                            <option value="2">Listopad</option>
+                            <option value="3">Prosinec</option>
+                            <option value="4">Leden</option>
+                            <option value="5">Únor</option>
+                            <option value="6">Březen</option>
+                            <option value="7">Duben</option>
+                            <option value="8">Květen</option>
+                            <option value="9">Červen</option>
+                            <option value="10">Červenec</option>
+                            <option value="11">Srpen</option>
+                            
                         </select>
                     </div>
                 </div>
 
                 <div class="schedule-management">
-                  <p id="total-hodiny">Váš standardní týdenní rozvrh je <span id="total-value"><%- users.total_hodiny %></span> hodin</p>
-                 
+                    <p id="total-hodiny">Váš standardní týdenní rozvrh je <span id="total-value"><%- users.total_hodiny
+                                %></span> hodin</p>
+
                     <div class="schedule-controls" style="display: flex;">
                         <div class="schedule-day">
                             <span>Po:</span>
                             <input type="number" min="0" max="24" value="<%- users.po %>" id="schedule-mon"
-                            class="day-schedule-input">
+                                class="day-schedule-input">
                         </div>
                         <div class="schedule-day">
                             <span>Út:</span>
@@ -848,43 +850,43 @@
                         </div> -->
                     </div>
                 </div>
-<script>
-    //prepocitavani celkoveho poctu hodin podle vstupu uzivatele
-    document.addEventListener('DOMContentLoaded', function() {
-    function calculateTotalHours() {
-        const inputs = document.querySelectorAll('.day-schedule-input');
-        let total = 0;
-        
-        inputs.forEach(input => {
-            const value = parseFloat(input.value) || 0;
-            if (value < 0) input.value = 0;
-            if (value > 24) input.value = 24;
-            total += parseFloat(input.value) || 0;
-        });
-        
-        // Pouze aktualizuje hodnotu uvnitř spanu
-        const totalValue = document.getElementById('total-value');
-        if (totalValue) {
-            totalValue.textContent = total;
-        }
-    }
+                <script>
+                    //prepocitavani celkoveho poctu hodin podle vstupu uzivatele
+                    document.addEventListener('DOMContentLoaded', function () {
+                        function calculateTotalHours() {
+                            const inputs = document.querySelectorAll('.day-schedule-input');
+                            let total = 0;
 
-    const inputs = document.querySelectorAll('.day-schedule-input');
-    inputs.forEach(input => {
-        input.addEventListener('input', calculateTotalHours);
-        input.addEventListener('change', function() {
-            let value = parseFloat(this.value);
-            if (isNaN(value)) value = 0;
-            if (value < 0) this.value = 0;
-            if (value > 24) this.value = 24;
-            calculateTotalHours();
-        });
-    });
+                            inputs.forEach(input => {
+                                const value = parseFloat(input.value) || 0;
+                                if (value < 0) input.value = 0;
+                                if (value > 24) input.value = 24;
+                                total += parseFloat(input.value) || 0;
+                            });
 
-    calculateTotalHours();
+                            // Pouze aktualizuje hodnotu uvnitř spanu
+                            const totalValue = document.getElementById('total-value');
+                            if (totalValue) {
+                                totalValue.textContent = total;
+                            }
+                        }
 
-});
-    </script>
+                        const inputs = document.querySelectorAll('.day-schedule-input');
+                        inputs.forEach(input => {
+                            input.addEventListener('input', calculateTotalHours);
+                            input.addEventListener('change', function () {
+                                let value = parseFloat(this.value);
+                                if (isNaN(value)) value = 0;
+                                if (value < 0) this.value = 0;
+                                if (value > 24) this.value = 24;
+                                calculateTotalHours();
+                            });
+                        });
+
+                        calculateTotalHours();
+
+                    });
+                </script>
                 <div class="instructions">
                     <p><strong>Instrukce:</strong> Tabulka zobrazuje všechny dny v měsíci s automatickým označením
                         víkendů, státních svátků a školních prázdnin. Odpracované hodiny se načítají ze standardního
@@ -970,7 +972,7 @@
                     <button class="btn-save" id="btn-save" disabled>Uložit výkaz</button>
                 </div>
 
-             
+
 
                 <!-- Tisková verze (skrytá při normálním zobrazení) -->
                 <div class="print-only" id="print-output">
@@ -1013,9 +1015,9 @@
 
                 // Odesilani hodin vykazu
                 //samozrejme to musim zkulturnit, ale prozatim tohle funguje
+
                 document.addEventListener('DOMContentLoaded', function () {
-                    const handler = new NumberInputHandler('#schedule-mon', {
-                        inputDay: '#schedule-mon',
+                    const config = {
                         minValue: 0,
                         maxValue: 100,
                         debounceDelay: 300,
@@ -1027,118 +1029,20 @@
                         },
                         onSuccess: function (data, value) {
                             console.log(`Úspěch! Hodnota ${value} zpracována:`, data);
-                            // Zde můžete přidat vlastní logiku pro úspěch
                         },
                         onError: function (error) {
                             console.error('Chyba v callbacku:', error);
-                            // Zde můžete přidat vlastní logiku pro chybu
                         }
-                    });
+                    };
 
-                    // Ukázka ovládání přes konzoli
-                    // window.numberHandler = handler;
-                    // console.log('Handler dostupný jako window.numberHandler');
-                    // console.log('Příkazy:');
-                    // console.log('  - numberHandler.sendCurrentValue() - okamžité odeslání');
-                    // console.log('  - numberHandler.setValue(42) - nastavení hodnoty');
-                    // console.log('  - numberHandler.getCurrentValue() - získání hodnoty');
-                    // console.log('  - numberHandler.destroy() - zničení handleru');
-                });
-                document.addEventListener('DOMContentLoaded', function () {
-                    const handler = new NumberInputHandler('#schedule-tue', {
-                        inputDay: '#schedule-tue',
-                        minValue: 0,
-                        maxValue: 100,
-                        debounceDelay: 300,
-                        endpoint: '/api/process-number',
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        onSuccess: function (data, value) {
-                            console.log(`Úspěch! Hodnota ${value} zpracována:`, data);
-                            // Zde můžete přidat vlastní logiku pro úspěch
-                        },
-                        onError: function (error) {
-                            console.error('Chyba v callbacku:', error);
-                            // Zde můžete přidat vlastní logiku pro chybu
-                        }
-                    });
+                    const days = ['#schedule-mon', '#schedule-tue', '#schedule-wed', '#schedule-thu', '#schedule-fri'];
 
-                  
-                });
-                document.addEventListener('DOMContentLoaded', function () {
-                    const handler = new NumberInputHandler('#schedule-wed', {
-                        inputDay: '#schedule-wed',
-                        minValue: 0,
-                        maxValue: 100,
-                        debounceDelay: 300,
-                        endpoint: '/api/process-number',
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        onSuccess: function (data, value) {
-                            console.log(`Úspěch! Hodnota ${value} zpracována:`, data);
-                            // Zde můžete přidat vlastní logiku pro úspěch
-                        },
-                        onError: function (error) {
-                            console.error('Chyba v callbacku:', error);
-                            // Zde můžete přidat vlastní logiku pro chybu
-                        }
+                    days.forEach(selector => {
+                        new NumberInputHandler(selector, {
+                            ...config,
+                            inputDay: selector
+                        });
                     });
-
-                 
-                });
-                document.addEventListener('DOMContentLoaded', function () {
-                    const handler = new NumberInputHandler('#schedule-thu', {
-                        inputDay: '#schedule-thu',
-                        minValue: 0,
-                        maxValue: 100,
-                        debounceDelay: 300,
-                        endpoint: '/api/process-number',
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        onSuccess: function (data, value) {
-                            console.log(`Úspěch! Hodnota ${value} zpracována:`, data);
-                            // Zde můžete přidat vlastní logiku pro úspěch
-                        },
-                        onError: function (error) {
-                            console.error('Chyba v callbacku:', error);
-                            // Zde můžete přidat vlastní logiku pro chybu
-                        }
-                    });
-
-                 
-                });
-                document.addEventListener('DOMContentLoaded', function () {
-                    const handler = new NumberInputHandler('#schedule-fri', {
-                        inputDay: '#schedule-fri',
-                        minValue: 0,
-                        maxValue: 100,
-                        debounceDelay: 300,
-                        endpoint: '/api/process-number',
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        onSuccess: function (data, value) {
-                            console.log(`Úspěch! Hodnota ${value} zpracována:`, data);
-                            // Zde můžete přidat vlastní logiku pro úspěch
-                        },
-                        onError: function (error) {
-                            console.error('Chyba v callbacku:', error);
-                            // Zde můžete přidat vlastní logiku pro chybu
-                        }
-                    });
-
-                    
                 });
 
             </script>
@@ -1278,6 +1182,8 @@
                         currentMonth = month;
                         generateCalendar(month, currentYear);
                     });
+                    // Umělé vyvolání události change, ktere zajistí, že se kalendář vygeneruje při načtení stránky
+                    document.getElementById('month').dispatchEvent(new Event('change'));
 
                     // Event listener pro checkbox - unchecked defaultně
                     document.getElementById('confirm-correctness').addEventListener('change', function () {
@@ -1388,10 +1294,10 @@
                         });
                     });
 
-                 
+
                 });
 
-            
+
 
                 // Vygeneruje kalendář
                 function generateCalendar(month, year) {
@@ -1434,7 +1340,7 @@
                         if (isVacation) cssClass = "vacation", dayType = vacationInfo;
 
                         const dayNames = ["Neděle", "Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota"];
-                        const workHours = (!isWeekend && !isHoliday && !isVacation) ? (currentSchedule[dayOfWeek] || 0) : 0;
+                        const workHours = (!isWeekend && !isHoliday && !isVacation) ? (currentSchedule[dayOfWeek] || 0) : 0;//tohle kdyz dam pryc tak se mi hodiny neprepisou do rozvrhu
 
                         const savedSubstitute = savedData.substituteHours && savedData.substituteHours[day] ? savedData.substituteHours[day] : "";
                         const savedMissed = savedData.missedHours && savedData.missedHours[day] ? savedData.missedHours[day] : "";

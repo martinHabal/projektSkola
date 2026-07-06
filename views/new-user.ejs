@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="cs">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nový uživatel</title>
+
     <style>
         body { font-family: Arial, sans-serif; max-width: 500px; margin: 50px auto; padding: 20px; }
         .form-group { margin-bottom: 15px; }
@@ -14,8 +11,11 @@
         .error { color: red; margin-top: 10px; }
         .success { color: green; margin-top: 10px; }
     </style>
-</head>
+
+<%- include('./partials/head') %>
 <body>
+   
+      <%- include('./partials/header') %>
     <h2>Přidat nového uživatele</h2>
     
     <% if (error) { %>
