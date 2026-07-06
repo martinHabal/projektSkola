@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="cs">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -52,7 +53,7 @@
             background: white;
             padding: 0.5rem 1.2rem;
             border-radius: 40px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
             font-weight: 500;
             border: 1px solid #e2e8f0;
         }
@@ -221,199 +222,278 @@
         }
 
         @media (max-width: 500px) {
-            body { padding: 1rem; }
-            .charts-grid { grid-template-columns: 1fr; }
-            .kpi-grid { grid-template-columns: 1fr 1fr; }
+            body {
+                padding: 1rem;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .kpi-grid {
+                grid-template-columns: 1fr 1fr;
+            }
         }
     </style>
 </head>
 <%- include('./partials/head') %>
-<body>
-   
-      <%- include('./partials/header') %>
-<div class="dashboard-container">
 
-    <!-- Hlavička -->
-    <div class="header">
-        <h1><i class="fas fa-chalkboard-teacher"></i> Statistiky pedagoga <%- user.username %> </h1>
-        <div class="badge-date"><i class="far fa-calendar-alt"></i> Vykazovací období: 2025/2026</div>
-    </div>
+    <body>
 
-    <!-- KPI karty -->
-    <div class="kpi-grid">
-        <div class="kpi-card">
-            <div class="kpi-label"><i class="fas fa-clock kpi-icon"></i> Celkem hodin</div>
-            <div class="kpi-value">1 284</div>
-            <div class="kpi-sub">⬆ +3,2 % oproti minulému roku</div>
-        </div>
-        <div class="kpi-card">
-            <div class="kpi-label"><i class="fas fa-users kpi-icon"></i> Přímá výuka</div>
-            <div class="kpi-value">782</div>
-            <div class="kpi-sub">60,9 % z celkového úvazku</div>
-        </div>
-        <div class="kpi-card">
-            <div class="kpi-label"><i class="fas fa-tasks kpi-icon"></i> Nepřímá činnost</div>
-            <div class="kpi-value">376</div>
-            <div class="kpi-sub">přípravy, korektury, projekty</div>
-        </div>
-        <div class="kpi-card">
-            <div class="kpi-label"><i class="fas fa-user-graduate kpi-icon"></i> Studenti / třídy</div>
-            <div class="kpi-value">4</div>
-            <div class="kpi-sub">průměr 22 žáků / třída</div>
-        </div>
-        <div class="kpi-card">
-            <div class="kpi-label"><i class="fas fa-calendar-check kpi-icon"></i> Dny přítomnosti</div>
-            <div class="kpi-value">189</div>
-            <div class="kpi-sub">z 200 plánovaných</div>
-        </div>
-    </div>
+        <%- include('./partials/header') %>
+            <div class="dashboard-container">
 
-    <!-- Grafy -->
-    <div class="charts-grid">
-        <!-- Koláčový graf: struktura činností -->
-        <div class="chart-card">
-            <h3><i class="fas fa-chart-pie"></i> Struktura činností</h3>
-            <div class="chart-wrapper">
-                <canvas id="activityPieChart"></canvas>
+                <!-- Hlavička -->
+                <div class="header">
+                    <h1><i class="fas fa-chalkboard-teacher"></i> Statistiky pedagoga <%- user.username %> </h1>
+
+                    <div class="badge-date"><i class="far fa-calendar-alt"></i> Vykazovací období: 2025/2026</div>
+                </div>
+
+                <!-- KPI karty -->
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-label"><i class="fas fa-clock kpi-icon"></i> Celkem hodin</div>
+                        <div class="kpi-value"><%- totalStats.total_hours %></div>
+                        <div class="kpi-sub">⬆ +3,2 % oproti minulému roku</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label"><i class="fas fa-users kpi-icon"></i> Průměrně hodin</div>
+                        <div class="kpi-value"><%- totalStats.avg_hours %></div>
+                        <div class="kpi-sub">60,9 % z celkového úvazku</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label"><i class="fas fa-tasks kpi-icon"></i> Suplované hodiny</div>
+                        <div class="kpi-value"><%- totalStats.total_subbed %></div>
+                        <div class="kpi-sub">přípravy, korektury, projekty</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label"><i class="fas fa-user-graduate kpi-icon"></i> Odpadnuté hodiny</div>
+                        <div class="kpi-value"><%- totalStats.total_missed %></div>
+                        <div class="kpi-sub">průměr 22 žáků / třída</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label"><i class="fas fa-calendar-check kpi-icon"></i> Dny přítomnosti</div>
+                        <div class="kpi-value">189</div>
+                        <div class="kpi-sub">z 200 plánovaných</div>
+                    </div>
+                </div>
+
+                <!-- Grafy -->
+                <div class="charts-grid">
+                    <!-- Koláčový graf: struktura činností -->
+                    <div class="chart-card">
+                        <h3><i class="fas fa-chart-pie"></i> Struktura hodin</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="activityPieChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Sloupcový graf: měsíční přehled -->
+                    <div class="chart-card">
+                        <h3><i class="fas fa-chart-bar"></i> Měsíční hodiny (přímé + nepřímé)</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="monthlyBarChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Podrobná tabulka výkazů -->
+                <div class="table-section">
+                    <h3><i class="fas fa-table"></i> Detailní přehled aktivit</h3>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Činnost</th>
+                                    <th>Kategorie</th>
+                                    <th>Hodin</th>
+                                    <th>Žáků / skupin</th>
+                                    <th>Období</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Matematika – 8.A</td>
+                                    <td>Přímá výuka</td>
+                                    <td>96</td>
+                                    <td>24</td>
+                                    <td>Září–červen</td>
+                                    <td><span class="status-badge">Dokončeno</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Matematika – 8.B</td>
+                                    <td>Přímá výuka</td>
+                                    <td>92</td>
+                                    <td>22</td>
+                                    <td>Září–červen</td>
+                                    <td><span class="status-badge">Dokončeno</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Fyzika – 9.A</td>
+                                    <td>Přímá výuka</td>
+                                    <td>78</td>
+                                    <td>20</td>
+                                    <td>Září–červen</td>
+                                    <td><span class="status-badge">Dokončeno</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Příprava DUM</td>
+                                    <td>Nepřímá</td>
+                                    <td>48</td>
+                                    <td>—</td>
+                                    <td>Celoročně</td>
+                                    <td><span class="status-badge">Probíhá</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Korektura písemek</td>
+                                    <td>Nepřímá</td>
+                                    <td>36</td>
+                                    <td>—</td>
+                                    <td>Průběžně</td>
+                                    <td><span class="status-badge">Dokončeno</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Školní projekt „Věda hrou“</td>
+                                    <td>Nepřímá</td>
+                                    <td>28</td>
+                                    <td>15</td>
+                                    <td>Březen–květen</td>
+                                    <td><span class="status-badge">Dokončeno</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Konzultace s rodiči</td>
+                                    <td>Nepřímá</td>
+                                    <td>18</td>
+                                    <td>—</td>
+                                    <td>Listopad, duben</td>
+                                    <td><span class="status-badge">Dokončeno</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Doučování – 9.B</td>
+                                    <td>Přímá výuka</td>
+                                    <td>32</td>
+                                    <td>6</td>
+                                    <td>Únor–květen</td>
+                                    <td><span class="status-badge">Dokončeno</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Školení „Inovace“</td>
+                                    <td>Nepřímá</td>
+                                    <td>8</td>
+                                    <td>—</td>
+                                    <td>Červen</td>
+                                    <td><span class="status-badge">Plánováno</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div style="margin-top: 1rem; font-size: 0.85rem; color: #475569;">
+                        <i class="fas fa-info-circle" style="color: #3b82f6;"></i> Celkem zaznamenáno 436 hodin (přímých
+                        + nepřímých) v detailu.
+                    </div>
+                </div>
+
+                <div class="footer-note">
+                    <i class="fas fa-sync-alt"></i> Data aktualizována k 1. 7. 2026 • všechny údaje jsou ilustrativní
+                </div>
             </div>
-        </div>
 
-        <!-- Sloupcový graf: měsíční přehled -->
-        <div class="chart-card">
-            <h3><i class="fas fa-chart-bar"></i> Měsíční hodiny (přímé + nepřímé)</h3>
-            <div class="chart-wrapper">
-                <canvas id="monthlyBarChart"></canvas>
-            </div>
-        </div>
-    </div>
+            <script>
+                (function () {
+                    // ---------- KOLÁČOVÝ GRAF: struktura činností ----------
+                    fetch('/api/chart-data')
+                        .then(response => response.json())
+                        .then(chartData => {
+                            const ctxPie = document.getElementById('activityPieChart').getContext('2d');
+                            new Chart(ctxPie, {
+                                type: 'pie',
+                                data: {
+                                    labels: ['Celkem hodin', 'Suplované', 'Odpadnuté'],
+                                    datasets: [{
+                                        data: chartData.data,
+                                        backgroundColor: chartData.colors,
+                                        borderWidth: 0,
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: {
+                                        legend: {
+                                            position: 'bottom',
+                                            labels: {
+                                                boxWidth: 12,
+                                                padding: 14,
+                                                font: { size: 11, weight: '500' },
+                                                color: '#1e293b'
+                                            }
+                                        }
+                                    },
+                                    cutout: '55%',
+                                    layout: {
+                                        padding: { top: 0, bottom: 0 }
+                                    }
+                                }
+                            });
+                        });
 
-    <!-- Podrobná tabulka výkazů -->
-    <div class="table-section">
-        <h3><i class="fas fa-table"></i> Detailní přehled aktivit</h3>
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Činnost</th>
-                        <th>Kategorie</th>
-                        <th>Hodin</th>
-                        <th>Žáků / skupin</th>
-                        <th>Období</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td>Matematika – 8.A</td><td>Přímá výuka</td><td>96</td><td>24</td><td>Září–červen</td><td><span class="status-badge">Dokončeno</span></td></tr>
-                    <tr><td>Matematika – 8.B</td><td>Přímá výuka</td><td>92</td><td>22</td><td>Září–červen</td><td><span class="status-badge">Dokončeno</span></td></tr>
-                    <tr><td>Fyzika – 9.A</td><td>Přímá výuka</td><td>78</td><td>20</td><td>Září–červen</td><td><span class="status-badge">Dokončeno</span></td></tr>
-                    <tr><td>Příprava DUM</td><td>Nepřímá</td><td>48</td><td>—</td><td>Celoročně</td><td><span class="status-badge">Probíhá</span></td></tr>
-                    <tr><td>Korektura písemek</td><td>Nepřímá</td><td>36</td><td>—</td><td>Průběžně</td><td><span class="status-badge">Dokončeno</span></td></tr>
-                    <tr><td>Školní projekt „Věda hrou“</td><td>Nepřímá</td><td>28</td><td>15</td><td>Březen–květen</td><td><span class="status-badge">Dokončeno</span></td></tr>
-                    <tr><td>Konzultace s rodiči</td><td>Nepřímá</td><td>18</td><td>—</td><td>Listopad, duben</td><td><span class="status-badge">Dokončeno</span></td></tr>
-                    <tr><td>Doučování – 9.B</td><td>Přímá výuka</td><td>32</td><td>6</td><td>Únor–květen</td><td><span class="status-badge">Dokončeno</span></td></tr>
-                    <tr><td>Školení „Inovace“</td><td>Nepřímá</td><td>8</td><td>—</td><td>Červen</td><td><span class="status-badge">Plánováno</span></td></tr>
-                </tbody>
-            </table>
-        </div>
-        <div style="margin-top: 1rem; font-size: 0.85rem; color: #475569;">
-            <i class="fas fa-info-circle" style="color: #3b82f6;"></i> Celkem zaznamenáno 436 hodin (přímých + nepřímých) v detailu.
-        </div>
-    </div>
-
-    <div class="footer-note">
-        <i class="fas fa-sync-alt"></i> Data aktualizována k 1. 7. 2026 • všechny údaje jsou ilustrativní
-    </div>
-</div>
-
-<script>
-    (function() {
-        // ---------- KOLÁČOVÝ GRAF: struktura činností ----------
-        const ctxPie = document.getElementById('activityPieChart').getContext('2d');
-        new Chart(ctxPie, {
-            type: 'pie',
-            data: {
-                labels: ['Přímá výuka', 'Nepřímá činnost', 'Administrativa', 'Projekty'],
-                datasets: [{
-                    data: [782, 276, 98, 128],
-                    backgroundColor: ['#3b82f6', '#8b5cf6', '#f59e0b', '#10b981'],
-                    borderWidth: 0,
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            boxWidth: 12,
-                            padding: 14,
-                            font: { size: 11, weight: '500' },
-                            color: '#1e293b'
+                    // ---------- SLOUPCOVÝ GRAF: měsíční hodiny (přímé + nepřímé) ----------
+                    const ctxBar = document.getElementById('monthlyBarChart').getContext('2d');
+                    new Chart(ctxBar, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Září', 'Říj', 'Lis', 'Pro', 'Led', 'Úno', 'Bře', 'Dub', 'Kvě', 'Čer'],
+                            datasets: [
+                                {
+                                    label: 'Přímá výuka',
+                                    data: [68, 72, 70, 64, 60, 66, 74, 70, 68, 62],
+                                    backgroundColor: '#3b82f6',
+                                    borderRadius: 4,
+                                },
+                                {
+                                    label: 'Nepřímá',
+                                    data: [22, 28, 30, 26, 34, 30, 38, 40, 36, 32],
+                                    backgroundColor: '#8b5cf6',
+                                    borderRadius: 4,
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                    labels: {
+                                        boxWidth: 12,
+                                        padding: 14,
+                                        font: { size: 11, weight: '500' },
+                                        color: '#1e293b'
+                                    }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    grid: { color: '#e9edf2' },
+                                    ticks: { font: { size: 10 } }
+                                },
+                                x: {
+                                    grid: { display: false },
+                                    ticks: { font: { size: 10 } }
+                                }
+                            },
+                            layout: {
+                                padding: { top: 10, bottom: 10 }
+                            }
                         }
-                    }
-                },
-                cutout: '55%',
-                layout: {
-                    padding: { top: 0, bottom: 0 }
-                }
-            }
-        });
+                    });
+                })();
+            </script>
 
-        // ---------- SLOUPCOVÝ GRAF: měsíční hodiny (přímé + nepřímé) ----------
-        const ctxBar = document.getElementById('monthlyBarChart').getContext('2d');
-        new Chart(ctxBar, {
-            type: 'bar',
-            data: {
-                labels: ['Září', 'Říj', 'Lis', 'Pro', 'Led', 'Úno', 'Bře', 'Dub', 'Kvě', 'Čer'],
-                datasets: [
-                    {
-                        label: 'Přímá výuka',
-                        data: [68, 72, 70, 64, 60, 66, 74, 70, 68, 62],
-                        backgroundColor: '#3b82f6',
-                        borderRadius: 4,
-                    },
-                    {
-                        label: 'Nepřímá',
-                        data: [22, 28, 30, 26, 34, 30, 38, 40, 36, 32],
-                        backgroundColor: '#8b5cf6',
-                        borderRadius: 4,
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            boxWidth: 12,
-                            padding: 14,
-                            font: { size: 11, weight: '500' },
-                            color: '#1e293b'
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: { color: '#e9edf2' },
-                        ticks: { font: { size: 10 } }
-                    },
-                    x: {
-                        grid: { display: false },
-                        ticks: { font: { size: 10 } }
-                    }
-                },
-                layout: {
-                    padding: { top: 10, bottom: 10 }
-                }
-            }
-        });
-    })();
-</script>
+            <!-- dodatečná úprava pro lepší zobrazení na mobilu -->
+    </body>
 
-<!-- dodatečná úprava pro lepší zobrazení na mobilu -->
-</body>
 </html>

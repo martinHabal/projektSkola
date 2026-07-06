@@ -27,11 +27,7 @@ const maturitaRoutes = {
     description: 'Informace o statistickém zpracování dat',
     // username: req.session.user.username 
   }),
-  '/dashboard-vykaz': (req, res) => res.render('dashboard-vykaz', {
-    title: 'Výkaz - tabulka',
-    description: 'Informace o mikroekonomii - státnice',
-    // username: req.session.user.username 
-  }),
+  
   '/vykaz-tabulka': (req, res) => res.render('vykaz-tabulka', {
     title: 'Výkaz - tabulka',
     description: 'Informace o mikroekonomii - státnice',

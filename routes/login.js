@@ -45,7 +45,7 @@ router.post("/login", async (req, res) => {
     };
 
     res.redirect("/dashboard");
-    console.log(req.session.user);
+    // console.log(req.session.user);
   } catch (error) {
     console.error(error);
     res.render("login", { error: "Chyba serveru" });
