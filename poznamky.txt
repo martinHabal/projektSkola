@@ -14,3 +14,11 @@ pak dashboard s loginama, navstevama apod.. FE resit az nakonec
 //AI dam ze zacatku do toho skolniho radu, dotazy ve smyslu jestli se zak provinil kdyz fotil ve tride
 
 //tisk budu mit pro jednotlive usera a pak i vedouci pracovnik muze kdykoliv vytisknout
+
+//CENOTVORBA
+//vykaz jeste nikde neni, tak proc bych nemel sbirat smetanu
+//slevit se da vzdycky az bude konkurence
+
+
+//API
+/// v edookitu nakej vykaz prace je, mrknu na to

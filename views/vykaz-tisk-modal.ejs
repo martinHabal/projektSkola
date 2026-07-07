@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Výkaz práce - <%= username %> - <%= username %></title>
+    <style>
+        /* Reset a základní nastavení pro tisk */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 11pt;
+            background: white;
+            padding: 20px;
+            margin: 0 auto;
+            max-width: 210mm;
+            color: #1a1a1a;
+            line-height: 1.4;
+        }
+
+        /* Hlavička */
+        .header {
+            border-bottom: 3px solid #1a1a1a;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .header-left {
+            flex: 1;
+        }
+
+        .header-left .company-name {
+            font-size: 14pt;
+            font-weight: bold;
+            color: #1a1a1a;
+            margin-bottom: 3px;
+        }
+
+        .header-left h1 {
+            font-size: 20pt;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: #1a1a1a;
+            margin-top: 5px;
+        }
+
+        .header-left .subtitle {
+            font-size: 12pt;
+            color: #555;
+            margin-top: 2px;
+        }
+
+        .header-right {
+            text-align: right;
+            min-width: 220px;
+            padding: 8px 12px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border-left: 3px solid #007bff;
+        }
+
+        .header-right .info-line {
+            margin-bottom: 3px;
+            font-size: 10pt;
+        }
+
+        .header-right .info-line:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-line strong {
+            font-weight: bold;
+            color: #1a1a1a;
+        }
+
+        /* Informace o zaměstnanci */
+        .employee-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            padding: 12px 15px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .employee-info .info-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .employee-info .info-item strong {
+            font-weight: bold;
+            margin-right: 5px;
+            min-width: 100px;
+        }
+
+        .employee-info .info-item span {
+            color: #1a1a1a;
+        }
+
+        /* Tabulka */
+        .table-container {
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 9.5pt;
+        }
+
+        table th {
+            background-color: #e9ecef;
+            font-weight: bold;
+            text-align: center;
+            border: 1px solid #1a1a1a;
+            padding: 8px 5px;
+            color: #1a1a1a;
+            font-size: 9pt;
+        }
+
+        table td {
+            border: 1px solid #1a1a1a;
+            padding: 6px 5px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .col-date { width: 8%; }
+        .col-day { width: 8%; }
+        .col-type { width: 10%; }
+        .col-hours { width: 8%; }
+        .col-substitute { width: 8%; }
+        .col-untaught { width: 8%; }
+        .col-reason { width: 35%; }
+        .col-notes { width: 15%; }
+
+        /* Styly pro buňky */
+        .weekend {
+            background-color: #fff5f5;
+            font-weight: bold;
+        }
+
+        .weekend td {
+            background-color: #fff5f5;
+        }
+
+        .holiday {
+            background-color: #f0f8ff;
+        }
+
+        .holiday td {
+            background-color: #f0f8ff;
+        }
+
+        .reason-cell {
+            text-align: left;
+            padding-left: 8px;
+            font-size: 8.5pt;
+        }
+
+        .notes-cell {
+            text-align: center;
+            font-size: 8pt;
+            color: #666;
+        }
+
+        .weekend-work {
+            color: #c0392b;
+            font-weight: bold;
+            font-size: 8pt;
+        }
+
+        /* Souhrnný řádek */
+        .summary-row td {
+            font-weight: bold;
+            background-color: #e9ecef;
+            border-top: 2px solid #1a1a1a;
+            padding: 8px 5px;
+        }
+
+        .summary-label {
+            text-align: right;
+            padding-right: 10px;
+            font-weight: bold;
+        }
+
+        /* Statistika */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+        }
+
+        .stats .stat-item {
+            text-align: center;
+        }
+
+        .stats .stat-item .stat-value {
+            font-size: 16pt;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .stats .stat-item .stat-label {
+            font-size: 8.5pt;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        /* Patička */
+        .footer {
+            margin-top: 30px;
+            border-top: 3px solid #1a1a1a;
+            padding-top: 20px;
+        }
+
+        .signature-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .signature-box {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .signature-box .label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 10pt;
+        }
+
+        .signature-line {
+            border-bottom: 1px solid #1a1a1a;
+            width: 100%;
+            height: 35px;
+            margin-top: 5px;
+        }
+
+        .signature-date {
+            margin-top: 5px;
+            font-size: 9pt;
+            color: #666;
+        }
+
+        /* Poznámky */
+        .notes {
+            margin-top: 15px;
+            padding: 12px 15px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            font-size: 8.5pt;
+        }
+
+        .notes strong {
+            font-weight: bold;
+        }
+
+        .notes ul {
+            margin: 5px 0 0 20px;
+            list-style: none;
+        }
+
+        .notes ul li {
+            margin-bottom: 2px;
+            padding-left: 15px;
+            position: relative;
+        }
+
+        .notes ul li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #007bff;
+        }
+
+        /* Tiskové styly */
+        @media print {
+            body {
+                padding: 10px;
+                font-size: 10pt;
+            }
+
+            table {
+                font-size: 8.5pt;
+            }
+
+            .header-left h1 {
+                font-size: 18pt;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            .stats .stat-item .stat-value {
+                font-size: 14pt;
+            }
+
+            .employee-info {
+                background: #f8f9fa !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .weekend td {
+                background-color: #fff5f5 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .holiday td {
+                background-color: #f0f8ff !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .summary-row td {
+                background-color: #e9ecef !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            table th {
+                background-color: #e9ecef !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .header-right {
+                background: #f8f9fa !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .stats {
+                background: #f8f9fa !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .notes {
+                background: #f8f9fa !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+
+        /* Responzivní úpravy */
+        @media screen and (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .header-content {
+                flex-direction: column;
+            }
+
+            .header-right {
+                text-align: left;
+                width: 100%;
+            }
+
+            .employee-info {
+                grid-template-columns: 1fr;
+            }
+
+            .signature-section {
+                flex-direction: column;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            table {
+                font-size: 7.5pt;
+            }
+
+            table th, table td {
+                padding: 3px 2px;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .col-reason {
+                min-width: 80px;
+            }
+
+            .header-left h1 {
+                font-size: 14pt;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hlavička -->
+    <div class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <div class="company-name">NÁZEV SPOLEČNOSTI</div>
+                <h1>VÝKAZ PRÁCE</h1>
+                <div class="subtitle">Měsíční výkaz odpracované doby</div>
+            </div>
+            <div class="header-right">
+                <div class="info-line">
+                    <strong>Vytvořeno:</strong> <%= username %>
+                </div>
+                <div class="info-line">
+                    <strong>Číslo výkazu:</strong> <%= `V${year}${String(month).padStart(2, '0')}${String(username || '').padStart(4, '0')}` %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Informace o zaměstnanci -->
+    <div class="employee-info">
+        <div class="info-item">
+            <strong>Zaměstnanec:</strong>
+            <span><%= username %></span>
+        </div>
+        <div class="info-item">
+            <strong>Osobní číslo:</strong>
+            <span><%= username || '-' %></span>
+        </div>
+        <div class="info-item">
+            <strong>Oddělení:</strong>
+            <span><%= username || '-' %></span>
+        </div>
+        <div class="info-item">
+            <strong>Pozice:</strong>
+            <span><%= username || '-' %></span>
+        </div>
+        <div class="info-item">
+            <strong>Období:</strong>
+            <span><%= username %></span>
+        </div>
+        <div class="info-item">
+            <strong>Počet dní:</strong>
+            <span><%= username %></span>
+        </div>
+    </div>
+
+    <!-- Tabulka výkazu -->
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th class="col-date">Datum</th>
+                    <th class="col-day">Den</th>
+                    <th class="col-type">Typ dne</th>
+                    <th class="col-hours">Odprac.<br>hod.</th>
+                    <th class="col-substitute">Supl.<br>hod.</th>
+                    <th class="col-untaught">Neoduč.<br>hod.</th>
+                    <th class="col-reason">Důvod neodučení / poznámka</th>
+                    <th class="col-notes">Pozn.</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (data && data.length > 0) { %>
+                    <% data.forEach(function(row, index) { %>
+                        <tr class="<%= row.is_weekend ? 'weekend' : '' %> <%= row.is_holiday ? 'holiday' : '' %>">
+                            <td><%= row.date_formatted %></td>
+                            <td><%= row.day_name %></td>
+                            <td><%= row.day_type %></td>
+                            <td><%= row.hours_worked %></td>
+                            <td><%= row.hours_subbed %></td>
+                            <td><%= row.hours_missed %></td>
+                            <td class="reason-cell">
+                                <%= row.reason || '-' %>
+                                <% if (row.weekend_work) { %>
+                                    <span class="weekend-work"> (Víkendová práce)</span>
+                                <% } %>
+                            </td>
+                            <td class="notes-cell">
+                                <% if (row.hours_subbed > 0) { %>
+                                    S
+                                <% } %>
+                                <% if (row.hours_missed > 0) { %>
+                                    N
+                                <% } %>
+                                <% if (row.weekend_work) { %>
+                                    V
+                                <% } %>
+                            </td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 30px; color: #999;">
+                            ⚠️ Pro vybrané období nejsou k dispozici žádná data.
+                        </td>
+                    </tr>
+                <% } %>
+
+                <!-- Souhrnný řádek -->
+                <tr class="summary-row">
+                    <td colspan="3" class="summary-label">CELKEM:</td>
+                    <td><%= username %></td>
+                    <td><%= username %></td>
+                    <td><%= username %></td>
+                    <td colspan="2"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Statistika -->
+    <div class="stats">
+        <div class="stat-item">
+            <div class="stat-value"><%= username %></div>
+            <div class="stat-label">Odpracované hodiny</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value"><%= username %></div>
+            <div class="stat-label">Suplované hodiny</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value"><%= username %></div>
+            <div class="stat-label">Neodučené hodiny</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value"><%= username %></div>
+            <div class="stat-label">Celkem hodin</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value"><%= username %></div>
+            <div class="stat-label">Pracovní dny</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value"><%= username %></div>
+            <div class="stat-label">Víkendové dny</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value"><%= username %></div>
+            <div class="stat-label">Svátky</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value"><%= username %></div>
+            <div class="stat-label">Průměr hodin/den</div>
+        </div>
+    </div>
+
+    <!-- Patička s podpisy -->
+    <div class="footer">
+        <div class="signature-section">
+            <div class="signature-box">
+                <div class="label">Vypracoval(a):</div>
+                <div class="signature-line"></div>
+                <div class="signature-date">Datum: ____________________</div>
+            </div>
+            <div class="signature-box">
+                <div class="label">Schválil(a):</div>
+                <div class="signature-line"></div>
+                <div class="signature-date">Datum: ____________________</div>
+            </div>
+            <div class="signature-box">
+                <div class="label">Razítko:</div>
+                <div class="signature-line"></div>
+            </div>
+        </div>
+
+        <!-- Poznámky -->
+        <div class="notes">
+            <strong>Poznámky k výkazu:</strong>
+            <ul>
+                <li><strong>Typ dne:</strong> Pracovní, Víkend, Svátek, Dovolená, Nemoc, Školení</li>
+                <li><strong>Víkendová práce</strong> je označena červeně a textem v poznámce</li>
+                <li><strong>Suplované hodiny (S)</strong> - hodiny odučené za nepřítomného kolegu</li>
+                <li><strong>Neodučené hodiny (N)</strong> - hodiny, které nebyly odučeny (důvod v poznámce)</li>
+                <li><strong>Víkend (V)</strong> - práce vykonaná o víkendu</li>
+            </ul>
+        </div>
+
+        <!-- Patička stránky -->
+        <div style="margin-top: 20px; text-align: center; font-size: 8pt; color: #999; border-top: 1px solid #ddd; padding-top: 10px;">
+            <span>Vygenerováno: <%= username %> | Strana 1/1</span>
+        </div>
+    </div>
+
+    <!-- Skript pro automatický tisk (volitelné) -->
+    <script>
+        // Automatický tisk po načtení (odkomentujte pro automatický tisk)
+        // window.onload = function() {
+        //     setTimeout(function() {
+        //         window.print();
+        //     }, 500);
+        // };
+    </script>
+</body>
+</html>
