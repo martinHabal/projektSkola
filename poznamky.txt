@@ -22,3 +22,8 @@ pak dashboard s loginama, navstevama apod.. FE resit az nakonec
 
 //API
 /// v edookitu nakej vykaz prace je, mrknu na to
+
+//takze neni zadny pravni predpis ze by musel byt vykaz podepsanej, takze proste jen vygenerovat pdf a poslat mailem
+//do napovedy a manualu taky zapojim AI
+
+//V2, do DB se bude brat z edookitu kazdy den odpracovana hodina, jeste mrknout na priznaky

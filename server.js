@@ -9,6 +9,8 @@ import routerVykaz from './routes/vykaz.js';
 import routerOther from './routes/others.js';
 import routerDashboardVykaz from './routes/dashboardVykaz.js';
 import routerNewUser from './routes/newUser.js';
+import openAI from './routes/openAI.js';
+
 // import { runMigrations } from './db/migrations/migrate.js';
 // import { seedAdmin } from './db/seeders/admin.js';
 // ---------- ROUTY ----------
@@ -47,6 +49,7 @@ app.use('/', routerVykaz);
 app.use('/', routerOther);
 app.use('/', routerDashboardVykaz);
 app.use('/', routerNewUser);
+app.use('/', openAI);
 
 
 

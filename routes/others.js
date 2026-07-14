@@ -33,11 +33,11 @@ const maturitaRoutes = {
     description: 'Informace o mikroekonomii - státnice',
     // username: req.session.user.username 
   }),
-//   '/vykaz-tisk-modal': (req, res) => res.render('vykaz-tisk-modal', {
-//     title: 'Výkaz - systém',
-//     description: 'Informace o systému výkazů',
-//     // username: req.session.user.username 
-//   }),
+  '/manual': (req, res) => res.render('manual', {
+    title: 'Výkaz - systém',
+    description: 'Informace o systému výkazů',
+    // username: req.session.user.username 
+  }),
 
   
   '/vykaz': (req, res) => {

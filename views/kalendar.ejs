@@ -1,9 +1,4 @@
-<!DOCTYPE html>
-<html lang="cs">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📅 Školní kalendář</title>
+
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -288,8 +283,11 @@
             .events-list .event-item .event-date { min-width: 80px; font-size: 0.8rem; }
         }
     </style>
-</head>
-<body>
+
+<%- include('./partials/head') %>
+
+    <body>
+        <%- include('./partials/header') %>
     <div class="container">
         <header class="header">
             <h1>📅 Školní kalendář</h1>

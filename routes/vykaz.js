@@ -641,6 +641,11 @@ const data = [
         const reportData = {
             data: data,
             username: records[0].username || 'Neznámý',
+            first_name: records[0].first_name || 'Neznámý',
+            last_name: records[0].last_name || 'Neznámý',
+            total_hodiny: records[0].total_hodiny || 0,
+            total_subbed: records[0].total_subbed || 0,
+            total_missed: records[0].total_missed || 0,
             // employee: employee ? employee.name : 'Neznámý',
             // department: employee ? employee.department : '',
             // position: employee ? employee.position : '',

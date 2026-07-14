@@ -1,0 +1,963 @@
+<style>
+    /* * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        } */
+    /* body {
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            background: #f4f7fc;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        } */
+    .app {
+        max-width: 1200px;
+        width: 100%;
+        background: white;
+        border-radius: 28px;
+        box-shadow: 0 20px 40px rgba(0, 20, 40, 0.12);
+        padding: 28px 30px 40px;
+        transition: all 0.2s;
+    }
+
+    h1 {
+        font-size: 2rem;
+        font-weight: 600;
+        color: #0a2540;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 8px;
+    }
+
+    .sub {
+        color: #4a5b6e;
+        margin-bottom: 28px;
+        border-left: 4px solid #2a7de1;
+        padding-left: 16px;
+        font-size: 1rem;
+        background: #f0f5fe;
+        border-radius: 0 12px 12px 0;
+        line-height: 1.5;
+    }
+
+    .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px 20px;
+        align-items: center;
+        margin-bottom: 30px;
+        background: #f8faff;
+        padding: 14px 20px;
+        border-radius: 60px;
+        border: 1px solid #e6edf5;
+    }
+
+    .search-box {
+        flex: 2;
+        min-width: 220px;
+        display: flex;
+        align-items: center;
+        background: white;
+        border-radius: 40px;
+        padding: 4px 4px 4px 18px;
+        border: 1px solid #d0dbe8;
+        transition: 0.2s;
+    }
+
+    .search-box:focus-within {
+        border-color: #2a7de1;
+        box-shadow: 0 0 0 3px rgba(42, 125, 225, 0.2);
+    }
+
+    .search-box i {
+        color: #6c7e94;
+        font-size: 1rem;
+    }
+
+    .search-box input {
+        border: none;
+        padding: 12px 10px;
+        font-size: 1rem;
+        width: 100%;
+        background: transparent;
+        outline: none;
+    }
+
+    .search-box button {
+        background: #2a7de1;
+        border: none;
+        color: white;
+        padding: 8px 20px;
+        border-radius: 40px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: 0.15s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .search-box button:hover {
+        background: #1b62b5;
+    }
+
+    .ai-controls {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px;
+        margin-left: auto;
+    }
+
+    .voice-btn {
+        background: #eef3fa;
+        border: none;
+        border-radius: 40px;
+        padding: 10px 18px;
+        font-weight: 500;
+        color: #1f3a57;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        transition: 0.15s;
+        border: 1px solid transparent;
+    }
+
+    .voice-btn i {
+        font-size: 1.2rem;
+        color: #2a7de1;
+    }
+
+    .voice-btn:hover {
+        background: #e2eaf5;
+        border-color: #b6cbe0;
+    }
+
+    .voice-btn.recording {
+        background: #fce8e8;
+        border-color: #d94a4a;
+        color: #b33;
+    }
+
+    .voice-btn.recording i {
+        color: #c42;
+    }
+
+    .agent-status {
+        font-size: 0.9rem;
+        background: #eaf1fb;
+        padding: 6px 18px;
+        border-radius: 30px;
+        color: #1f4973;
+        white-space: nowrap;
+    }
+
+    .agent-status .dot {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-right: 4px;
+    }
+
+    .agent-status .dot.online {
+        background: #22c55e;
+    }
+
+    .agent-status .dot.loading {
+        background: #f59e0b;
+        animation: pulse 1s infinite;
+    }
+
+    .agent-status .dot.error {
+        background: #ef4444;
+    }
+
+    .agent-status .dot.offline {
+        background: #94a3b8;
+    }
+
+    @keyframes pulse {
+
+        0%,
+        100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.3;
+        }
+    }
+
+    .main-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 28px;
+        margin-top: 6px;
+    }
+
+    @media (max-width: 800px) {
+        .main-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .manual-section {
+        background: #fafcff;
+        border-radius: 20px;
+        padding: 16px 20px 20px;
+        border: 1px solid #e2ebf5;
+        max-height: 580px;
+        overflow-y: auto;
+    }
+
+    .manual-section h2 {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #0a2a44;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border-bottom: 2px solid #dce6f2;
+        padding-bottom: 12px;
+        margin-bottom: 18px;
+    }
+
+    .manual-content {
+        font-size: 0.95rem;
+        line-height: 1.6;
+        color: #1d2f44;
+    }
+
+    .manual-content p {
+        margin: 0 0 14px 0;
+    }
+
+    .manual-content ul,
+    .manual-content ol {
+        padding-left: 24px;
+        margin: 8px 0 16px 0;
+    }
+
+    .manual-content li {
+        margin-bottom: 5px;
+    }
+
+    .highlight {
+        background: #fff7d6;
+        padding: 0 4px;
+        border-radius: 4px;
+        font-weight: 500;
+    }
+
+    .chat-panel {
+        background: #f8faff;
+        border-radius: 20px;
+        border: 1px solid #e2ebf5;
+        display: flex;
+        flex-direction: column;
+        max-height: 580px;
+        min-height: 400px;
+    }
+
+    .chat-header {
+        padding: 14px 20px;
+        border-bottom: 1px solid #e2ebf5;
+        font-weight: 600;
+        color: #0a2a44;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #f2f8ff;
+        border-radius: 20px 20px 0 0;
+    }
+
+    .chat-messages {
+        flex: 1;
+        padding: 16px 18px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        min-height: 240px;
+    }
+
+    .message {
+        max-width: 90%;
+        padding: 12px 16px;
+        border-radius: 18px;
+        line-height: 1.5;
+        font-size: 0.95rem;
+        word-break: break-word;
+        animation: fadeUp 0.2s ease;
+    }
+
+    .message.user {
+        background: #dce6f5;
+        align-self: flex-end;
+        border-bottom-right-radius: 6px;
+        color: #0b1e33;
+    }
+
+    .message.assistant {
+        background: white;
+        align-self: flex-start;
+        border-bottom-left-radius: 6px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+        border: 1px solid #e6edf6;
+        color: #152b40;
+    }
+
+    .message.assistant.error {
+        background: #fee2e2;
+        border-color: #fca5a5;
+        color: #991b1b;
+    }
+
+    .message .msg-icon {
+        margin-right: 8px;
+    }
+
+    .typing-indicator {
+        display: inline-flex;
+        gap: 4px;
+    }
+
+    .typing-indicator span {
+        width: 6px;
+        height: 6px;
+        background: #94a3b8;
+        border-radius: 50%;
+        animation: typing 1.2s infinite;
+    }
+
+    .typing-indicator span:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+
+    .typing-indicator span:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+
+    @keyframes typing {
+
+        0%,
+        60%,
+        100% {
+            transform: translateY(0);
+        }
+
+        30% {
+            transform: translateY(-6px);
+        }
+    }
+
+    .chat-input-area {
+        display: flex;
+        gap: 8px;
+        padding: 12px 16px 16px;
+        border-top: 1px solid #e2ebf5;
+        background: #fafdff;
+        border-radius: 0 0 20px 20px;
+        align-items: center;
+    }
+
+    .chat-input-area input {
+        flex: 1;
+        padding: 12px 16px;
+        border-radius: 40px;
+        border: 1px solid #d0dbe8;
+        font-size: 0.95rem;
+        outline: none;
+        transition: 0.2s;
+        background: white;
+    }
+
+    .chat-input-area input:focus {
+        border-color: #2a7de1;
+        box-shadow: 0 0 0 3px rgba(42, 125, 225, 0.15);
+    }
+
+    .chat-input-area button {
+        background: #2a7de1;
+        border: none;
+        color: white;
+        width: 46px;
+        height: 46px;
+        border-radius: 40px;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: 0.15s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .chat-input-area button:hover {
+        background: #1b62b5;
+    }
+
+    .chat-input-area button:disabled {
+        opacity: 0.5;
+        pointer-events: none;
+    }
+
+    .voice-indicator {
+        font-size: 0.8rem;
+        background: #e1ebf6;
+        padding: 6px 14px;
+        border-radius: 30px;
+        display: none;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .voice-indicator.active {
+        display: flex;
+    }
+
+    @keyframes fadeUp {
+        0% {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .footer-note {
+        margin-top: 18px;
+        font-size: 0.8rem;
+        color: #6b7e96;
+        text-align: right;
+        border-top: 1px solid #e6edf6;
+        padding-top: 16px;
+    }
+
+    .badge {
+        background: #eef3fa;
+        border-radius: 30px;
+        padding: 2px 12px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: #1e3b5c;
+    }
+
+    /* scroll */
+    .manual-section::-webkit-scrollbar,
+    .chat-messages::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .manual-section::-webkit-scrollbar-thumb,
+    .chat-messages::-webkit-scrollbar-thumb {
+        background: #cbd8e8;
+        border-radius: 10px;
+    }
+
+    .server-status {
+        font-size: 0.75rem;
+        padding: 2px 12px;
+        border-radius: 20px;
+        margin-left: 8px;
+    }
+
+    .server-status.online {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .server-status.offline {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .server-status.checking {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .chat-header-right {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .clear-chat-btn {
+        background: none;
+        border: none;
+        color: #94a3b8;
+        cursor: pointer;
+        font-size: 0.8rem;
+        padding: 4px 10px;
+        border-radius: 20px;
+    }
+
+    .clear-chat-btn:hover {
+        background: #fee2e2;
+        color: #ef4444;
+    }
+</style>
+
+<%- include('./partials/head') %>
+
+    <body>
+
+        <%- include('./partials/header') %>
+            <div style="  display: flex; justify-content: center;">
+                <div class="app" id="app">
+                    <h1>
+                        <i class="fas fa-clipboard-list" style="color: #1f6bc0;"></i>
+                        Manuál k výkazu práce
+                        <span class="badge">AI agent</span>
+                    </h1>
+                    <div class="sub">
+                        <i class="fas fa-robot" style="margin-right: 8px;"></i>
+                        Fulltextové vyhledávání · Hlasový vstup i odpověď · Napojení na OpenAI API
+                    </div>
+
+                    <!-- Toolbar -->
+                    <div class="toolbar">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchInput" placeholder="Fulltextové hledání v manuálu..." />
+                            <button id="searchBtn"><i class="fas fa-arrow-right"></i> Hledat</button>
+                        </div>
+                        <div class="ai-controls">
+                            <button class="voice-btn" id="voiceInputBtn">
+                                <i class="fas fa-microphone"></i> <span id="voiceLabel">Hlasová otázka</span>
+                            </button>
+                            <button class="voice-btn" id="voiceOutputBtn">
+                                <i class="fas fa-volume-up"></i> <span>Odpověď hlasem</span>
+                            </button>
+                            <span class="agent-status" id="agentStatus">
+                                <span class="dot online" id="statusDot"></span>
+                                <span id="statusText">Agent připraven</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Main grid: manual + chat -->
+                    <div class="main-grid">
+                        <!-- Manual -->
+                        <div class="manual-section" id="manualSection">
+                            <h2><i class="fas fa-book-open" style="color: #1f6bc0;"></i> Obsah manuálu</h2>
+                            <div class="manual-content" id="manualContent">
+                                <p><strong>1. Úvod</strong><br>
+                                    Výkaz práce slouží k zaznamenávání odpracovaných hodin, projektů a úkolů. Vyplňuje
+                                    se denně nebo týdně.</p>
+                                <p><strong>2. Povinné položky</strong><br>
+                                <ul>
+                                    <li><span class="highlight">Datum</span> – den, ke kterému se výkaz vztahuje.</li>
+                                    <li><span class="highlight">Projekt / zakázka</span> – kód nebo název projektu.</li>
+                                    <li><span class="highlight">Činnost</span> – popis vykonané práce (např. vývoj,
+                                        analýza, schůzka).</li>
+                                    <li><span class="highlight">Doba trvání</span> – v hodinách (0,5 – 24h).</li>
+                                </ul>
+                                </p>
+                                <p><strong>3. Schvalovací proces</strong><br>
+                                    Výkaz odesíláte vedoucímu projektu. Po kontrole může být schválen, vrácen k
+                                    přepracování nebo zamítnut.</p>
+                                <p><strong>4. Časté chyby</strong><br>
+                                <ul>
+                                    <li>Chybějící název projektu – <span class="highlight">povinné</span>.</li>
+                                    <li>Neplatný formát času – používejte desetinná čísla (např. 1,5 hodiny).</li>
+                                    <li>Duplicitní záznamy pro stejný den/projekt – systém varuje.</li>
+                                </ul>
+                                </p>
+                                <p><strong>5. Odevzdání a uzávěrka</strong><br>
+                                    Výkazy se odevzdávají do <span class="highlight">pátku 12:00</span> za uplynulý
+                                    týden. Po uzávěrce je nutná výjimka.</p>
+                                <p><strong>6. Přílohy a komentáře</strong><br>
+                                    K výkazu lze připojit soubory (max 5 MB) a interní poznámky pro schvalovatele.</p>
+                                <p><strong>7. Náhrady a přesčasy</strong><br>
+                                    Přesčasové hodiny se vykazují samostatně a musí být schváleny předem.</p>
+                            </div>
+                        </div>
+
+                        <!-- Chat / AI agent -->
+                        <div class="chat-panel">
+                            <div class="chat-header">
+                                <i class="fas fa-comment-dots" style="color: #1f6bc0;"></i>
+                                Konzultace s AI agentem
+                                <div class="chat-header-right">
+                                    <span class="server-status checking" id="serverStatus">⏳ kontrola...</span>
+                                    <button class="clear-chat-btn" id="clearChatBtn">✕ Smazat</button>
+                                </div>
+                            </div>
+                            <div class="chat-messages" id="chatMessages">
+                                <div class="message assistant">
+                                    <span class="msg-icon">🤖</span> Dobrý den, jsem AI agent pro manuál k výkazu práce.
+                                    Zeptejte se mě na cokoliv – odpovídám na základě manuálu.
+                                </div>
+                            </div>
+                            <div class="chat-input-area">
+                                <input type="text" id="chatInput" placeholder="Napište dotaz..." />
+                                <button id="sendChatBtn"><i class="fas fa-paper-plane"></i></button>
+                                <span id="voiceIndicator" class="voice-indicator"><i class="fas fa-circle"
+                                        style="color: #d94a4a; font-size: 0.5rem;"></i> poslouchám...</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer-note">
+                        <i class="fas fa-microphone-alt"></i> Hlasový vstup: klikněte na tlačítko "Hlasová otázka" a
+                        mluvte. Hlasový výstup: přehraje poslední odpověď agenta.
+                    </div>
+                </div>
+            </div>
+                <script>
+                    (function () {
+                        "use strict";
+
+                        // ============================================================
+                        // 1. DATA
+                        // ============================================================
+                        const manualFullText = `
+            Výkaz práce slouží k zaznamenávání odpracovaných hodin, projektů a úkolů. Vyplňuje se denně nebo týdně.
+            Povinné položky: Datum – den, ke kterému se výkaz vztahuje. Projekt / zakázka – kód nebo název projektu. Činnost – popis vykonané práce (např. vývoj, analýza, schůzka). Doba trvání – v hodinách (0,5 – 24h).
+            Schvalovací proces: Výkaz odesíláte vedoucímu projektu. Po kontrole může být schválen, vrácen k přepracování nebo zamítnut.
+            Časté chyby: Chybějící název projektu – povinné. Neplatný formát času – používejte desetinná čísla (např. 1,5 hodiny). Duplicitní záznamy pro stejný den/projekt – systém varuje.
+            Odevzdání a uzávěrka: Výkazy se odevzdávají do pátku 12:00 za uplynulý týden. Po uzávěrce je nutná výjimka.
+            Přílohy a komentáře: K výkazu lze připojit soubory (max 5 MB) a interní poznámky pro schvalovatele.
+            Náhrady a přesčasy: Přesčasové hodiny se vykazují samostatně a musí být schváleny předem.
+        `;
+
+                        // ============================================================
+                        // 2. DOM ELEMENTY
+                        // ============================================================
+                        const searchInput = document.getElementById('searchInput');
+                        const searchBtn = document.getElementById('searchBtn');
+                        const manualContent = document.getElementById('manualContent');
+                        const chatMessages = document.getElementById('chatMessages');
+                        const chatInput = document.getElementById('chatInput');
+                        const sendBtn = document.getElementById('sendChatBtn');
+                        const voiceInputBtn = document.getElementById('voiceInputBtn');
+                        const voiceOutputBtn = document.getElementById('voiceOutputBtn');
+                        const voiceLabel = document.getElementById('voiceLabel');
+                        const voiceIndicator = document.getElementById('voiceIndicator');
+                        const statusText = document.getElementById('statusText');
+                        const statusDot = document.getElementById('statusDot');
+                        const serverStatus = document.getElementById('serverStatus');
+                        const clearChatBtn = document.getElementById('clearChatBtn');
+
+                        // ============================================================
+                        // 3. KONTROLA BACKENDU
+                        // ============================================================
+                        async function checkBackend() {
+                            try {
+                                const response = await fetch('/api/test');
+                                if (response.ok) {
+                                    serverStatus.className = 'server-status online';
+                                    serverStatus.textContent = '✅ Backend online';
+                                    return true;
+                                } else {
+                                    throw new Error('Backend neodpovídá');
+                                }
+                            } catch (e) {
+                                console.error('❌ Backend nedostupný:', e.message);
+                                serverStatus.className = 'server-status offline';
+                                serverStatus.textContent = '❌ Backend offline (spusťte node server.js)';
+                                return false;
+                            }
+                        }
+
+                        // ============================================================
+                        // 4. FULLTEXT SEARCH
+                        // ============================================================
+                        function highlightText(text, query) {
+                            if (!query.trim()) return text;
+                            const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+                            return text.replace(regex, '<span class="highlight">$1</span>');
+                        }
+
+                        function performSearch() {
+                            const query = searchInput.value.trim();
+                            if (!query) {
+                                // Reset
+                                manualContent.innerHTML = `
+                    <p><strong>1. Úvod</strong><br>
+                    Výkaz práce slouží k zaznamenávání odpracovaných hodin, projektů a úkolů. Vyplňuje se denně nebo týdně.</p>
+                    <p><strong>2. Povinné položky</strong><br>
+                    <ul>
+                        <li><span class="highlight">Datum</span> – den, ke kterému se výkaz vztahuje.</li>
+                        <li><span class="highlight">Projekt / zakázka</span> – kód nebo název projektu.</li>
+                        <li><span class="highlight">Činnost</span> – popis vykonané práce (např. vývoj, analýza, schůzka).</li>
+                        <li><span class="highlight">Doba trvání</span> – v hodinách (0,5 – 24h).</li>
+                    </ul>
+                    </p>
+                    <p><strong>3. Schvalovací proces</strong><br>
+                    Výkaz odesíláte vedoucímu projektu. Po kontrole může být schválen, vrácen k přepracování nebo zamítnut.</p>
+                    <p><strong>4. Časté chyby</strong><br>
+                    <ul>
+                        <li>Chybějící název projektu – <span class="highlight">povinné</span>.</li>
+                        <li>Neplatný formát času – používejte desetinná čísla (např. 1,5 hodiny).</li>
+                        <li>Duplicitní záznamy pro stejný den/projekt – systém varuje.</li>
+                    </ul>
+                    </p>
+                    <p><strong>5. Odevzdání a uzávěrka</strong><br>
+                    Výkazy se odevzdávají do <span class="highlight">pátku 12:00</span> za uplynulý týden. Po uzávěrce je nutná výjimka.</p>
+                    <p><strong>6. Přílohy a komentáře</strong><br>
+                    K výkazu lze připojit soubory (max 5 MB) a interní poznámky pro schvalovatele.</p>
+                    <p><strong>7. Náhrady a přesčasy</strong><br>
+                    Přesčasové hodiny se vykazují samostatně a musí být schváleny předem.</p>
+                `;
+                                return;
+                            }
+
+                            const plain = manualContent.innerText;
+                            const parts = plain.split(/\n/).filter(p => p.trim().length > 0);
+                            let highlightedHtml = '';
+                            for (let line of parts) {
+                                if (line.toLowerCase().includes(query.toLowerCase())) {
+                                    highlightedHtml += `<p>${highlightText(line, query)}</p>`;
+                                } else {
+                                    highlightedHtml += `<p>${line}</p>`;
+                                }
+                            }
+                            if (!highlightedHtml) {
+                                highlightedHtml = `<p><i class="fas fa-exclamation-circle"></i> Nic nenalezeno pro "<strong>${query}</strong>"</p>`;
+                            }
+                            manualContent.innerHTML = highlightedHtml;
+                        }
+
+                        searchBtn.addEventListener('click', performSearch);
+                        searchInput.addEventListener('keyup', (e) => { if (e.key === 'Enter') performSearch(); });
+
+                        // ============================================================
+                        // 5. AI AGENT – KOMUNIKACE S BACKENDEM
+                        // ============================================================
+                        // Historie konverzace (bez system promptu, ten se přidává na backendu)
+                        let conversationHistory = [];
+                        let lastAssistantReply = 'Dobrý den, jsem AI agent pro manuál k výkazu práce.';
+
+                        function addMessage(text, type, isError = false) {
+                            const msgDiv = document.createElement('div');
+                            msgDiv.className = `message ${type}${isError ? ' error' : ''}`;
+                            const icon = type === 'user' ? '🧑' : '🤖';
+                            msgDiv.innerHTML = `<span class="msg-icon">${icon}</span> ${text}`;
+                            chatMessages.appendChild(msgDiv);
+                            chatMessages.scrollTop = chatMessages.scrollHeight;
+                        }
+
+                        function addTypingIndicator() {
+                            const msgDiv = document.createElement('div');
+                            msgDiv.className = 'message assistant';
+                            msgDiv.id = 'typingIndicator';
+                            msgDiv.innerHTML = `
+                <span class="msg-icon">🤖</span>
+                <span class="typing-indicator"><span></span><span></span><span></span></span>
+            `;
+                            chatMessages.appendChild(msgDiv);
+                            chatMessages.scrollTop = chatMessages.scrollHeight;
+                        }
+
+                        function removeTypingIndicator() {
+                            const el = document.getElementById('typingIndicator');
+                            if (el) el.remove();
+                        }
+
+                        function updateStatus(text, type) {
+                            statusText.textContent = text;
+                            statusDot.className = 'dot ' + type;
+                        }
+
+                        async function processUserQuery(query) {
+                            if (!query.trim()) return;
+
+                            // Kontrola backendu
+                            const isOnline = await checkBackend();
+                            if (!isOnline) {
+                                addMessage('❌ Backend není dostupný. Spusťte server příkazem: node server.js', 'assistant', true);
+                                return;
+                            }
+
+                            addMessage(query, 'user');
+                            chatInput.value = '';
+                            sendBtn.disabled = true;
+                            updateStatus('Přemýšlím...', 'loading');
+
+                            addTypingIndicator();
+
+                            try {
+                                // Přidáme dotaz do historie
+                                conversationHistory.push({ role: 'user', content: query });
+
+                                const response = await fetch('/api/chat/manual', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ messages: conversationHistory })
+                                });
+
+                                if (!response.ok) {
+                                    const errorData = await response.json();
+                                    throw new Error(errorData.error || 'Neznámá chyba');
+                                }
+
+                                const data = await response.json();
+                                removeTypingIndicator();
+
+                                // Přidáme odpověď do historie
+                                conversationHistory.push({ role: 'assistant', content: data.reply });
+
+                                addMessage(data.reply, 'assistant');
+                                lastAssistantReply = data.reply;
+                                updateStatus('Odpovězeno', 'online');
+                                setTimeout(() => updateStatus('Agent připraven', 'online'), 2000);
+
+                            } catch (error) {
+                                removeTypingIndicator();
+                                console.error('Chyba:', error);
+                                addMessage(`❌ Chyba: ${error.message}`, 'assistant', true);
+                                updateStatus('Chyba', 'error');
+                                setTimeout(() => updateStatus('Agent připraven', 'online'), 3000);
+                            } finally {
+                                sendBtn.disabled = false;
+                            }
+                        }
+
+                        // ============================================================
+                        // 6. CHAT EVENTY
+                        // ============================================================
+                        function sendChat() {
+                            const q = chatInput.value.trim();
+                            if (!q) return;
+                            processUserQuery(q);
+                        }
+
+                        sendBtn.addEventListener('click', sendChat);
+                        chatInput.addEventListener('keyup', (e) => {
+                            if (e.key === 'Enter') sendChat();
+                        });
+
+                        // ============================================================
+                        // 7. SMAZÁNÍ KONVERZACE
+                        // ============================================================
+                        clearChatBtn.addEventListener('click', function () {
+                            if (!confirm('Opravdu chcete smazat celou konverzaci?')) return;
+                            conversationHistory = [];
+                            chatMessages.innerHTML = `
+                <div class="message assistant">
+                    <span class="msg-icon">🤖</span> Konverzace byla vymazána. Zeptejte se mě na cokoli ohledně manuálu k výkazu práce.
+                </div>
+            `;
+                            lastAssistantReply = 'Konverzace byla vymazána.';
+                            updateStatus('Agent připraven', 'online');
+                        });
+
+                        // ============================================================
+                        // 8. HLASOVÝ VSTUP
+                        // ============================================================
+                        let recognition = null;
+                        let isRecording = false;
+
+                        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                            recognition = new SpeechRecognition();
+                            recognition.lang = 'cs-CZ';
+                            recognition.continuous = false;
+                            recognition.interimResults = false;
+
+                            recognition.onstart = function () {
+                                isRecording = true;
+                                voiceInputBtn.classList.add('recording');
+                                voiceLabel.textContent = 'Poslouchám...';
+                                voiceIndicator.classList.add('active');
+                                updateStatus('Poslouchám hlas...', 'loading');
+                            };
+
+                            recognition.onresult = function (event) {
+                                const transcript = event.results[0][0].transcript;
+                                voiceLabel.textContent = 'Hlasová otázka';
+                                voiceInputBtn.classList.remove('recording');
+                                voiceIndicator.classList.remove('active');
+                                chatInput.value = transcript;
+                                processUserQuery(transcript);
+                            };
+
+                            recognition.onerror = function (event) {
+                                console.warn('Speech error:', event.error);
+                                voiceLabel.textContent = 'Hlasová otázka';
+                                voiceInputBtn.classList.remove('recording');
+                                voiceIndicator.classList.remove('active');
+                                if (event.error === 'not-allowed') {
+                                    addMessage('⚠️ Povolte prosím přístup k mikrofonu.', 'assistant', true);
+                                }
+                                updateStatus('Chyba mikrofonu', 'error');
+                                setTimeout(() => updateStatus('Agent připraven', 'online'), 2000);
+                            };
+
+                            recognition.onend = function () {
+                                isRecording = false;
+                                voiceInputBtn.classList.remove('recording');
+                                voiceLabel.textContent = 'Hlasová otázka';
+                                voiceIndicator.classList.remove('active');
+                                if (statusText.textContent.includes('Poslouchám')) {
+                                    updateStatus('Agent připraven', 'online');
+                                }
+                            };
+                        } else {
+                            voiceInputBtn.style.opacity = '0.6';
+                            voiceInputBtn.title = 'Web Speech API není podporována';
+                        }
+
+                        voiceInputBtn.addEventListener('click', function () {
+                            if (!recognition) {
+                                alert('Váš prohlížeč nepodporuje rozpoznávání řeči (Web Speech API).');
+                                return;
+                            }
+                            if (isRecording) {
+                                recognition.stop();
+                                return;
+                            }
+                            try {
+                                recognition.start();
+                            } catch (e) {
+                                // už běží
+                            }
+                        });
+
+                        // ============================================================
+                        // 9. HLASOVÝ VÝSTUP
+                        // ============================================================
+                        voiceOutputBtn.addEventListener('click', function () {
+                            const textToSpeak = lastAssistantReply;
+                            if (!textToSpeak || textToSpeak === 'Dobrý den, jsem AI agent pro manuál k výkazu práce.') {
+                                alert('Žádná odpověď k přehrání. Zeptejte se nejprve agenta.');
+                                return;
+                            }
+                            if ('speechSynthesis' in window) {
+                                const utterance = new SpeechSynthesisUtterance(textToSpeak);
+                                utterance.lang = 'cs-CZ';
+                                utterance.rate = 1.0;
+                                utterance.pitch = 1.0;
+                                speechSynthesis.speak(utterance);
+                                updateStatus('Přehrávám odpověď...', 'loading');
+                                utterance.onend = function () {
+                                    updateStatus('Agent připraven', 'online');
+                                };
+                            } else {
+                                alert('Váš prohlížeč nepodporuje syntézu řeči.');
+                            }
+                        });
+
+                        // ============================================================
+                        // 10. INICIALIZACE
+                        // ============================================================
+                        checkBackend();
+                        updateStatus('Agent připraven', 'online');
+                        console.log('✅ Aplikace načtena. Backend musí běžet na http://localhost:3000');
+
+                    })();
+                </script>
+    </body>
+
+    </html>

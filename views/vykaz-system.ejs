@@ -967,7 +967,7 @@
 
                 <!-- Sekce s akcemi -->
                 <div class="actions-section">
-                    <button class="btn-print" id="btn-print" onclick="openModal()">Tisk výkazu</button>
+                    <button class="btn-print" id="btn-print" onclick="openModal()">Náhled tisku</button>
                     <!-- <button class="btn-email" id="btn-email" disabled>Odeslat e-mailem</button> -->
                     <button class="btn-save" id="btn-save" disabled>Uložit výkaz</button>
                 </div>
@@ -1300,10 +1300,13 @@
 
 
                 // Vygeneruje kalendář
+                //HLAVNI GROW - TADY SE GENERUJE TABULKA
                 function generateCalendar(month, year) {
                     const container = document.getElementById('calendar-container');
+                    //vytvori pocet dnu v mesici, ktery se pak pouzije v cyklu
+                    //vrátí počet dní v měsíci.
                     const daysInMonth = new Date(year, month + 1, 0).getDate();
-
+//vytvori zahlavi
                     let html = `
                 <table id="workTable">
                     <thead>
@@ -1319,22 +1322,24 @@
                     </thead>
                     <tbody>
             `;
-
+//tohle nacita data z localstorage, ale toho se musim zbavit
                     const savedData = loadMonthData(month, year);
 
+                    //pro kazdy den v mesici generuje radku v tabulce
                     for (let day = 1; day <= daysInMonth; day++) {
-                        const date = new Date(year, month, day);
-                        const dayOfWeek = date.getDay();
-                        const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-                        const isToday = isSameDay(date, new Date());
-                        const holidayInfo = getHolidayInfo(day, month, date);
-                        const isHoliday = holidayInfo !== null;
-                        const vacationInfo = isSchoolVacation(date);
+                        const date = new Date(year, month, day);//datum
+                        const dayOfWeek = date.getDay();//den
+                        const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;//typ dne
+                        const isToday = isSameDay(date, new Date());//kontroluje, jestli je to dnesni datum -> oznaci asi aktualni den
+                        const holidayInfo = getHolidayInfo(day, month, date);//informace o svátcích
+                        const isHoliday = holidayInfo !== null;//kontrola svatku
+                        const vacationInfo = isSchoolVacation(date);//kontrola prazdnin
                         const isVacation = vacationInfo !== null;
 
                         let dayType = "Pracovní den";
                         let cssClass = "workday";
 
+                        //nastavujeme tridu pro csska, nastacuje se trida v generovani rádku níže
                         if (isWeekend) cssClass = "weekend", dayType = "Víkend";
                         if (isHoliday) cssClass = "holiday", dayType = "Státní svátek";
                         if (isVacation) cssClass = "vacation", dayType = vacationInfo;
@@ -1349,6 +1354,7 @@
                         const canHaveSubstitute = (!isWeekend && !isHoliday && !isVacation);
                         const canHaveMissed = (!isWeekend && !isHoliday && !isVacation);
 
+                        //option s důvody pro neoducené hodiny
                         let reasonOptions = '<option value="">-- vyberte --</option>';
                         missedReasons.forEach(reason => {
                             const selected = savedReason === reason.id ? 'selected' : '';
