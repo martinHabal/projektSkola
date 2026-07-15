@@ -27,3 +27,5 @@ pak dashboard s loginama, navstevama apod.. FE resit az nakonec
 //do napovedy a manualu taky zapojim AI
 
 //V2, do DB se bude brat z edookitu kazdy den odpracovana hodina, jeste mrknout na priznaky
+//sjednotit ty nazvy v DB, cestinu apod, pak samozrejme ty seeds a migrace upravit
+//skolni prazniny holt rucne a svatky budu nacitat z api

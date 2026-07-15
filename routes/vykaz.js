@@ -169,7 +169,7 @@ router.post("/api/uloz-vykaz", async (req, res) => {
 
 
 //TISK
-// Route pro výkaz práce - stary, muzu smazat
+// Route pro výkaz práce - stary, muzu smazat, jeste funguje, ale asi zrusim
 router.get('/work-report', async (req, res) => {
     try {
         // Parametry z URL
@@ -697,6 +697,34 @@ const data = [
     }
 });
 
+// API endpoint
+router.get('/api/prazdniny', async (req, res) => {
+    const rok = req.query.rok || 2026;
+    console.log("prjat pozadavani na prazdniny pro rok: " + rok);
+
+   
+    try {
+        const rok = req.query.rok || 2026;
+        
+        const [rows] = await pool.query(
+            'SELECT * FROM prazdniny'
+           
+        );
+        
+        res.json(rows);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+
+
+    // pool.query(
+    //     'SELECT * FROM prazdniny',
+    //     (err, data) => {
+    //         if (err) return res.status(500).json({ error: err.message });
+    //         res.json(data);
+    //     }
+    // );
+});
 
 export default router;
 // UPDATE uvazky SET po = ? WHERE user_id = ?;`, [value, req.session.user.id]);

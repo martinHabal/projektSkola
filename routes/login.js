@@ -3,16 +3,16 @@ const router = express.Router();
 import pool from "#db/db"; //moderni import - nastaveny v package.json
 import bcrypt from "bcrypt";
 
-router.get("/login", (req, res) => {
-  if (req.session.user) {
-    return res.redirect("/dashboard");
-  }
-  res.render("login", {
-    title: "Přihlášení",
-    error: null,
-    success: null,
-  });
-});
+// router.get("/login", (req, res) => {
+//   if (req.session.user) {
+//     return res.redirect("/dashboard-vykaz");
+//   }
+//   res.render("login", {
+//     title: "Přihlášení",
+//     error: null,
+//     success: null,
+//   });
+// });
 
 // PŘIHLÁŠENÍ - pouze login page a pak presmerovani na dashboard
 router.post("/login", async (req, res) => {
@@ -44,7 +44,7 @@ router.post("/login", async (req, res) => {
       username: user.username,
     };
 
-    res.redirect("/dashboard");
+    res.redirect("/dashboard-vykaz");
     // console.log(req.session.user);
   } catch (error) {
     console.error(error);
