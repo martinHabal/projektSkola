@@ -434,16 +434,16 @@
         opacity: 0.6;
     }
 
-    .btn-email {
+    .btn-save {
         background-color: #9b59b6;
         color: white;
     }
 
-    .btn-email:hover {
+    .btn-save:hover {
         background-color: #8e44ad;
     }
 
-    .btn-email:disabled {
+    .btn-save:disabled {
         background-color: #bdc3c7;
         cursor: not-allowed;
         opacity: 0.6;
@@ -774,12 +774,10 @@
     <body>
         <%- include('./partials/header') %>
             <div class="container">
-                <h1>Výkaz pracovní doby pedagogického pracovníka</h1>
-
-                <!-- Sekce pro zadání jména uživatele a výběr měsíce -->
-                <div class="user-info-section">
-                    <h3>Zadejte své jméno:</h3>
-                    <input type="text" id="user-name" class="user-info-input" placeholder="Např. Jan Novák" />
+                  <div class="user-info-section">
+                    <h3>Učitel: <%- users.first_name %> <%- users.last_name %></h3>
+                    <input style="display: none" disabled type="text" id="user-name" class="user-info-input"
+                        placeholder="<%- users.first_name %> <%- users.last_name %>" />
 
                     <div class="month-selector">
                         <label for="month">Měsíc:</label>
@@ -931,15 +929,16 @@
                 </div>
 
                 <!-- Sekce s akcemi -->
-                <div class="actions-section">
-                    <button class="btn-print" id="btn-print" disabled>Tisk výkazu</button>
-                    <button class="btn-email" id="btn-email" disabled>
-                        Odeslat e-mailem
+                  <div class="actions-section">
+                    <button class="btn-print" id="btn-print" onclick="openModal()">
+                        Náhled tisku
                     </button>
+                    <!-- <button class="btn-save" id="btn-email" disabled>Odeslat e-mailem</button> -->
+                    <button class="btn-save" id="btn-save" disabled>Uložit výkaz</button>
                 </div>
 
                 <!-- Modal pro odeslání e-mailem -->
-                <div class="email-modal" id="emailModal">
+                <!-- <div class="email-modal" id="emailModal">
                     <div class="email-modal-content">
                         <h3>Odeslat výkaz e-mailem</h3>
                         <form id="emailForm">
@@ -963,7 +962,7 @@
                             </div>
                         </form>
                     </div>
-                </div>
+                </div> -->
 
                 <!-- Tisková verze (skrytá při normálním zobrazení) -->
                 <div class="print-only" id="print-output">
@@ -1102,7 +1101,7 @@
 
                 // Důvody pro neoducené hodiny s nápovědou, načteno z duvody.js
                 const missedReasons = duvodyNepritomnosti()
-                
+
                 // Školní prázdniny
                 const schoolVacations = skolniPrazdniny()
 
@@ -1110,7 +1109,6 @@
                 let fixedHolidays
 
                 //nacte svatky pres API
-
                 const dataPromise = (async () => {
                     try {
                         const res = await fetch(
@@ -1149,7 +1147,7 @@
 
                     // Tlačítka jsou disabled defaultně
                     document.getElementById("btn-print").disabled = true;
-                    document.getElementById("btn-email").disabled = true;
+                    document.getElementById("btn-save").disabled = true;
 
                     // Event listener pro jméno uživatele
                     document
@@ -1173,7 +1171,7 @@
                         .addEventListener("change", function () {
                             const isChecked = this.checked;
                             document.getElementById("btn-print").disabled = !isChecked;
-                            document.getElementById("btn-email").disabled = !isChecked;
+                            document.getElementById("btn-save").disabled = !isChecked;
                         });
 
                     // Event listener pro tlačítko tisku
@@ -1187,27 +1185,27 @@
                         });
 
                     // Event listener pro tlačítko odeslání e-mailem
-                    document
-                        .getElementById("btn-email")
-                        .addEventListener("click", function () {
-                            if (document.getElementById("confirm-correctness").checked) {
-                                showEmailModal();
-                            }
-                        });
+                    // document
+                    //     .getElementById("btn-save")
+                    //     .addEventListener("click", function () {
+                    //         if (document.getElementById("confirm-correctness").checked) {
+                    //             showEmailModal();
+                    //         }
+                    //     });
 
                     // Event listenery pro modal e-mailu
-                    document
-                        .getElementById("btnCancelEmail")
-                        .addEventListener("click", function () {
-                            hideEmailModal();
-                        });
+                    // document
+                    //     .getElementById("btnCancelEmail")
+                    //     .addEventListener("click", function () {
+                    //         hideEmailModal();
+                    //     });
 
-                    document
-                        .getElementById("emailForm")
-                        .addEventListener("submit", function (e) {
-                            e.preventDefault();
-                            sendEmail();
-                        });
+                    // document
+                    //     .getElementById("emailForm")
+                    //     .addEventListener("submit", function (e) {
+                    //         e.preventDefault();
+                    //         sendEmail();
+                    //     });
 
                     // Event listenery pro změnu rozvrhu
                     document.querySelectorAll(".day-schedule-input").forEach((input) => {
@@ -1511,7 +1509,7 @@
                     const daysInMonth = new Date(year, month + 1, 0).getDate();
 
                     let html = `
-                        <table>
+                         <table id="workTable">
                             <thead>
                                 <tr>
                                     <th>Datum</th>
@@ -1856,7 +1854,188 @@
                         previewContainer.innerHTML = previewHtml;
                     }
                 }
+
+                // Event listener pro tlačítko ulozit
+                    document
+                        .getElementById("btn-save")
+                        .addEventListener("click", function () {
+                            // Funkce pro získání dat z tabulky
+                            function tableToObjectArray(tableId) {
+                                // Získáme tabulku podle ID
+                                const table = document.getElementById(tableId);
+                                if (!table) {
+                                    console.error("Tabulka s tímto ID nebyla nalezena.");
+                                    return [];
+                                }
+
+                                // Získáme všechny řádky tabulky (kromě hlavičky)
+                                const rows = table.querySelectorAll("tbody tr");
+                                const result = [];
+
+                                // Získáme názvy sloupců z hlavičky
+                                const headers = [];
+                                const headerCells = table.querySelectorAll("thead th");
+                                headerCells.forEach((th) => {
+                                    headers.push(th.textContent.trim());
+                                });
+
+                                // Pro každý řádek vytvoříme objekt
+                                rows.forEach((row) => {
+                                    const cells = row.querySelectorAll("td");
+                                    const obj = {};
+
+                                    // Pro každou buňku v řádku přiřadíme hodnotu k příslušnému klíči
+                                    cells.forEach((cell, index) => {
+                                        if (index < headers.length) {
+                                            const key = headers[index];
+                                            let value;
+
+                                            // Zkontrolujeme, zda buňka obsahuje input nebo select prvek
+                                            const input = cell.querySelector("input");
+                                            const select = cell.querySelector("select");
+
+                                            if (input) {
+                                                // Zpracování input prvků
+                                                value = input.value.trim();
+
+                                                if (input.type === "checkbox") {
+                                                    value = input.checked;
+                                                } else if (input.type === "number") {
+                                                    const numValue = parseFloat(value);
+                                                    if (!isNaN(numValue)) {
+                                                        value = numValue;
+                                                    }
+                                                }
+                                            } else if (select) {
+                                                // Zpracování select prvků - načteme aktuálně vybranou hodnotu
+                                                value = select.value;
+
+                                                // Pokud je select multiple, vrátíme pole vybraných hodnot
+                                                if (select.multiple) {
+                                                    value = Array.from(select.selectedOptions).map(
+                                                        (option) => option.value,
+                                                    );
+                                                }
+
+                                                // Pokusíme se převést na číslo, pokud je to možné
+                                                if (typeof value === "string" && value !== "") {
+                                                    const cleanValue = value
+                                                        .replace(/\s/g, "")
+                                                        .replace(/,/g, ".");
+                                                    if (!isNaN(cleanValue) && cleanValue !== "") {
+                                                        value = parseFloat(cleanValue);
+                                                    }
+                                                }
+                                            } else {
+                                                // Pokud žádný prvek neexistuje, vezmeme textový obsah buňky
+                                                value = cell.textContent.trim();
+
+                                                // Pokusíme se převést číselné hodnoty
+                                                if (value !== "") {
+                                                    const cleanValue = value
+                                                        .replace(/\s/g, "")
+                                                        .replace(/,/g, ".");
+                                                    if (!isNaN(cleanValue) && cleanValue !== "") {
+                                                        value = parseFloat(cleanValue);
+                                                    }
+                                                }
+                                            }
+
+                                            obj[key] = value;
+                                        }
+                                    });
+
+                                    result.push(obj);
+                                });
+
+                                return result;
+                            }
+
+                            const data = tableToObjectArray("workTable");
+                            console.log(data);
+
+                            fetch(`/api/uloz-vykaz`, {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify({
+                                    data: data,
+                                }),
+                            });
+                        });
+                
             </script>
+
+            <div id="printModal" class="modal">
+                <div class="modal-content">
+                    <span id="modalOverlay" onclick="closeModal()">&times;</span>
+                    <iframe src="/vykaz-tisk-modal"></iframe>
+                </div>
+            </div>
+            <style>
+                /* Celé pozadí modalu */
+                .modal {
+                    display: none;
+                    /* zobrazit přes JS */
+                    position: fixed;
+                    z-index: 1000;
+                    left: 0;
+                    top: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: rgba(0, 0, 0, 0.5);
+
+                    justify-content: center;
+                    align-items: center;
+                }
+
+                /* Okno modalu */
+                .modal-content {
+                    position: relative;
+                    width: 90%;
+                    height: 90%;
+                    background: white;
+                    border-radius: 10px;
+                    overflow: hidden;
+                    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+                }
+
+                /* iframe uvnitř modalu */
+                .modal-content iframe {
+                    width: 100%;
+                    height: 100%;
+                    border: none;
+                }
+
+                /* Zavírací křížek */
+                #modalOverlay {
+                    position: absolute;
+                    top: 10px;
+                    right: 20px;
+                    z-index: 10;
+
+                    font-size: 30px;
+                    font-weight: bold;
+                    color: #333;
+                    cursor: pointer;
+                }
+
+                #modalOverlay:hover {
+                    color: red;
+                }
+            </style>
+            <script>
+                function openModal() {
+                    const modal = document.getElementById("printModal");
+                    modal.style.display = "flex";
+                }
+
+                function closeModal() {
+                    const modal = document.getElementById("printModal");
+                    modal.style.display = "none";
+                }
+                </script>
     </body>
 
     </html>
