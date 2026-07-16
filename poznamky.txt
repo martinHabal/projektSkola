@@ -29,3 +29,9 @@ pak dashboard s loginama, navstevama apod.. FE resit az nakonec
 //V2, do DB se bude brat z edookitu kazdy den odpracovana hodina, jeste mrknout na priznaky
 //sjednotit ty nazvy v DB, cestinu apod, pak samozrejme ty seeds a migrace upravit
 //skolni prazniny holt rucne a svatky budu nacitat z api
+//ma tyden zacinat pondelim? asi ne, at zacina 1.ho
+
+// dulezity je mit zaklad, kterymu budu rozumnet a pak ho dodelavat, protoze jak si moc vymejslim tak uz se nemam sanci se v tom zorientovat a je to moc prekombinovany
+// to ejs je zbytecne slozity na to ze mi kostra staci resit na FE
+// pozdeji stejne bu muset ten fetch na fe zrusit a resit pres sablony, aby nebyly videt endpointy
+

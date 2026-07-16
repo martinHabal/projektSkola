@@ -3,6 +3,8 @@ const router = express.Router();
 import pool from "#db/db"; //moderni import - nastaveny v package.json
 import bcrypt from "bcrypt";
 
+
+//routa i s uvazkama, kdyz se to generovalo pres ejs -> i kdyz necham to a pouziju v novy-novy - tuhle pak samazt
 router.get("/vykaz-system", async (req, res) => {
     try {
         // Dotaz na uživatele
@@ -21,7 +23,39 @@ router.get("/vykaz-system", async (req, res) => {
             users: users[0], // Předpokládáme, že je pouze jeden admin
             stats: null,
             totalUsers: users.length,
-            filter: "Pouze učitelé",
+            filter: "Pouze učitelé"
+           
+        });
+    } catch (error) {
+        // console.error("Chyba při načítání uživatelů:", error);
+        // res.status(500).render("error", {
+        //   title: "Chyba",
+        //   message: "Nepodařilo se načíst uživatele",
+        //   error: process.env.NODE_ENV === "development" ? error : {},
+        // });
+        res.render("login", { error: "Chyba serveru" });
+    }
+});
+router.get("/vykaz-novy-novy", async (req, res) => {
+    try {
+        // Dotaz na uživatele
+
+        const [users] = await pool.query(
+            `
+             SELECT * FROM users LEFT JOIN uvazky ON users.id = uvazky.id WHERE users.id = ?`,
+            [req.session.user.id],
+        );
+
+        console.log(users);
+        console.log(req.session.user);
+
+        res.render("vykaz-novy-novy", {
+            title: "Seznam učitelů (prepared statement)",
+            users: users[0], // Předpokládáme, že je pouze jeden admin
+            stats: null,
+            totalUsers: users.length,
+            filter: "Pouze učitelé"
+           
         });
     } catch (error) {
         // console.error("Chyba při načítání uživatelů:", error);

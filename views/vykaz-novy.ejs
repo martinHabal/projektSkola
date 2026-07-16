@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Školní rok | Výkaz hodin v měsíci</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', system-ui, sans-serif;
+            background: linear-gradient(145deg, #1e2b3c 0%, #0f1a26 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 2.5rem;
+            padding: 2.2rem 2rem;
+            width: 100%;
+            max-width: 950px;
+            box-shadow: 0 30px 55px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.15);
+            color: #f0f6ff;
+            transition: all 0.2s ease;
+        }
+        h2 {
+            font-weight: 500;
+            font-size: 1.9rem;
+            letter-spacing: 0.5px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 2px solid rgba(255, 215, 150, 0.5);
+            padding-bottom: 0.75rem;
+            color: #ffdead;
+        }
+        h2 span {
+            font-size: 1.8rem;
+        }
+        .form-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.8rem;
+            margin-bottom: 2rem;
+        }
+        .select-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 600;
+            color: #b4cdff;
+            margin-left: 0.2rem;
+        }
+        select {
+            width: 100%;
+            padding: 0.9rem 1.2rem;
+            border-radius: 1.4rem;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            background: rgba(10, 20, 30, 0.7);
+            backdrop-filter: blur(10px);
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 500;
+            outline: none;
+            transition: all 0.25s;
+            cursor: pointer;
+            appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="white" opacity="0.7"><path d="M7 10l5 5 5-5z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 1.1rem center;
+            background-size: 1.4rem;
+        }
+        select:hover {
+            border-color: rgba(255, 200, 120, 0.7);
+            background: rgba(20, 30, 45, 0.8);
+        }
+        select:focus {
+            border-color: #f0b35b;
+            box-shadow: 0 0 12px rgba(240, 180, 90, 0.5);
+        }
+        .row-dual {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .row-dual .select-group {
+            flex: 1 1 0;
+            min-width: 120px;
+        }
+        .summary-box {
+            background: rgba(0, 0, 0, 0.45);
+            border-radius: 1.5rem;
+            padding: 1.2rem 1.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            border: 1px solid rgba(255, 215, 140, 0.3);
+            margin-bottom: 2rem;
+        }
+        .days-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #ffd78b;
+            line-height: 1;
+            text-shadow: 0 0 12px #ffb34780;
+        }
+        .details {
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: #e0e9ff;
+            text-align: right;
+            line-height: 1.5;
+        }
+        .details strong {
+            font-weight: 700;
+            color: #fff;
+            background: rgba(255,255,240,0.1);
+            padding: 0.2rem 0.6rem;
+            border-radius: 0.5rem;
+        }
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 1.2rem;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(12px);
+            margin-top: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            max-height: 420px;
+            overflow-y: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+            white-space: nowrap;
+            font-size: 0.95rem;
+        }
+        th {
+            background: rgba(255, 215, 140, 0.2);
+            color: #ffdead;
+            font-weight: 600;
+            text-align: center;
+            padding: 0.9rem 0.6rem;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid rgba(255, 180, 70, 0.6);
+        }
+        td {
+            padding: 0.7rem 0.5rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: #e3ecff;
+        }
+        tbody tr:hover td {
+            background: rgba(255, 215, 140, 0.15);
+            transition: 0.2s;
+        }
+        .day-name {
+            font-weight: 600;
+            color: #c6d9ff;
+        }
+        .weekend {
+            background: rgba(255, 180, 100, 0.1);
+            color: #ffcb8f;
+        }
+        .input-small {
+            width: 70px;
+            padding: 0.4rem 0.3rem;
+            border-radius: 0.6rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(20, 25, 40, 0.7);
+            color: white;
+            text-align: center;
+            font-weight: 500;
+            outline: none;
+            transition: 0.2s;
+        }
+        .input-small:focus {
+            border-color: #f0b35b;
+            box-shadow: 0 0 8px #f0b35b;
+        }
+        .reason-input {
+            width: 130px;
+            padding: 0.4rem;
+            border-radius: 0.6rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(20, 25, 40, 0.7);
+            color: white;
+            text-align: left;
+            outline: none;
+        }
+        .reason-input:focus {
+            border-color: #f0b35b;
+            box-shadow: 0 0 8px #f0b35b;
+        }
+        .small-note {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            margin-top: 0.2rem;
+        }
+        hr {
+            border-color: rgba(255,255,255,0.1);
+            margin: 0.7rem 0 0.3rem;
+        }
+        @media (max-width: 600px) {
+            .card {
+                padding: 1.5rem 1rem;
+            }
+            .row-dual {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>
+            <span>📋</span> Měsíční výkaz hodin
+        </h2>
+        <div class="form-grid">
+            <div class="select-group">
+                <label>🎓 Školní rok (září–srpen)</label>
+                <select id="schoolYearSelect" aria-label="Vyberte školní rok"></select>
+            </div>
+            <div class="row-dual">
+                <div class="select-group">
+                    <label>📅 Měsíc</label>
+                    <select id="monthSelect" aria-label="Vyberte měsíc"></select>
+                </div>
+                <div class="select-group">
+                    <label>🔢 Den (výchozí výběr)</label>
+                    <select id="daySelect" aria-label="Vyberte den"></select>
+                </div>
+            </div>
+        </div>
+
+        <div class="summary-box" id="resultContainer">
+            <div class="days-number" id="daysInMonthDisplay">--</div>
+            <div class="details" id="selectedDateDisplay">
+                <span style="opacity:0.7;">vybraný den</span><br>
+                <strong id="dateString">—</strong>
+                <div class="small-note" id="leapInfo"></div>
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <span style="font-weight: 500; color: #ccd9ff;">📌 Tabulka dnů v měsíci</span>
+            <span style="font-size:0.8rem; color:#a0b5dd;">(upravte hodnoty přímo v tabulce)</span>
+        </div>
+        <div class="table-wrapper" id="tableContainer">
+            <!-- Tabulka se vygeneruje dynamicky -->
+        </div>
+        <hr>
+        <div style="font-size:0.8rem; text-align:center; color:#aab9dd; margin-top:0.4rem;">
+            Počet řádků odpovídá počtu dní ve vybraném měsíci.
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const schoolYearSelect = document.getElementById('schoolYearSelect');
+            const monthSelect = document.getElementById('monthSelect');
+            const daySelect = document.getElementById('daySelect');
+            const daysInMonthDisplay = document.getElementById('daysInMonthDisplay');
+            const dateStringEl = document.getElementById('dateString');
+            const leapInfoEl = document.getElementById('leapInfo');
+            const tableContainer = document.getElementById('tableContainer');
+
+            // Pomocné funkce
+            // vraci pocet dnu v mesici
+            function getDaysInMonth(year, month) {
+                return new Date(year, month, 0).getDate();
+            }
+//kontrola prestupneho roku
+            function isLeapYear(year) {
+                return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+            }
+//resi skolni rok
+            function getCalendarYear(schoolStartYear, month) {
+                return month >= 9 ? schoolStartYear : schoolStartYear + 1;
+            }
+
+            // Názvy dnů
+            const dayNames = ['Neděle', 'Pondělí', 'Úterý', 'Středa', 'Čtvrtek', 'Pátek', 'Sobota'];
+
+            // Naplnění školních roků do optionu    
+            function populateSchoolYears() {
+                const currentYear = new Date().getFullYear();
+                const startYear = currentYear - 5;
+                const endYear = currentYear + 5;
+                schoolYearSelect.innerHTML = '';
+                for (let y = startYear; y <= endYear; y++) {
+                    const option = document.createElement('option');
+                    option.value = y;
+                    option.textContent = `${y}/${y + 1}`;
+                    if (y === currentYear && new Date().getMonth() >= 8) option.selected = true;
+                    else if (y === currentYear - 1 && new Date().getMonth() < 8) option.selected = true;
+                    schoolYearSelect.appendChild(option);
+                }
+            }
+//naplneni mesicu
+            function populateMonths() {
+                monthSelect.innerHTML = '';
+                const monthNames = ['Leden', 'Únor', 'Březen', 'Duben', 'Květen', 'Červen', 'Červenec', 'Srpen', 'Září', 'Říjen', 'Listopad', 'Prosinec'];
+                for (let m = 1; m <= 12; m++) {
+                    const option = document.createElement('option');
+                    option.value = m;
+                    option.textContent = `${m}. ${monthNames[m-1]}`;
+                    if (m === new Date().getMonth() + 1) option.selected = true;
+                    monthSelect.appendChild(option);
+                }
+            }
+
+            function updateDayOptions() {
+                const schoolStart = parseInt(schoolYearSelect.value, 10);
+                const month = parseInt(monthSelect.value, 10);
+                const calYear = getCalendarYear(schoolStart, month);
+                const daysCount = getDaysInMonth(calYear, month);
+                const previousDay = daySelect.value ? parseInt(daySelect.value, 10) : null;
+
+                daySelect.innerHTML = '';
+                for (let d = 1; d <= daysCount; d++) {
+                    const opt = document.createElement('option');
+                    opt.value = d;
+                    opt.textContent = d;
+                    daySelect.appendChild(opt);
+                }
+                if (previousDay && previousDay <= daysCount) daySelect.value = previousDay;
+                else daySelect.value = 1;
+
+                updateDisplay();
+                generateTable();
+            }
+
+            function updateDisplay() {
+                const schoolStart = parseInt(schoolYearSelect.value, 10);
+                const month = parseInt(monthSelect.value, 10);
+                const day = parseInt(daySelect.value, 10);
+                const calYear = getCalendarYear(schoolStart, month);
+                const daysInMonth = getDaysInMonth(calYear, month);
+                daysInMonthDisplay.textContent = daysInMonth;
+
+                const monthNames = ['ledna', 'února', 'března', 'dubna', 'května', 'června', 'července', 'srpna', 'září', 'října', 'listopadu', 'prosince'];
+                dateStringEl.textContent = `${day}. ${monthNames[month-1]} ${calYear}`;
+                
+                if (month === 2) {
+                    leapInfoEl.textContent = isLeapYear(calYear) ? '🔵 Přestupný rok' : '⚪ Nepřestupný rok';
+                } else {
+                    leapInfoEl.textContent = '';
+                }
+            }
+
+            // Generování tabulky s řádky = počet dní v měsíci
+            function generateTable() {
+                const schoolStart = parseInt(schoolYearSelect.value, 10);
+                const month = parseInt(monthSelect.value, 10);
+                const calYear = getCalendarYear(schoolStart, month);
+                const daysCount = getDaysInMonth(calYear, month);
+                const selectedDay = parseInt(daySelect.value, 10);
+
+                let html = `
+                <table>
+                    <thead>
+                         <tr>
+                            <th>Datum</th>
+                            <th>Den</th>
+                            <th>Počet hodin</th>
+                            <th>Suplované hod.</th>
+                            <th>Neodučené hod.</th>
+                            <th>Důvod neodučené hodiny</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                `;
+
+                for (let d = 1; d <= daysCount; d++) {
+                    const dateObj = new Date(calYear, month - 1, d);
+                    const dayOfWeek = dateObj.getDay(); // 0=neděle, 6=sobota
+                    const dayName = dayNames[dayOfWeek];
+                    const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
+                    const rowClass = isWeekend ? 'weekend' : '';
+                    
+                    // Formátování data DD.MM.YYYY
+                    const formattedDate = `${String(d).padStart(2,'0')}.${String(month).padStart(2,'0')}.${calYear}`;
+                    
+                    // Zvýraznění vybraného dne (volitelně tučnějším písmem nebo jiným stylem)
+                    const highlightStyle = (d === selectedDay) ? 'font-weight: 700; color: #ffd78b;' : '';
+
+                    html += `
+                        <tr class="${rowClass}">
+                            <td style="${highlightStyle}">${formattedDate}</td>
+                            <td class="day-name" style="${highlightStyle}">${dayName}</td>
+                            <td><input class="input-small" type="number" min="0" value="${isWeekend ? 0 : ''}" placeholder="0" data-day="${d}" data-field="hours"></td>
+                            <td><input class="input-small" type="number" min="0" value="0" placeholder="0" data-day="${d}" data-field="supl"></td>
+                            <td><input class="input-small" type="number" min="0" value="0" placeholder="0" data-day="${d}" data-field="neod"></td>
+                            <td><input class="reason-input" type="text" placeholder="např. nemoc, dovolená" data-day="${d}" data-field="reason"></td>
+                        </tr>
+                    `;
+                }
+
+                html += '</tbody></table>';
+                tableContainer.innerHTML = html;
+            }
+
+            // Event listenery pro změny selectů
+            function attachEvents() {
+                schoolYearSelect.addEventListener('change', () => {
+                    updateDayOptions(); // přegeneruje dny, tabulku a display
+                });
+                monthSelect.addEventListener('change', () => {
+                    updateDayOptions();
+                });
+                daySelect.addEventListener('change', () => {
+                    updateDisplay();
+                    generateTable(); // překreslíme tabulku, abychom zvýraznili vybraný den
+                });
+            }
+
+            function init() {
+                populateSchoolYears();
+                populateMonths();
+                updateDayOptions(); // nastaví daySelect, display a tabulku
+                attachEvents();
+            }
+
+            init();
+        })();
+    </script>
+</body>
+</html>
