@@ -36,3 +36,4 @@ pak dashboard s loginama, navstevama apod.. FE resit az nakonec
 // pozdeji stejne bu muset ten fetch na fe zrusit a resit pres sablony, aby nebyly videt endpointy
 
 //komenty na BE nemusim mazat, coz je vyhoda
+// v dashboard admin by dole v tabulce meli byt vsichni uzivatele s jejich zakladnima statistikama, vyber z opionu je zybtecnej 

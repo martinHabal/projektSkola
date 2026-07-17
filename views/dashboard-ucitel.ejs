@@ -293,7 +293,8 @@
                 </div>
 
                 <!-- Podrobná tabulka výkazů -->
-                <div class="table-section">
+                 <!-- //mimoskolni aktivity az nekdy pozdeji -->
+                <!-- <div class="table-section">
                     <h3><i class="fas fa-table"></i> Mimoškolní aktivity</h3>
                     <div class="table-responsive">
                         <table>
@@ -387,14 +388,15 @@
                         <i class="fas fa-info-circle" style="color: #3b82f6;"></i> Celkem zaznamenáno 436 hodin (přímých
                         + nepřímých) v detailu.
                     </div>
-                </div>
+                </div> -->
 
                 <div class="footer-note">
-                    <i class="fas fa-sync-alt"></i> Data aktualizována k 1. 7. 2026 • všechny údaje jsou ilustrativní
+                  <i class="fas fa-sync-alt"></i> Data aktualizována dnes <%= new Date().toLocaleDateString('cs-CZ', { day: 'numeric', month: 'numeric', year: 'numeric' }) %>
                 </div>
             </div>
 
             <script>
+                //funkcni kolacovej, sloupcovej dodelat, potrebuju mesicni data
                 (function () {
                     const celkemHodinGraf = "<%= totalStats.total_hours %>";
                     const suplovaneHodinGraf = "<%= totalStats.total_subbed %>";
@@ -411,9 +413,9 @@
                             datasets: [{
                                 data: [celkemHodinGraf, 31, 25],
                                 backgroundColor: [
-                                    '#FF6B6B',  // Pizza - červená
-                                    '#FFA94D',  // Hamburger - oranžová
-                                    '#FFD93D',  // Sushi - žlutá
+                                    '#3b82f6',  
+                                    '#8b5cf6',  
+                                    '#f59e0b',  
                                    
                                 ],
                                 borderWidth: 0,

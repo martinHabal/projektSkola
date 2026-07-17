@@ -412,7 +412,7 @@
             <div class="header">
                 <h1><i class="fas fa-users-cog"></i> Admin přehled uživatelů</h1>
                 <div class="header-actions">
-                    <a href="/dashboard" class="back-btn"><i class="fas fa-arrow-left"></i> Zpět na vlastní dashboard</a>
+                    <a href="/dashboard-ucitel" class="back-btn"><i class="fas fa-arrow-left"></i> Zpět na vlastní dashboard</a>
                     <div class="badge-date"><i class="far fa-calendar-alt"></i> 2025/2026</div>
                 </div>
             </div>
@@ -422,7 +422,7 @@
                 <div class="admin-title"><i class="fas fa-chart-line"></i> Celkové statistiky všech uživatelů</div>
 
                 <div class="kpi-card">
-                    <div class="kpi-label"><i class="fas fa-users kpi-icon"></i> Celkem uživatelů</div>
+                    <div class="kpi-label"><i class="fas fa-users kpi-icon"></i> Celkem pedagogů</div>
                     <div class="kpi-value" id="totalUsers">0</div>
                     <div class="kpi-sub">aktivních pedagogů</div>
                 </div>
@@ -442,7 +442,7 @@
                     <div class="kpi-sub" id="topUserHours">0 hodin</div>
                 </div>
                 <div class="kpi-card">
-                    <div class="kpi-label"><i class="fas fa-calendar-check kpi-icon"></i> Celkem aktivit</div>
+                    <div class="kpi-label"><i class="fas fa-calendar-check kpi-icon"></i> Nejméně vytížený</div>
                     <div class="kpi-value" id="totalActivities">0</div>
                     <div class="kpi-sub">zaznamenaných činností</div>
                 </div>
@@ -718,7 +718,7 @@
                         <div class="kpi-sub">průměr 22 žáků / třída</div>
                     </div>
                     <div class="kpi-card">
-                        <div class="kpi-label"><i class="fas fa-calendar-check kpi-icon"></i> Aktivit celkem</div>
+                        <div class="kpi-label"><i class="fas fa-calendar-check kpi-icon"></i> Úvazek</div>
                         <div class="kpi-value">${user.activities.length}</div>
                         <div class="kpi-sub">zaznamenaných činností</div>
                     </div>
