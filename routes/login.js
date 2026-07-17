@@ -54,7 +54,7 @@ router.post("/login", async (req, res) => {
       role: user.role
     };
 
-    res.redirect("/dashboard-vykaz");
+    res.redirect("/dashboard-ucitel");
     // console.log(req.session.user);
   } catch (error) {
     console.error(error);

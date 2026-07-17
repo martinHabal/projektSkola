@@ -35,3 +35,4 @@ pak dashboard s loginama, navstevama apod.. FE resit az nakonec
 // to ejs je zbytecne slozity na to ze mi kostra staci resit na FE
 // pozdeji stejne bu muset ten fetch na fe zrusit a resit pres sablony, aby nebyly videt endpointy
 
+//komenty na BE nemusim mazat, coz je vyhoda

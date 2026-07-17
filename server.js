@@ -7,7 +7,7 @@ import mysql from 'mysql2/promise';
 import routerLogin from './routes/login.js';
 import routerVykaz from './routes/vykaz.js';
 import routerOther from './routes/others.js';
-import routerDashboardVykaz from './routes/dashboardVykaz.js';
+import routerDashboardUcitel from './routes/dashboardUcitel.js';
 import routerNewUser from './routes/newUser.js';
 import openAI from './routes/openAI.js';
 //favicon
@@ -62,7 +62,7 @@ app.use((req, res, next) => {
 app.use('/', routerLogin);
 app.use('/', routerVykaz);
 app.use('/', routerOther);
-app.use('/', routerDashboardVykaz);
+app.use('/', routerDashboardUcitel);
 app.use('/', routerNewUser);
 app.use('/', openAI);
 

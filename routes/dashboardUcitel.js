@@ -5,10 +5,10 @@ import bcrypt from "bcrypt";
 
 
 //DASHBOARD VYKAZ - ZOBRAZENI STATISTIKY JEDNOHO UZIVATELE
-router.get("/dashboard-vykaz", async (req, res) => {
+router.get("/dashboard-ucitel", async (req, res) => {
     // Kontrola přihlášení - měla by být na začátku
     if (!req.session.user) {
-        return res.redirect("/login");
+        return res.redirect("/");
     }
 
     try {
@@ -62,11 +62,11 @@ console.log(monthlyStats);
         );
 
         
-
-        res.render('dashboard-vykaz', {
+//zatim resim jen celkove statistiky
+        res.render('dashboard-ucitel', {
             user: req.session.user,
-            totalStats: totalStats[0] || {},
-            monthlyStats: monthlyStats,
+            totalStats: totalStats[0] || {}
+           
          
         });
 
@@ -79,7 +79,8 @@ console.log(monthlyStats);
     }
 });
 
-// Endpoint pro data
+//Endpoint pro data
+// na to se vykaslu, budu posilat pres sablonu
 router.get('/api/chart-data', (req, res) => {
     const chartData = {
         labels: ['Celkem hodin', 'Suplované', 'Odpadnuté'],
@@ -89,6 +90,48 @@ router.get('/api/chart-data', (req, res) => {
     res.json(chartData);
 });
 
+// router.get('/api/chart-data', async (req, res) => {
+//     try {
+//         // Získání userId - upravte podle vašeho auth systému
+//         const userId = req.user?.id || req.session?.userId;
+        
+//         if (!userId) {
+//             return res.status(401).json({ error: 'Uživatel není přihlášen' });
+//         }
+
+//         // Váš původní dotaz
+//         const [totalStats] = await pool.execute(
+//             `SELECT 
+//                 SUM(hours_worked) as total_hours,
+//                 AVG(hours_worked) as avg_hours,
+//                 COUNT(*) as total_days,
+//                 SUM(hours_missed) as total_missed,
+//                 SUM(hours_subbed) as total_subbed
+//             FROM work_logs 
+//             WHERE users_id = ?`,
+//             [userId]
+//         );
+
+//         // Příprava dat pro frontend - přesně ve formátu, který očekává
+//         const chartData = {
+//             data: [
+//                 Number(totalStats.total_hours) || 0,
+//                 Number(totalStats.total_subbed) || 0,
+//                 Number(totalStats.total_missed) || 0
+//             ],
+//             colors: ['#3b82f6', '#8b5cf6', '#f59e0b']
+//         };
+
+//         res.json(chartData);
+//     } catch (error) {
+//         console.error('Chyba při načítání dat pro graf:', error);
+//         res.status(500).json({ 
+//             error: 'Interní chyba serveru',
+//             data: [0, 0, 0],
+//             colors: ['#3b82f6', '#8b5cf6', '#f59e0b']
+//         });
+//     }
+// });
 
 
 
