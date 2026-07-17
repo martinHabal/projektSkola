@@ -1,95 +1,869 @@
 <!DOCTYPE html>
 <html lang="cs">
-<!-- <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
         }
+
         body {
-            font-family: Arial, sans-serif;
-            background: #f0f2f5;
+            background: #f4f7fc;
+            padding: 2rem 1.5rem;
+            color: #1e293b;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Hlavička */
+        .header {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            min-height: 100vh;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
         }
-        #dashboard {
+
+        .header h1 {
+            font-weight: 600;
+            font-size: 2rem;
+            letter-spacing: -0.5px;
+            color: #0f172a;
+        }
+
+        .header h1 i {
+            color: #3b82f6;
+            margin-right: 10px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .badge-date {
             background: white;
-            padding: 50px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            text-align: center;
-            max-width: 500px;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+            font-weight: 500;
+            border: 1px solid #e2e8f0;
+        }
+
+        .badge-date i {
+            color: #64748b;
+            margin-right: 8px;
+        }
+
+        /* Selector uživatele */
+        .user-selector {
+            background: white;
+            padding: 0.5rem 1rem;
+            border-radius: 40px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .user-selector label {
+            font-weight: 500;
+            color: #475569;
+            font-size: 0.9rem;
+        }
+
+        .user-selector select {
+            padding: 0.4rem 1rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            background: #f8fafc;
+            color: #1e293b;
+            cursor: pointer;
+            outline: none;
+            min-width: 180px;
+        }
+
+        .user-selector select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Karty KPI */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .kpi-card {
+            background: white;
+            padding: 1.3rem 1.2rem;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+            border: 1px solid #edf2f7;
+            transition: 0.1s ease;
+        }
+
+        .kpi-card:hover {
+            border-color: #cbd5e1;
+        }
+
+        .kpi-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #64748b;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .kpi-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-top: 6px;
+            color: #0f172a;
+        }
+
+        .kpi-sub {
+            font-size: 0.8rem;
+            color: #475569;
+            margin-top: 4px;
+        }
+
+        .kpi-icon {
+            color: #3b82f6;
+            opacity: 0.7;
+        }
+
+        /* Karty celkových statistik - admin */
+        .admin-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            padding: 1.5rem;
+            border-radius: 24px;
+        }
+
+        .admin-stats-grid .kpi-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .admin-stats-grid .kpi-label {
+            color: #94a3b8;
+        }
+
+        .admin-stats-grid .kpi-value {
+            color: #f8fafc;
+        }
+
+        .admin-stats-grid .kpi-sub {
+            color: #94a3b8;
+        }
+
+        .admin-stats-grid .kpi-icon {
+            color: #60a5fa;
+        }
+
+        .admin-title {
+            color: #f8fafc;
+            font-size: 1rem;
+            font-weight: 600;
+            grid-column: 1 / -1;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-title i {
+            color: #60a5fa;
+        }
+
+        /* Mřížka grafů */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.8rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 24px;
+            padding: 1.5rem 1.2rem 1.2rem 1.2rem;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.02);
+            border: 1px solid #eef2f6;
+        }
+
+        .chart-card h3 {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chart-card h3 i {
+            color: #3b82f6;
+            font-size: 1rem;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 200px;
+        }
+
+        /* Tabulka */
+        .table-section {
+            background: white;
+            border-radius: 24px;
+            padding: 1.5rem 1.2rem;
+            border: 1px solid #eef2f6;
+            margin-top: 0.5rem;
+        }
+
+        .table-section h3 {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .table-section h3 i {
+            color: #3b82f6;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
             width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
         }
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
+
+        th {
+            text-align: left;
+            padding: 0.8rem 0.4rem 0.8rem 0;
+            font-weight: 600;
+            color: #475569;
+            border-bottom: 2px solid #e9edf2;
         }
-        .user-info {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 20px 0;
+
+        td {
+            padding: 0.7rem 0.4rem 0.7rem 0;
+            border-bottom: 1px solid #eef2f6;
         }
-        .username {
-            font-size: 24px;
-            font-weight: bold;
-            color: #4CAF50;
+
+        tr:last-child td {
+            border-bottom: none;
         }
-        .logout-btn {
-            display: inline-block;
-            padding: 12px 30px;
-            background: #dc3545;
-            color: white;
+
+        .status-badge {
+            background: #dbeafe;
+            color: #1d4ed8;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .status-badge.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-badge.warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-badge.danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .text-muted {
+            color: #64748b;
+        }
+
+        .footer-note {
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: #94a3b8;
+            text-align: right;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 1.5rem;
+        }
+
+        @media (max-width: 500px) {
+            body {
+                padding: 1rem;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .kpi-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .admin-stats-grid {
+                grid-template-columns: 1fr 1fr;
+                padding: 1rem;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .header-actions {
+                flex-direction: column;
+            }
+
+            .user-selector {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .user-selector select {
+                flex: 1;
+                min-width: 120px;
+            }
+        }
+
+        /* Loading spinner */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #64748b;
+        }
+
+        .loading i {
+            font-size: 2rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Tlačítko zpět */
+        .back-btn {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
             text-decoration: none;
-            border-radius: 5px;
-            margin-top: 20px;
-            transition: background 0.3s;
+            color: #475569;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
-        .logout-btn:hover {
-            background: #c82333;
-        }
-        .emoji {
-            font-size: 48px;
-            margin-bottom: 20px;
+
+        .back-btn:hover {
+            background: #e2e8f0;
+            color: #0f172a;
         }
     </style>
-</head> -->
-<style>
-     #dashboard {
-            background: white;
-            padding: 50px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            text-align: center;
-            /* max-width: 500px; */
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-</style>
-<%- include('./partials/head') %>
-<body>
-      <%- include('./partials/header') %>
-    <div class="container" id="dashboard">
-        <div>
 
-            <h1>Dashboard</h1>
-            
-            <div class="user-info">
-                <p style="color: #666; margin-bottom: 5px;">Přihlášen jako:</p>
-                <div class="username"><%= username %></div>
+
+<%- include('./partials/head') %>
+
+    <body>
+
+        <%- include('./partials/header') %>
+
+        <div class="dashboard-container">
+
+            <!-- Hlavička -->
+            <div class="header">
+                <h1><i class="fas fa-users-cog"></i> Admin přehled uživatelů</h1>
+                <div class="header-actions">
+                    <a href="/dashboard" class="back-btn"><i class="fas fa-arrow-left"></i> Zpět na vlastní dashboard</a>
+                    <div class="badge-date"><i class="far fa-calendar-alt"></i> 2025/2026</div>
+                </div>
             </div>
-            <p>Zde se budou ukazovat zmeny v nove verzi aplikace</p>
-            
-            <a href="/logout" class="logout-btn">Odhlásit se</a>
+
+            <!-- Celkové statistiky všech uživatelů -->
+            <div class="admin-stats-grid">
+                <div class="admin-title"><i class="fas fa-chart-line"></i> Celkové statistiky všech uživatelů</div>
+
+                <div class="kpi-card">
+                    <div class="kpi-label"><i class="fas fa-users kpi-icon"></i> Celkem uživatelů</div>
+                    <div class="kpi-value" id="totalUsers">0</div>
+                    <div class="kpi-sub">aktivních pedagogů</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label"><i class="fas fa-clock kpi-icon"></i> Celkem hodin</div>
+                    <div class="kpi-value" id="totalAllHours">0</div>
+                    <div class="kpi-sub">napříč všemi uživateli</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label"><i class="fas fa-tasks kpi-icon"></i> Průměr na uživatele</div>
+                    <div class="kpi-value" id="avgHoursPerUser">0</div>
+                    <div class="kpi-sub">hodin / uživatel</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label"><i class="fas fa-chart-bar kpi-icon"></i> Nejvytíženější</div>
+                    <div class="kpi-value" id="topUser">—</div>
+                    <div class="kpi-sub" id="topUserHours">0 hodin</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label"><i class="fas fa-calendar-check kpi-icon"></i> Celkem aktivit</div>
+                    <div class="kpi-value" id="totalActivities">0</div>
+                    <div class="kpi-sub">zaznamenaných činností</div>
+                </div>
+            </div>
+
+            <!-- Výběr uživatele -->
+            <div style="margin-bottom: 1.5rem;">
+                <div class="user-selector" style="border-radius: 16px; padding: 0.8rem 1.2rem; background: white; border: 1px solid #e2e8f0;">
+                    <label for="userSelect"><i class="fas fa-user-circle" style="color: #3b82f6;"></i> Vyber uživatele:</label>
+                    <select id="userSelect" onchange="loadUserData(this.value)">
+                        <option value="">— vyber uživatele —</option>
+                    </select>
+                    <span style="font-size: 0.8rem; color: #94a3b8; margin-left: auto;" id="selectedUserInfo"></span>
+                </div>
+            </div>
+
+            <!-- Detail vybraného uživatele -->
+            <div id="userDetail">
+                <div class="loading" id="loadingIndicator">
+                    <i class="fas fa-spinner"></i>
+                    <p style="margin-top: 0.5rem;">Vyber uživatele pro zobrazení detailu</p>
+                </div>
+
+                <div id="userContent" style="display: none;">
+                    <!-- KPI karty uživatele -->
+                    <div class="kpi-grid" id="userKpi">
+                        <!-- Dynamicky generováno -->
+                    </div>
+
+                    <!-- Grafy -->
+                    <div class="charts-grid">
+                        <div class="chart-card">
+                            <h3><i class="fas fa-chart-pie"></i> Struktura hodin</h3>
+                            <div class="chart-wrapper">
+                                <canvas id="userPieChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-card">
+                            <h3><i class="fas fa-chart-bar"></i> Měsíční přehled</h3>
+                            <div class="chart-wrapper">
+                                <canvas id="userBarChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabulka aktivit uživatele -->
+                    <div class="table-section">
+                        <h3><i class="fas fa-table"></i> Aktivity uživatele</h3>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Činnost</th>
+                                        <th>Kategorie</th>
+                                        <th>Hodin</th>
+                                        <th>Žáků / skupin</th>
+                                        <th>Období</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="userActivities">
+                                    <!-- Dynamicky generováno -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-note">
+                <i class="fas fa-shield-alt"></i> Administrátorský přístup • data aktualizována k 1. 7. 2026
+            </div>
         </div>
-    </div>
+
+        <script>
+            // ---------- DATA ----------
+            // Simulovaná data uživatelů (v reálu by přišla z API)
+            const usersData = {
+                users: [{
+                        id: 1,
+                        username: 'novakj',
+                        fullName: 'Jan Novák',
+                        total_hours: 436,
+                        avg_hours: 24.2,
+                        total_subbed: 124,
+                        total_missed: 18,
+                        activities: [
+                            { name: 'Matematika – 8.A', category: 'Přímá výuka', hours: 96, students: 24, period: 'Září–červen',
+                                status: 'Dokončeno' },
+                            { name: 'Matematika – 8.B', category: 'Přímá výuka', hours: 92, students: 22, period: 'Září–červen',
+                                status: 'Dokončeno' },
+                            { name: 'Fyzika – 9.A', category: 'Přímá výuka', hours: 78, students: 20, period: 'Září–červen',
+                                status: 'Dokončeno' },
+                            { name: 'Příprava DUM', category: 'Nepřímá', hours: 48, students: '—', period: 'Celoročně',
+                                status: 'Probíhá' },
+                            { name: 'Korektura písemek', category: 'Nepřímá', hours: 36, students: '—', period: 'Průběžně',
+                                status: 'Dokončeno' },
+                            { name: 'Školní projekt "Věda hrou"', category: 'Nepřímá', hours: 28, students: 15,
+                                period: 'Březen–květen', status: 'Dokončeno' },
+                            { name: 'Konzultace s rodiči', category: 'Nepřímá', hours: 18, students: '—',
+                                period: 'Listopad, duben', status: 'Dokončeno' },
+                            { name: 'Doučování – 9.B', category: 'Přímá výuka', hours: 32, students: 6,
+                                period: 'Únor–květen', status: 'Dokončeno' },
+                            { name: 'Školení "Inovace"', category: 'Nepřímá', hours: 8, students: '—', period: 'Červen',
+                                status: 'Plánováno' }
+                        ]
+                    },
+                    {
+                        id: 2,
+                        username: 'svobodap',
+                        fullName: 'Petra Svobodová',
+                        total_hours: 520,
+                        avg_hours: 28.9,
+                        total_subbed: 156,
+                        total_missed: 22,
+                        activities: [
+                            { name: 'Čeština – 6.A', category: 'Přímá výuka', hours: 110, students: 26,
+                                period: 'Září–červen', status: 'Dokončeno' },
+                            { name: 'Čeština – 6.B', category: 'Přímá výuka', hours: 108, students: 24,
+                                period: 'Září–červen', status: 'Dokončeno' },
+                            { name: 'Literatura – 7.A', category: 'Přímá výuka', hours: 84, students: 22,
+                                period: 'Září–červen', status: 'Dokončeno' },
+                            { name: 'Čtenářský klub', category: 'Nepřímá', hours: 40, students: 12, period: 'Celoročně',
+                                status: 'Dokončeno' },
+                            { name: 'Příprava maturit', category: 'Nepřímá', hours: 52, students: '—', period: 'Únor–květen',
+                                status: 'Dokončeno' },
+                            { name: 'Korektura slohů', category: 'Nepřímá', hours: 42, students: '—', period: 'Průběžně',
+                                status: 'Probíhá' },
+                            { name: 'Školní časopis', category: 'Nepřímá', hours: 30, students: 8, period: 'Celoročně',
+                                status: 'Dokončeno' },
+                            { name: 'Konzultace s rodiči', category: 'Nepřímá', hours: 20, students: '—',
+                                period: 'Listopad, duben', status: 'Dokončeno' },
+                            { name: 'Doučování – 9.A', category: 'Přímá výuka', hours: 34, students: 5,
+                                period: 'Únor–květen', status: 'Dokončeno' }
+                        ]
+                    },
+                    {
+                        id: 3,
+                        username: 'horakm',
+                        fullName: 'Martin Horák',
+                        total_hours: 382,
+                        avg_hours: 21.2,
+                        total_subbed: 98,
+                        total_missed: 30,
+                        activities: [
+                            { name: 'Fyzika – 7.A', category: 'Přímá výuka', hours: 82, students: 22,
+                                period: 'Září–červen', status: 'Dokončeno' },
+                            { name: 'Fyzika – 7.B', category: 'Přímá výuka', hours: 78, students: 20,
+                                period: 'Září–červen', status: 'Dokončeno' },
+                            { name: 'Chemie – 8.A', category: 'Přímá výuka', hours: 64, students: 21,
+                                period: 'Září–červen', status: 'Dokončeno' },
+                            { name: 'Laboratorní cvičení', category: 'Nepřímá', hours: 44, students: 16,
+                                period: 'Celoročně', status: 'Dokončeno' },
+                            { name: 'Příprava pokusů', category: 'Nepřímá', hours: 34, students: '—', period: 'Průběžně',
+                                status: 'Probíhá' },
+                            { name: 'Korektura protokolů', category: 'Nepřímá', hours: 28, students: '—',
+                                period: 'Průběžně', status: 'Dokončeno' },
+                            { name: 'Přírodovědný projekt', category: 'Nepřímá', hours: 26, students: 10,
+                                period: 'Březen–květen', status: 'Dokončeno' },
+                            { name: 'Konzultace s rodiči', category: 'Nepřímá', hours: 14, students: '—',
+                                period: 'Listopad, duben', status: 'Dokončeno' },
+                            { name: 'Doučování – 8.B', category: 'Přímá výuka', hours: 12, students: 4,
+                                period: 'Únor–květen', status: 'Plánováno' }
+                        ]
+                    }
+                ]
+            };
+
+            // Globální proměnné pro grafy
+            let userPieChart = null;
+            let userBarChart = null;
+
+            // ---------- NAČTENÍ DAT ----------
+            function initDashboard() {
+                // Naplnění selectu
+                const select = document.getElementById('userSelect');
+                usersData.users.forEach(user => {
+                    const option = document.createElement('option');
+                    option.value = user.id;
+                    option.textContent = `${user.fullName} (${user.username})`;
+                    select.appendChild(option);
+                });
+
+                // Výpočet celkových statistik
+                calculateTotalStats();
+
+                // Automaticky vybrat prvního uživatele
+                if (usersData.users.length > 0) {
+                    select.value = usersData.users[0].id;
+                    loadUserData(usersData.users[0].id);
+                }
+            }
+
+            // ---------- CELKOVÉ STATISTIKY ----------
+            function calculateTotalStats() {
+                const totalUsers = usersData.users.length;
+                let totalHours = 0;
+                let totalActivities = 0;
+                let maxHours = 0;
+                let topUser = '';
+
+                usersData.users.forEach(user => {
+                    totalHours += user.total_hours;
+                    totalActivities += user.activities.length;
+                    if (user.total_hours > maxHours) {
+                        maxHours = user.total_hours;
+                        topUser = user.fullName;
+                    }
+                });
+
+                const avgHours = (totalHours / totalUsers).toFixed(1);
+
+                document.getElementById('totalUsers').textContent = totalUsers;
+                document.getElementById('totalAllHours').textContent = totalHours;
+                document.getElementById('avgHoursPerUser').textContent = avgHours;
+                document.getElementById('topUser').textContent = topUser;
+                document.getElementById('topUserHours').textContent = `${maxHours} hodin`;
+                document.getElementById('totalActivities').textContent = totalActivities;
+            }
+
+            // ---------- NAČTENÍ DAT UŽIVATELE ----------
+            function loadUserData(userId) {
+                const loading = document.getElementById('loadingIndicator');
+                const content = document.getElementById('userContent');
+
+                if (!userId) {
+                    loading.style.display = 'block';
+                    content.style.display = 'none';
+                    return;
+                }
+
+                loading.style.display = 'none';
+                content.style.display = 'block';
+
+                const user = usersData.users.find(u => u.id === parseInt(userId));
+                if (!user) return;
+
+                // Aktualizace info
+                document.getElementById('selectedUserInfo').textContent = `${user.fullName} (${user.username})`;
+
+                // KPI karty
+                renderUserKpi(user);
+
+                // Tabulka aktivit
+                renderUserActivities(user);
+
+                // Grafy
+                renderUserCharts(user);
+            }
+
+            // ---------- RENDER KPI ----------
+            function renderUserKpi(user) {
+                const container = document.getElementById('userKpi');
+                container.innerHTML = `
+                    <div class="kpi-card">
+                        <div class="kpi-label"><i class="fas fa-clock kpi-icon"></i> Celkem hodin</div>
+                        <div class="kpi-value">${user.total_hours}</div>
+                        <div class="kpi-sub">⬆ +3,2 % oproti minulému roku</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label"><i class="fas fa-users kpi-icon"></i> Průměrně hodin</div>
+                        <div class="kpi-value">${user.avg_hours}</div>
+                        <div class="kpi-sub">60,9 % z celkového úvazku</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label"><i class="fas fa-tasks kpi-icon"></i> Suplované hodiny</div>
+                        <div class="kpi-value">${user.total_subbed}</div>
+                        <div class="kpi-sub">přípravy, korektury, projekty</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label"><i class="fas fa-user-graduate kpi-icon"></i> Odpadnuté hodiny</div>
+                        <div class="kpi-value">${user.total_missed}</div>
+                        <div class="kpi-sub">průměr 22 žáků / třída</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label"><i class="fas fa-calendar-check kpi-icon"></i> Aktivit celkem</div>
+                        <div class="kpi-value">${user.activities.length}</div>
+                        <div class="kpi-sub">zaznamenaných činností</div>
+                    </div>
+                `;
+            }
+
+            // ---------- RENDER AKTIVIT ----------
+            function renderUserActivities(user) {
+                const tbody = document.getElementById('userActivities');
+                const statusMap = {
+                    'Dokončeno': 'success',
+                    'Probíhá': 'warning',
+                    'Plánováno': 'danger'
+                };
+
+                tbody.innerHTML = user.activities.map(act => `
+                    <tr>
+                        <td>${act.name}</td>
+                        <td>${act.category}</td>
+                        <td>${act.hours}</td>
+                        <td>${act.students}</td>
+                        <td>${act.period}</td>
+                        <td><span class="status-badge ${statusMap[act.status] || ''}">${act.status}</span></td>
+                    </tr>
+                `).join('');
+            }
+
+            // ---------- RENDER GRAFŮ ----------
+            function renderUserCharts(user) {
+                // Data pro grafy
+                const directHours = user.activities
+                    .filter(a => a.category === 'Přímá výuka')
+                    .reduce((sum, a) => sum + a.hours, 0);
+                const indirectHours = user.activities
+                    .filter(a => a.category === 'Nepřímá')
+                    .reduce((sum, a) => sum + a.hours, 0);
+
+                // Měsíční data (simulovaná)
+                const monthlyData = [68, 72, 70, 64, 60, 66, 74, 70, 68, 62];
+                const monthlyLabels = ['Září', 'Říj', 'Lis', 'Pro', 'Led', 'Úno', 'Bře', 'Dub', 'Kvě', 'Čer'];
+
+                // ---- Koláčový graf ----
+                const pieCtx = document.getElementById('userPieChart').getContext('2d');
+
+                if (userPieChart) {
+                    userPieChart.destroy();
+                }
+
+                userPieChart = new Chart(pieCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Přímá výuka', 'Nepřímá činnost', 'Suplované', 'Odpadnuté'],
+                        datasets: [{
+                            data: [directHours || 200, indirectHours || 100, user.total_subbed || 50, user
+                                .total_missed || 20
+                            ],
+                            backgroundColor: ['#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444'],
+                            borderWidth: 0,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    boxWidth: 12,
+                                    padding: 14,
+                                    font: { size: 11, weight: '500' },
+                                    color: '#1e293b'
+                                }
+                            }
+                        },
+                        cutout: '55%',
+                        layout: {
+                            padding: { top: 0, bottom: 0 }
+                        }
+                    }
+                });
+
+                // ---- Sloupcový graf ----
+                const barCtx = document.getElementById('userBarChart').getContext('2d');
+
+                if (userBarChart) {
+                    userBarChart.destroy();
+                }
+
+                userBarChart = new Chart(barCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: monthlyLabels,
+                        datasets: [{
+                            label: 'Celkem hodin',
+                            data: monthlyData,
+                            backgroundColor: '#3b82f6',
+                            borderRadius: 4,
+                        }, {
+                            label: 'Suplované',
+                            data: monthlyData.map(d => Math.round(d * 0.3)),
+                            backgroundColor: '#8b5cf6',
+                            borderRadius: 4,
+                        }, {
+                            label: 'Odpadnuté',
+                            data: monthlyData.map(d => Math.round(d * 0.15)),
+                            backgroundColor: '#f59e0b',
+                            borderRadius: 4,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    boxWidth: 12,
+                                    padding: 14,
+                                    font: { size: 11, weight: '500' },
+                                    color: '#1e293b'
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: '#e9edf2' },
+                                ticks: { font: { size: 10 } }
+                            },
+                            x: {
+                                grid: { display: false },
+                                ticks: { font: { size: 10 } }
+                            }
+                        },
+                        layout: {
+                            padding: { top: 10, bottom: 10 }
+                        }
+                    }
+                });
+            }
+
+            // ---------- INICIALIZACE ----------
+            document.addEventListener('DOMContentLoaded', initDashboard);
+        </script>
+
 </body>
+
 </html>

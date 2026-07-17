@@ -13,7 +13,16 @@ import bcrypt from "bcrypt";
 //     success: null,
 //   });
 // });
-
+// MIDDLEWARE pro předání session do všech šablon
+router.use((req, res, next) => {
+    res.locals.session = req.session;
+    res.locals.isAdmin = req.session.user && req.session.user.role === 'admin';
+    next();
+});
+router.get('/', (req, res) => {
+    
+    res.render("login", { error: "Vyplňte všechny údaje" });
+});
 // PŘIHLÁŠENÍ - pouze login page a pak presmerovani na dashboard
 router.post("/login", async (req, res) => {
   const { username, password } = req.body;
@@ -42,6 +51,7 @@ router.post("/login", async (req, res) => {
     req.session.user = {
       id: user.id,
       username: user.username,
+      role: user.role
     };
 
     res.redirect("/dashboard-vykaz");
@@ -55,13 +65,13 @@ router.post("/login", async (req, res) => {
 // GET - Odhlášení
 router.get("/logout", (req, res) => {
   req.session.destroy();
-  res.redirect("/login");
+  res.redirect("/");
 });
 
 //Dashboard se zobrazi po prihlaseni
 router.get("/dashboard", (req, res) => {
   if (!req.session.user) {
-    return res.redirect("/login");
+    return res.redirect("/");
   }
   res.render("dashboard", {
     username: req.session.user.username,

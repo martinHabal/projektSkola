@@ -45,6 +45,6 @@ function skolniPrazdniny() {
                 toMonth: 11,
             },
         ];
-                console.log('Data:', schoolVacations);
+                // console.log('Data:', schoolVacations);
                 return schoolVacations
 }

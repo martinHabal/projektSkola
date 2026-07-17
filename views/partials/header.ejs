@@ -2,39 +2,36 @@
   <h1>Školní intranet Hotelové školy Mariánské Lázně - <%= username || 'Nepřihlášen' %></h1>
   <div class="header-right">
    
-    <!-- <button style="cursor: pointer" class="tooltip" data-tooltip="Zpráva" onclick="window.location.href='/fip-upload'">
-      <span class="material-icons">message</span>
-    </button> -->
+    
    
     <button class="tooltip" data-tooltip=" vykaz-novy-novy " onclick="window.location.href='/vykaz-novy-novy'" style="background-color: #95c2f2;">
       <span class="material-icons">data_object</span>
     </button>
-    <button class="tooltip" data-tooltip=" Výkaz tisk " onclick="window.location.href='/work-report'" style="background-color: red;">
+    <!-- <button class="tooltip" data-tooltip=" Výkaz tisk " onclick="window.location.href='/work-report'" style="background-color: red;">
       <span class="material-icons">print</span>
-    </button>
-    <button class="tooltip" data-tooltip="Nový uživatel" onclick="window.location.href='/new-user'" style="background-color: red;">
-      <span class="material-icons">person_add</span>
-    </button>
+    </button> -->
+ 
     <button class="tooltip" data-tooltip="Dashboard výkaz" onclick="window.location.href='/dashboard-vykaz'" style="background-color: #95c2f2;">
       <span class="material-icons">analytics</span>
     </button>
-    <button class="tooltip" data-tooltip="Dashboard" onclick="window.location.href='/dashboard'" style="background-color: red;">
-      <span class="material-icons">dashboard</span>
-    </button>
-    <button class="tooltip" data-tooltip="Maturita" onclick="window.location.href='/maturita'" style="background-color: #95c2f2;">
+    
+
+    <!-- tu maturitu pak dam nekam do ostatnich apek - sem to tak nejak nepatri -->
+    <!-- <button class="tooltip" data-tooltip="Maturita" onclick="window.location.href='/maturita'" style="background-color: #95c2f2;">
       <span class="material-icons">work</span>
-    </button>
-    <button class="tooltip" data-tooltip="Školní řád" onclick="window.location.href='/skolni-rad'" style="background-color: #95c2f2;">
-      <span class="material-icons">policy</span>
-    </button>
+    </button> -->
+
     <!-- <button class="tooltip" data-tooltip="Výkaz" onclick="window.location.href='/vykaz'" style="background-color: #95c2f2;">
-      <span class="material-icons">bar_chart</span>
+        <span class="material-icons">bar_chart</span>
     </button> -->
     <!-- <button class="tooltip" data-tooltip="Výkaz info" onclick="window.location.href='/vykaz-info'" style="background-color: #95c2f2;">
-      <span class="material-icons">data_thresholding</span>
+        <span class="material-icons">data_thresholding</span>
     </button> -->
-    <button class="tooltip" data-tooltip="Výkaz tabulka" onclick="window.location.href='/vykaz-system'" style="background-color: #95c2f2;;">
-      <span class="material-icons">area_chart</span>
+    <!-- <button class="tooltip" data-tooltip="Výkaz tabulka" onclick="window.location.href='/vykaz-system'" style="background-color: #95c2f2;;">
+        <span class="material-icons">area_chart</span>
+    </button> -->
+    <button class="tooltip" data-tooltip="Školní řád" onclick="window.location.href='/skolni-rad'" style="background-color: #38d0c0;">
+      <span class="material-icons">policy</span>
     </button>
     <button class="tooltip" data-tooltip="Organizace roku" onclick="window.location.href='/kalendar'" style="background-color: #38d0c0;">
       <span class="material-icons">format_list_numbered</span>
@@ -47,6 +44,19 @@
     </button>
     <button class="tooltip" data-tooltip="Manuál" onclick="window.location.href='/manual'" style="background-color: #38d0c0;">
       <span class="material-icons">help_center</span>
+    </button>
+    <% if (isAdmin) { %>
+    <button class="tooltip" data-tooltip="Dashboard" onclick="window.location.href='/dashboard'" style="background-color: rgb(140, 16, 211);">
+      <span class="material-icons">dashboard</span>
+    </button>
+    <% } %>
+      <% if (isAdmin) { %>
+    <button class="tooltip" data-tooltip="Nový uživatel" onclick="window.location.href='/new-user'" style="background-color: rgb(140, 16, 211);">
+        <span class="material-icons">person_add</span>
+    </button>
+<% } %>
+    <button style="cursor: pointer" class="tooltip" data-tooltip="Odhlášení" onclick="window.location.href='/logout'" style="background-color: red;">
+      <span class="material-icons">logout</span>
     </button>
   </div>
   <!-- <button class="tooltip" data-tooltip="Poslat zprávu" onclick="window.location.href='/fip-upload'"><span class="material-icons">home</span></button> -->

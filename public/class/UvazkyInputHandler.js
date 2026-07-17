@@ -35,7 +35,7 @@ export class NumberInputHandler {
         // Validace při odchodu z inputu
         this.input.addEventListener('blur', this.validateValue.bind(this));
 
-        console.log('NumberInputHandler inicializován');
+        // console.log('NumberInputHandler inicializován');
     }
 
     handleInputChange(event) {

@@ -10,6 +10,9 @@ import routerOther from './routes/others.js';
 import routerDashboardVykaz from './routes/dashboardVykaz.js';
 import routerNewUser from './routes/newUser.js';
 import openAI from './routes/openAI.js';
+//favicon
+import path from 'path';
+import favicon from "serve-favicon";
 
 // import { runMigrations } from './db/migrations/migrate.js';
 // import { seedAdmin } from './db/seeders/admin.js';
@@ -18,6 +21,7 @@ import openAI from './routes/openAI.js';
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use(favicon(path.join(process.cwd(), "public", "favicon.ico")));
 app.use(express.json());
 // Session
 app.use(session({
@@ -26,6 +30,17 @@ app.use(session({
     saveUninitialized: false,
     cookie: { secure: false } // pro HTTPS dejte true
 }));
+// Hned po session middleware
+app.use((req, res, next) => {
+    if (req.session.user) {
+        res.locals.user = req.session.user;
+        res.locals.isAdmin = req.session.user.role === 'admin';
+    } else {
+        res.locals.user = null;
+        res.locals.isAdmin = false;
+    }
+    next();
+});
 
 //import modulu get a post
 

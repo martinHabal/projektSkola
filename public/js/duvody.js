@@ -53,6 +53,6 @@ function duvodyNepritomnosti() {
                         hint: "Jiný důvod neodpovídající výše uvedeným kategorií"
                     }
                 ];
-                console.log('Data:', missedReasons);
+                // console.log('Data:', missedReasons);
                 return missedReasons
 }
