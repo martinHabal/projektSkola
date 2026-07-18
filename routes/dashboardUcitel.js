@@ -69,35 +69,38 @@ router.get("/dashboard-ucitel", async (req, res) => {
         SUM(hours_worked) as celkem_hodin
     FROM work_logs
     WHERE work_date BETWEEN '2025-09-01' AND '2026-08-31'
+    AND users_id = ?
     GROUP BY MONTH(work_date)
     ORDER BY mesic_cislo ASC
-`);
-        const celkemHodiny = celkem.map(row => row.celkem_hodin);
-
-
+`, [userId]);
+        const celkemHodiny = celkem.map(row => Number(row.celkem_hodin));
+console.log(typeof celkemHodiny)
+//   const data = rows.map(row => Number(row.celkem_hodin));
         //suplovane hodiny
         const [suplovane] = await pool.execute(`
     SELECT 
         MONTH(work_date) as mesic_cislo,
-        SUM(hours_worked) as celkem_hodin
+        SUM(hours_subbed) as celkem_suplovane
     FROM work_logs
     WHERE work_date BETWEEN '2025-09-01' AND '2026-08-31'
+    AND users_id = ?
     GROUP BY MONTH(work_date)
     ORDER BY mesic_cislo ASC
-`);
-        const suplovaneHodiny = suplovane.map(row => row.celkem_hodin);
+`, [userId]);
+        const suplovaneHodiny = suplovane.map(row => row.celkem_suplovane);
 
         //odpadnute hodiny
         const [odpadnute] = await pool.execute(`
     SELECT 
         MONTH(work_date) as mesic_cislo,
-        SUM(hours_worked) as celkem_hodin
+        SUM(hours_missed) as celkem_odpadnute
     FROM work_logs
     WHERE work_date BETWEEN '2025-09-01' AND '2026-08-31'
+    AND users_id = ?
     GROUP BY MONTH(work_date)
     ORDER BY mesic_cislo ASC
-`);
-        const odpadnuteHodiny = odpadnute.map(row => row.celkem_hodin);
+`, [userId]);
+        const odpadnuteHodiny = odpadnute.map(row => row.celkem_odpadnute);
 
 
 

@@ -248,28 +248,28 @@
                     <div class="kpi-card">
                         <div class="kpi-label"><i class="fas fa-clock kpi-icon"></i> Celkem hodin</div>
                         <div class="kpi-value"><%- totalStats.total_hours %></div>
-                        <div class="kpi-sub">⬆ +3,2 % oproti minulému roku</div>
+                        <!-- <div class="kpi-sub">⬆ +3,2 % oproti minulému roku</div> -->
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label"><i class="fas fa-calendar-check kpi-icon"></i> Celkem dní
+                            (hodin)</div>
+                        <div class="kpi-value"><%- totalStats.total_days %></div>
+                        <!-- <div class="kpi-sub">z 200 plánovaných</div> -->
                     </div>
                     <div class="kpi-card">
                         <div class="kpi-label"><i class="fas fa-users kpi-icon"></i> Průměrně hodin</div>
                         <div class="kpi-value"><%- totalStats.avg_hours %></div>
-                        <div class="kpi-sub">60,9 % z celkového úvazku</div>
+                        <!-- <div class="kpi-sub">60,9 % z celkového úvazku</div> -->
                     </div>
                     <div class="kpi-card">
                         <div class="kpi-label"><i class="fas fa-tasks kpi-icon"></i> Suplované hodiny</div>
                         <div class="kpi-value"><%- totalStats.total_subbed %></div>
-                        <div class="kpi-sub">přípravy, korektury, projekty</div>
+                        <!-- <div class="kpi-sub">přípravy, korektury, projekty</div> -->
                     </div>
                     <div class="kpi-card">
                         <div class="kpi-label"><i class="fas fa-user-graduate kpi-icon"></i> Odpadnuté hodiny</div>
                         <div class="kpi-value"><%- totalStats.total_missed %></div>
-                        <div class="kpi-sub">průměr 22 žáků / třída</div>
-                    </div>
-                    <div class="kpi-card">
-                        <div class="kpi-label"><i class="fas fa-calendar-check kpi-icon"></i> Mimoškolní aktivity
-                            (hodin)</div>
-                        <div class="kpi-value">189</div>
-                        <div class="kpi-sub">z 200 plánovaných</div>
+                        <!-- <div class="kpi-sub">průměr 22 žáků / třída</div> -->
                     </div>
                 </div>
 
@@ -446,18 +446,19 @@
 
                     // ---------- SLOUPCOVÝ GRAF: měsíční hodiny (přímé + nepřímé) ----------
                     const ctxBar = document.getElementById('monthlyBarChart').getContext('2d');
-                    const celkemHodin = "<%= celkem %>";
-                    const suplovane = "<%= suplovane %>";
-                    const odpadnute = "<%= odpadnute %>";
+                  const celkemHodiny = <%- JSON.stringify(celkem) %>
+                    const suplovane = <%- JSON.stringify(suplovane) %>
+                    const odpadnute = <%- JSON.stringify(odpadnute) %>
 
                     new Chart(ctxBar, {
                         type: 'bar',
                         data: {
-                            labels: ['Září', 'Říj', 'Lis', 'Pro', 'Led', 'Úno', 'Bře', 'Dub', 'Kvě', 'Čer'],
+                            // labels: ['Září', 'Říj', 'Lis', 'Pro', 'Led', 'Úno', 'Bře', 'Dub', 'Kvě', 'Čer'],
+                            labels: ['Leden', 'Únor', 'Březen', 'Duben', 'Květen', 'Červen', 'Červenec', 'Srpen', 'Kvě', 'Čer'],
                             datasets: [
                                 {
                                     label: 'Celkem hodin',
-                                    data: celkemHodin,
+                                    data: celkemHodiny,
                                     backgroundColor: '#3b82f6',
                                     borderRadius: 4,
                                 },
