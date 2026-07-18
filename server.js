@@ -68,7 +68,10 @@ app.use('/', openAI);
 
 
 
-
+// app.use((req, res, next) => {
+//     console.log(res.getHeaders());
+//     next();
+// });
 
 app.listen(PORT, () => {
     console.log(`🚀 Server běží na http://localhost:${PORT}`);

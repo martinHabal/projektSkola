@@ -13,7 +13,7 @@ router.get("/dashboard-ucitel", async (req, res) => {
 
     try {
         const userId = req.session.user.id;
-        
+
         // Celkové statistiky
         const [totalStats] = await pool.execute(
             `SELECT 
@@ -26,7 +26,7 @@ router.get("/dashboard-ucitel", async (req, res) => {
             WHERE users_id = ?`,
             [userId]
         );
-console.log(totalStats[0]);
+        console.log(totalStats[0]);
         // Měsíční statistiky
         const [monthlyStats] = await pool.execute(
             `SELECT 
@@ -42,7 +42,7 @@ console.log(totalStats[0]);
             ORDER BY month DESC`,
             [userId]
         );
-console.log(monthlyStats);
+        console.log(monthlyStats);
         // Další užitečné statistiky
         const [weeklyStats] = await pool.execute(
             `SELECT 
@@ -61,13 +61,55 @@ console.log(monthlyStats);
             [userId]
         );
 
-        
-//zatim resim jen celkove statistiky
+        //mesicni statistiky pro sloupcovy graf
+        //celkove hodiny
+        const [celkem] = await pool.execute(`
+    SELECT 
+        MONTH(work_date) as mesic_cislo,
+        SUM(hours_worked) as celkem_hodin
+    FROM work_logs
+    WHERE work_date BETWEEN '2025-09-01' AND '2026-08-31'
+    GROUP BY MONTH(work_date)
+    ORDER BY mesic_cislo ASC
+`);
+        const celkemHodiny = celkem.map(row => row.celkem_hodin);
+
+
+        //suplovane hodiny
+        const [suplovane] = await pool.execute(`
+    SELECT 
+        MONTH(work_date) as mesic_cislo,
+        SUM(hours_worked) as celkem_hodin
+    FROM work_logs
+    WHERE work_date BETWEEN '2025-09-01' AND '2026-08-31'
+    GROUP BY MONTH(work_date)
+    ORDER BY mesic_cislo ASC
+`);
+        const suplovaneHodiny = suplovane.map(row => row.celkem_hodin);
+
+        //odpadnute hodiny
+        const [odpadnute] = await pool.execute(`
+    SELECT 
+        MONTH(work_date) as mesic_cislo,
+        SUM(hours_worked) as celkem_hodin
+    FROM work_logs
+    WHERE work_date BETWEEN '2025-09-01' AND '2026-08-31'
+    GROUP BY MONTH(work_date)
+    ORDER BY mesic_cislo ASC
+`);
+        const odpadnuteHodiny = odpadnute.map(row => row.celkem_hodin);
+
+
+
+        //zatim resim jen celkove statistiky
         res.render('dashboard-ucitel', {
             user: req.session.user,
-            totalStats: totalStats[0] || {}
-           
-         
+            totalStats: totalStats[0] || {},
+            celkem: celkemHodiny,
+            suplovane: suplovaneHodiny,
+            odpadnute: odpadnuteHodiny
+
+
         });
 
     } catch (error) {
@@ -94,7 +136,7 @@ router.get('/api/chart-data', (req, res) => {
 //     try {
 //         // Získání userId - upravte podle vašeho auth systému
 //         const userId = req.user?.id || req.session?.userId;
-        
+
 //         if (!userId) {
 //             return res.status(401).json({ error: 'Uživatel není přihlášen' });
 //         }
