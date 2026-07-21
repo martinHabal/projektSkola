@@ -1999,7 +1999,7 @@
                     // Funkce pro smazání posledního záznamu
 async function deleteLastRecord() {
     try {
-        const response = await fetch(`/record/last`, {
+        const response = await fetch(`/api/record/last`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'

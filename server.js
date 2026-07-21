@@ -9,7 +9,9 @@ import routerVykaz from './routes/vykaz.js';
 import routerOther from './routes/others.js';
 import routerDashboardUcitel from './routes/dashboardUcitel.js';
 import routerNewUser from './routes/newUser.js';
+import routerTisk from './routes/tisk.js';
 import openAI from './routes/openAI.js';
+import routerApi from './routes/api.js';
 //favicon
 import path from 'path';
 import favicon from "serve-favicon";
@@ -65,6 +67,8 @@ app.use('/', routerOther);
 app.use('/', routerDashboardUcitel);
 app.use('/', routerNewUser);
 app.use('/', openAI);
+app.use('/', routerTisk);
+app.use('/', routerApi);
 
 
 
@@ -80,19 +84,17 @@ app.use('/', openAI);
 //     });
 // });
 
-app.get('/record/last', async (req, res) => {
-      console.log('=== DEBUG ===');
-      res.json({
-        success: true,
-        message: 'Poslední záznam byl smazán',
-        deletedRecord: {
-          id: lastRecord.id,
-          datum: lastRecord.datum
-        }
-      });
-
-   
-  });
+// app.get('/record/last', async (req, res) => {
+//       console.log('=== DEBUG ===');
+//       res.json({
+//         success: true,
+//         message: 'Poslední záznam byl smazán',
+//         deletedRecord: {
+//           id: lastRecord.id,
+//           datum: lastRecord.datum
+//         }
+//       });
+//   });
 
 app.listen(PORT, () => {
     console.log(`🚀 Server běží na http://localhost:${PORT}`);
