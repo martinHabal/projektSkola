@@ -37,3 +37,11 @@ pak dashboard s loginama, navstevama apod.. FE resit az nakonec
 
 //komenty na BE nemusim mazat, coz je vyhoda
 // v dashboard admin by dole v tabulce meli byt vsichni uzivatele s jejich zakladnima statistikama, vyber z opionu je zybtecnej 
+
+//ted je tu problem, v tom, ze pokud ulozi vykaz, tak se nic nekontroluje a muze ho ulozit vicekrat
+to muzu vyresit tim, ze bude moct vykaz za ten aktualni mesic smazat a udelat ho znova, coz nebude problem, ptze to bude easy
+ale jeste musim osetrit, aby nemohli vykaz poslat vicekrat
+
+
+//dalsi problem, co kdyz neco pokazi? jak upravi? 
+//Blby je ze kdyz je fetch na ge tak jsou ty endpointy videt v prohlizeci

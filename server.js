@@ -31,16 +31,16 @@ app.use(session({
     cookie: { secure: false } // pro HTTPS dejte true
 }));
 // Hned po session middleware
-app.use((req, res, next) => {
-    if (req.session.user) {
-        res.locals.user = req.session.user;
-        res.locals.isAdmin = req.session.user.role === 'admin';
-    } else {
-        res.locals.user = null;
-        res.locals.isAdmin = false;
-    }
-    next();
-});
+// app.use((req, res, next) => {
+//     if (req.session.user) {
+//         res.locals.user = req.session.user;
+//         res.locals.isAdmin = req.session.user.role === 'admin';
+//     } else {
+//         res.locals.user = null;
+//         res.locals.isAdmin = false;
+//     }
+//     next();
+// });
 
 //import modulu get a post
 
@@ -72,6 +72,27 @@ app.use('/', openAI);
 //     console.log(res.getHeaders());
 //     next();
 // });
+// app.delete('/api/record/last', async (req, res) => {
+//     console.log("TEST - DELETE endpoint funguje!");
+//     res.json({ 
+//         success: true, 
+//         message: 'Endpoint funguje, ale toto je jen test' 
+//     });
+// });
+
+app.get('/record/last', async (req, res) => {
+      console.log('=== DEBUG ===');
+      res.json({
+        success: true,
+        message: 'Poslední záznam byl smazán',
+        deletedRecord: {
+          id: lastRecord.id,
+          datum: lastRecord.datum
+        }
+      });
+
+   
+  });
 
 app.listen(PORT, () => {
     console.log(`🚀 Server běží na http://localhost:${PORT}`);

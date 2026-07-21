@@ -5,17 +5,41 @@ import bcrypt from "bcrypt";
 
 
 router.get("/vykaz-novy-novy", async (req, res) => {
+  if (!req.session.user) {
+    return res.redirect("/");
+  }
   try {
     // Dotaz na uživatele
-
+    console.log(req.session.user)
     const [users] = await pool.query(
       `
              SELECT * FROM users LEFT JOIN uvazky ON users.id = uvazky.id WHERE users.id = ?`,
       [req.session.user.id],
     );
 
-    console.log(users);
-    console.log(req.session.user);
+
+
+    //kontrola, zda je odevzdano, kvuli zobrazeni tlacoitka na smazani posledniho vykazu
+    const [odevzdano] = await pool.query(`
+        SELECT EXISTS(
+            SELECT 1 FROM odevzdano 
+            WHERE users_id = ? 
+            AND MONTH(datum) = MONTH(CURRENT_DATE()) 
+            AND YEAR(datum) = YEAR(CURRENT_DATE())
+        ) AS maOdevzdano`,
+      [req.session.user.id]
+    );
+
+    // odevzdano[0].maOdevzdano vrátí 1 (true) nebo 0 (false)
+    const maOdevzdano = odevzdano[0].maOdevzdano === 1;
+
+
+
+
+
+    console.log("odevzdano " + maOdevzdano.odevzdano);
+    // console.log(users);
+    // console.log(req.session.user);
 
     res.render("vykaz-novy-novy", {
       title: "Seznam učitelů (prepared statement)",
@@ -23,14 +47,16 @@ router.get("/vykaz-novy-novy", async (req, res) => {
       stats: null,
       totalUsers: users.length,
       filter: "Pouze učitelé",
+      maOdevzdano: odevzdano[0].odevzdano
+      // maOdevzdano: true
     });
   } catch (error) {
-    // console.error("Chyba při načítání uživatelů:", error);
-    // res.status(500).render("error", {
-    //   title: "Chyba",
-    //   message: "Nepodařilo se načíst uživatele",
-    //   error: process.env.NODE_ENV === "development" ? error : {},
-    // });
+    console.error("Chyba při načítání uživatelů:", error);
+    res.status(500).render("error", {
+      title: "Chyba",
+      message: "Nepodařilo se načíst uživatele",
+      error: process.env.NODE_ENV === "development" ? error : {},
+    });
     res.render("login", { error: "Chyba serveru" });
   }
 });
@@ -117,10 +143,12 @@ router.post("/api/uloz-vykaz", async (req, res) => {
 
   // console.log(dataMaped);
 
-  async function insertWorkLogs(employeeId = 1) {
+  async function insertWorkLogs() {
     try {
-      // Vytvoření připojení
+      //       const sqlOdevzdano = `INSERT INTO work_logs (odevzdano, user_id) VALUES ?`;
+      // const values = [1, req.session.user.id];
 
+      // seru na to, proste udelam jen endpoint kam se posle dotaz z FE
       // SQL dotaz s placeholdery
       const sql = `
                 INSERT INTO work_logs 
@@ -143,6 +171,7 @@ router.post("/api/uloz-vykaz", async (req, res) => {
 
       const [result] = await pool.query(sql, [values]);
 
+
       console.log(`✅ Úspěšně vloženo ${result.affectedRows} záznamů`);
       console.log(`📊 Poslední ID: ${result.insertId}`);
 
@@ -162,7 +191,7 @@ router.post("/api/uloz-vykaz", async (req, res) => {
 });
 
 //TISK
-// Route pro výkaz práce - stary, muzu smazat, jeste funguje, ale asi zrusim
+// Route pro výkaz práce
 router.get("/work-report", async (req, res) => {
   try {
     // Parametry z URL
@@ -746,8 +775,122 @@ router.get("/api/uvazky", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 
-  
+
+});
+//posilam z FE, ze je vykaz odevzdany
+router.post("/api/odevzdano", async (req, res) => {
+  console.log("prijat pozadavek na odevzdano, kde chci vedet jestli uz je v aktualni mesic vykaz odevzadenj");
+  console.log(req.session.user)
+  try {
+    const userId = req.session.user.id;
+
+    // const userId = 5;
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth() + 1; // MySQL měsíce od 1
+
+    // Kontrola zda záznam existuje
+    const [rows] = await pool.execute(
+      `SELECT COUNT(*) as count 
+             FROM odevzdano 
+             WHERE users_id = ? 
+             AND YEAR(datum) = ? 
+             AND MONTH(datum) = ?`,
+      [userId, year, month]
+    );
+
+    if (rows[0].count === 0) {
+      // Vložení záznamu
+      const [result] = await pool.execute(
+        `INSERT INTO odevzdano (odevzdano, datum, users_id) 
+                 VALUES (1, NOW(), ?)`,
+        [userId]
+      );
+      console.log('Záznam byl vložen:', result.insertId);
+      return { inserted: true, id: result.insertId };
+    } else {
+      console.log('Záznam pro tento měsíc již existuje');
+      return { inserted: false };
+    }
+  } catch (error) {
+    console.error('Chyba:', error);
+    throw error;
+  }
+  // finally {
+  //   await pool.end();
+  // }
+
+
+  // const sqlOdevzdano = `INSERT INTO odevzdano (odevzdano, users_id) VALUES ?`;
+  // const values = [[1, req.session.user.id]];
+  // const [rows] = await pool.query(sqlOdevzdano, [values]);
+
+  // console.log("Vloženo:", rows);
+  // res.json({ success: true, affectedRows: rows.affectedRows });
+
+  // DELETE /api/record/last/:userId
+  // router.get('/record/last', async (req, res) => {
+  //     console.log('=== DEBUG ===');
+  // console.log('Session:', req.session);
+  // console.log('User:', req.session?.user);
+  // console.log('Cookies:', req.headers.cookie);
+  // console.log('=============');
+  //   console.log("odrzen pozadavek na smazani posledniho zaznamu z odevzdano")
+  //   const userId = req.session.user.id;
+
+
+  //   const connection = await pool.getConnection();
+
+  //   try {
+  //     // Najdeme poslední záznam uživatele (podle data)
+  //     const [rows] = await connection.execute(
+  //       `SELECT id, datum 
+  //            FROM odevzdano 
+  //            WHERE users_id = ? 
+  //            ORDER BY datum DESC 
+  //            LIMIT 1`,
+  //       [userId]
+  //     );
+  //     console.log(rows[0])
+  //     if (rows.length === 0) {
+  //       console.log("zaznam nenalezen")
+  //       return res.status(404).json({
+  //         success: false,
+  //         message: 'Žádný záznam nenalezen pro tohoto uživatele'
+  //       });
+  //     }
+
+  //     const lastRecord = rows[0];
+
+  //     // Smazání záznamu
+  //     const [result] = await connection.execute(
+  //       `DELETE FROM odevzdano 
+  //            WHERE id = ? AND users_id = ?`,
+  //       [lastRecord.id, userId]
+  //     );
+
+  //     res.json({
+  //       success: true,
+  //       message: 'Poslední záznam byl smazán',
+  //       deletedRecord: {
+  //         id: lastRecord.id,
+  //         datum: lastRecord.datum
+  //       }
+  //     });
+
+  //   } catch (error) {
+  //     console.error('Chyba při mazání:', error);
+  //     res.status(500).json({
+  //       success: false,
+  //       error: error.message
+  //     });
+  //   } finally {
+  //     connection.release();
+  //   }
+  // });
+   
 });
 
+
 export default router;
-// UPDATE uvazky SET po = ? WHERE user_id = ?;`, [value, req.session.user.id]);
+
