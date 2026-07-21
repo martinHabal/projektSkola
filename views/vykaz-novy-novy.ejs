@@ -956,8 +956,9 @@
                         <% } else { %>
                             <button class="btn-save" id="btn-save">Uložit výkaz</button>
                             <% } %>
-                            
-                                <button onclick="deleteLastRecord()" class="btn-delete" id="btn-delete" <% if (maOdevzdano) { %>disabled<% } %>>
+
+                                <button onclick="deleteLastRecord()" class="btn-delete" id="btn-delete" <%
+                                    if(!maOdevzdano) { %>disabled<% } %>>
                                         Smazat poslední výkaz
                                 </button>
 
@@ -1882,159 +1883,216 @@
                 }
 
                 // Event listener pro tlačítko ulozit
-                document
-                    .getElementById("btn-save")
-                    .addEventListener("click", function () {
-                        // Funkce pro získání dat z tabulky
-                        function tableToObjectArray(tableId) {
-                            // Získáme tabulku podle ID
-                            const table = document.getElementById(tableId);
-                            if (!table) {
-                                console.error("Tabulka s tímto ID nebyla nalezena.");
-                                return [];
-                            }
-
-                            // Získáme všechny řádky tabulky (kromě hlavičky)
-                            const rows = table.querySelectorAll("tbody tr");
-                            const result = [];
-
-                            // Získáme názvy sloupců z hlavičky
-                            const headers = [];
-                            const headerCells = table.querySelectorAll("thead th");
-                            headerCells.forEach((th) => {
-                                headers.push(th.textContent.trim());
-                            });
-
-                            // Pro každý řádek vytvoříme objekt
-                            rows.forEach((row) => {
-                                const cells = row.querySelectorAll("td");
-                                const obj = {};
-
-                                // Pro každou buňku v řádku přiřadíme hodnotu k příslušnému klíči
-                                cells.forEach((cell, index) => {
-                                    if (index < headers.length) {
-                                        const key = headers[index];
-                                        let value;
-
-                                        // Zkontrolujeme, zda buňka obsahuje input nebo select prvek
-                                        const input = cell.querySelector("input");
-                                        const select = cell.querySelector("select");
-
-                                        if (input) {
-                                            // Zpracování input prvků
-                                            value = input.value.trim();
-
-                                            if (input.type === "checkbox") {
-                                                value = input.checked;
-                                            } else if (input.type === "number") {
-                                                const numValue = parseFloat(value);
-                                                if (!isNaN(numValue)) {
-                                                    value = numValue;
-                                                }
-                                            }
-                                        } else if (select) {
-                                            // Zpracování select prvků - načteme aktuálně vybranou hodnotu
-                                            value = select.value;
-
-                                            // Pokud je select multiple, vrátíme pole vybraných hodnot
-                                            if (select.multiple) {
-                                                value = Array.from(select.selectedOptions).map(
-                                                    (option) => option.value,
-                                                );
-                                            }
-
-                                            // Pokusíme se převést na číslo, pokud je to možné
-                                            if (typeof value === "string" && value !== "") {
-                                                const cleanValue = value
-                                                    .replace(/\s/g, "")
-                                                    .replace(/,/g, ".");
-                                                if (!isNaN(cleanValue) && cleanValue !== "") {
-                                                    value = parseFloat(cleanValue);
-                                                }
-                                            }
-                                        } else {
-                                            // Pokud žádný prvek neexistuje, vezmeme textový obsah buňky
-                                            value = cell.textContent.trim();
-
-                                            // Pokusíme se převést číselné hodnoty
-                                            if (value !== "") {
-                                                const cleanValue = value
-                                                    .replace(/\s/g, "")
-                                                    .replace(/,/g, ".");
-                                                if (!isNaN(cleanValue) && cleanValue !== "") {
-                                                    value = parseFloat(cleanValue);
-                                                }
-                                            }
-                                        }
-
-                                        obj[key] = value;
-                                    }
-                                });
-
-                                result.push(obj);
-                            });
-
-                            return result;
+                document.getElementById("btn-save").addEventListener("click", function () {
+                    // Funkce pro získání dat z tabulky
+                    function tableToObjectArray(tableId) {
+                        // Získáme tabulku podle ID
+                        const table = document.getElementById(tableId);
+                        if (!table) {
+                            console.error("Tabulka s tímto ID nebyla nalezena.");
+                            return [];
                         }
 
-                        const data = tableToObjectArray("workTable");
-                        console.log(data);
+                        // Získáme všechny řádky tabulky (kromě hlavičky)
+                        const rows = table.querySelectorAll("tbody tr");
+                        const result = [];
 
-                        fetch(`/api/uloz-vykaz`, {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify({
-                                data: data,
-                            }),
+                        // Získáme názvy sloupců z hlavičky
+                        const headers = [];
+                        const headerCells = table.querySelectorAll("thead th");
+                        headerCells.forEach((th) => {
+                            headers.push(th.textContent.trim());
                         });
-                        fetch('/api/odevzdano', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ data: data })
+
+                        // Pro každý řádek vytvoříme objekt
+                        rows.forEach((row) => {
+                            const cells = row.querySelectorAll("td");
+                            const obj = {};
+
+                            // Pro každou buňku v řádku přiřadíme hodnotu k příslušnému klíči
+                            cells.forEach((cell, index) => {
+                                if (index < headers.length) {
+                                    const key = headers[index];
+                                    let value;
+
+                                    // Zkontrolujeme, zda buňka obsahuje input nebo select prvek
+                                    const input = cell.querySelector("input");
+                                    const select = cell.querySelector("select");
+
+                                    if (input) {
+                                        // Zpracování input prvků
+                                        value = input.value.trim();
+
+                                        if (input.type === "checkbox") {
+                                            value = input.checked;
+                                        } else if (input.type === "number") {
+                                            const numValue = parseFloat(value);
+                                            if (!isNaN(numValue)) {
+                                                value = numValue;
+                                            }
+                                        }
+                                    } else if (select) {
+                                        // Zpracování select prvků - načteme aktuálně vybranou hodnotu
+                                        value = select.value;
+
+                                        // Pokud je select multiple, vrátíme pole vybraných hodnot
+                                        if (select.multiple) {
+                                            value = Array.from(select.selectedOptions).map(
+                                                (option) => option.value,
+                                            );
+                                        }
+
+                                        // Pokusíme se převést na číslo, pokud je to možné
+                                        if (typeof value === "string" && value !== "") {
+                                            const cleanValue = value
+                                                .replace(/\s/g, "")
+                                                .replace(/,/g, ".");
+                                            if (!isNaN(cleanValue) && cleanValue !== "") {
+                                                value = parseFloat(cleanValue);
+                                            }
+                                        }
+                                    } else {
+                                        // Pokud žádný prvek neexistuje, vezmeme textový obsah buňky
+                                        value = cell.textContent.trim();
+
+                                        // Pokusíme se převést číselné hodnoty
+                                        if (value !== "") {
+                                            const cleanValue = value
+                                                .replace(/\s/g, "")
+                                                .replace(/,/g, ".");
+                                            if (!isNaN(cleanValue) && cleanValue !== "") {
+                                                value = parseFloat(cleanValue);
+                                            }
+                                        }
+                                    }
+
+                                    obj[key] = value;
+                                }
+                            });
+
+                            result.push(obj);
                         });
+
+                        return result;
+                    }
+
+                    const data = tableToObjectArray("workTable");
+                    // console.log(data);
+
+                    fetch(`/api/uloz-vykaz`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            data: data,
+                        }),
                     });
 
-                    // Funkce pro smazání posledního záznamu
-async function deleteLastRecord() {
-    try {
-        const response = await fetch(`/api/record/last`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-              credentials: 'include' // DŮLEŽITÉ pro session cookies
-        });
 
-        const data = await response.json();
 
-        if (!response.ok) {
-            throw new Error(data.message || 'Chyba při mazání');
-        }
 
-        return {
-            success: true,
-            data: data
-        };
-    } catch (error) {
-        console.error('Chyba:', error);
-        return {
-            success: false,
-            error: error.message
-        };
-    }
-}
+                    //toto nyní ted funguje
+                    async function odevzdatVykaz() {
+                        try {
+                            const response = await fetch(`/api/odevzdano`, {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                // Pokud neposíláš žádná data, nemusíš posílat body
+                                // body: JSON.stringify({ data: data }),
+                            });
 
-// Použití
-// deleteLastRecord(5)
-//     .then(result => {
-//         if (result.success) {
-//             console.log('Záznam smazán:', result.data);
-//         } else {
-//             console.error('Chyba:', result.error);
-//         }
-//     });
+                            const result = await response.json();
+                            console.log('Odpověď z backendu:', result);
+
+                            if (result.success) {
+                                if (result.ulozeno) {
+                                    alert('✅ ' + result.message);
+                                    location.reload();
+                                    // Zde můžeš provést další akce - např. přesměrování
+                                    // window.location.href = '/prehled';
+                                } else {
+                                    alert('ℹ️ ' + result.message);
+                                }
+                            } else {
+                                alert('❌ ' + result.message);
+                            }
+
+                        } catch (error) {
+                            console.error('Chyba při odesílání:', error);
+                            alert('❌ Nepodařilo se připojit k serveru. Zkontroluj připojení.');
+                        }
+                    }
+
+                    // Zavolání funkce
+                    odevzdatVykaz();
+                });
+
+                // Funkce pro smazání posledního záznamu
+                // 
+                async function deleteLastRecord() {
+                    try {
+                        const response = await fetch(`/api/record/last`, {
+                            method: 'GET', // Změněno z GET na DELETE
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            credentials: 'include' // DŮLEŽITÉ pro session cookies
+                        });
+
+                        const data = await response.json();
+
+                        // if (!response.ok) {
+                        //     throw new Error(data.message || 'Chyba při mazání');
+                        // }
+
+                        // Kontrola, zda bylo smazáno
+                        if (data.success || data.deleted || data.affectedRows > 0) {
+                            // Úspěšné smazání
+                            alert('✅ Záznam byl úspěšně smazán!');
+                            console.log('Smazáno:', data);
+location.reload();
+                            // Můžeš vrátit i další informace
+                            return {
+                                success: true,
+                                data: data,
+                                deleted: true
+                            };
+                        } else {
+                            // Nic nebylo smazáno (např. žádný záznam neexistoval)
+                            alert('ℹ️ Žádný záznam nebyl nalezen k smazání.');
+                            return {
+                                success: true,
+                                data: data,
+                                deleted: false,
+                                message: 'Žádný záznam k smazání'
+                            };
+                        }
+
+                    } catch (error) {
+                        console.error('Chyba při mazání:', error);
+
+                        // Zobrazení chybového alertu
+                        alert('❌ Chyba při mazání: ' + (error.message || 'Neznámá chyba'));
+
+                        return {
+                            success: false,
+                            error: error.message
+                        };
+                    }
+                }
+
+                // Použití
+                // deleteLastRecord(5)
+                //     .then(result => {
+                //         if (result.success) {
+                //             console.log('Záznam smazán:', result.data);
+                //         } else {
+                //             console.error('Chyba:', result.error);
+                //         }
+                //     });
 
             </script>
 
