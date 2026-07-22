@@ -45,3 +45,8 @@ ale jeste musim osetrit, aby nemohli vykaz poslat vicekrat
 
 //dalsi problem, co kdyz neco pokazi? jak upravi? 
 //Blby je ze kdyz je fetch na ge tak jsou ty endpointy videt v prohlizeci
+
+//asi bych měl osetrit aby vykaz nesel smazat po nejakem datumu, ale to pocka
+
+//poprve nebude mit uzivatel uvazek, tak to vyhodi chybu v konzoli, ale to se hned spravi, jak si nastavi uvazek, ale mohl bych nastavit default 4 hodiny
+//!!! smazat posledni vykaz nesmaze data z work_logs, dodelat!!!

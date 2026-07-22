@@ -71,31 +71,6 @@ app.use('/', routerTisk);
 app.use('/', routerApi);
 
 
-
-// app.use((req, res, next) => {
-//     console.log(res.getHeaders());
-//     next();
-// });
-// app.delete('/api/record/last', async (req, res) => {
-//     console.log("TEST - DELETE endpoint funguje!");
-//     res.json({ 
-//         success: true, 
-//         message: 'Endpoint funguje, ale toto je jen test' 
-//     });
-// });
-
-// app.get('/record/last', async (req, res) => {
-//       console.log('=== DEBUG ===');
-//       res.json({
-//         success: true,
-//         message: 'Poslední záznam byl smazán',
-//         deletedRecord: {
-//           id: lastRecord.id,
-//           datum: lastRecord.datum
-//         }
-//       });
-//   });
-
 app.listen(PORT, () => {
     console.log(`🚀 Server běží na http://localhost:${PORT}`);
 });

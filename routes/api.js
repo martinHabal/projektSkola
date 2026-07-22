@@ -75,7 +75,7 @@ router.post("/api/odevzdano", async (req, res) => {
                 [userId]
             );
             console.log('Záznam byl vložen:', result.insertId);
-            
+
             res.status(200).json({
                 success: true,
                 ulozeno: true,
@@ -90,7 +90,7 @@ router.post("/api/odevzdano", async (req, res) => {
                 inserted: false,
                 message: 'Výkaz pro tento měsíc již byl odevzdán'
             });
-          
+
         }
     } catch (error) {
         console.error('Chyba:', error);
@@ -98,7 +98,7 @@ router.post("/api/odevzdano", async (req, res) => {
     }
 
 });
-
+//smaze posledni zaznam z tabulky odevzdano a vsechny zaznamy tento měsíc z worklogs
 router.get('/api/record/last', async (req, res) => {
 
     console.log("odrzen pozadavek na smazani posledniho zaznamu z odevzdano")
@@ -129,11 +129,49 @@ router.get('/api/record/last', async (req, res) => {
         const lastRecord = rows[0];
 
         // Smazání záznamu
-        const [result] = await connection.execute(
-            `DELETE FROM odevzdano 
-          WHERE id = ? AND users_id = ?`,
-            [lastRecord.id, userId]
-        );
+        // const [result] = await connection.execute(
+        //     `DELETE FROM odevzdano 
+        //   WHERE id = ? AND users_id = ?`,
+        //     [lastRecord.id, userId]
+        // );
+
+
+        // Celý kód s transakcí
+        // kdyz bude jiny den, tak to uz nesmaze a to staci protoze ulozit a smazat muze jen jednou
+        await connection.beginTransaction();
+
+        try {
+            // 1. Smazání z odevzdano
+            const [result1] = await connection.execute(
+                `DELETE FROM odevzdano 
+         WHERE id = ? AND users_id = ?`,
+                [lastRecord.id, userId]
+            );
+
+            // 2. Získání posledního data z work_logs
+            const [maxDateResult] = await connection.execute(
+                `SELECT MAX(DATE(created_at)) as max_date FROM work_logs`
+            );
+
+            const maxDate = maxDateResult[0]?.max_date;
+
+            // 3. Smazání z work_logs jen pokud existuje nějaké datum
+            if (maxDate) {
+                const [result2] = await connection.execute(
+                    `DELETE FROM work_logs 
+             WHERE DATE(created_at) = ? 
+             AND users_id = ?`,
+                    [maxDate, userId]
+                );
+                console.log('Smazáno z work_logs:', result2.affectedRows);
+            }
+
+            await connection.commit();
+            console.log('Vše smazáno úspěšně');
+        } catch (error) {
+            await connection.rollback();
+            console.error('Chyba při mazání:', error);
+        }
 
         res.json({
             success: true,
