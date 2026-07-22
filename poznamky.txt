@@ -1,17 +1,12 @@
-proste zacnu tema uctama a DB hlavne
-pak dashboard s loginama, navstevama apod.. FE resit az nakonec
 
 
 //login - admin -> OK
-//s tim AI se to fakt neda, musim postupne a pak doplnovat funkce
+
 //zacnu tak ze seed zadam rucne, jinak se nikam neposunu
-//nejdriv proste jednoduchej login, admina necham na jindy
 
 //rozvrh bude zacinat skolnim rokem a svatky, vikendy prazdniny si holt necham kazdej rok vygenerovat do jsonu
-//ten localstorage dam pryc, radsi pokazdy request na DB
-//do profilu se nacte pocet hodin z API edookitu toho uzivatele -> budetam kontrola zda mu to sedi
 
-//AI dam ze zacatku do toho skolniho radu, dotazy ve smyslu jestli se zak provinil kdyz fotil ve tride
+//do profilu se nacte pocet hodin z API edookitu toho uzivatele -> budetam kontrola zda mu to sedi
 
 //tisk budu mit pro jednotlive usera a pak i vedouci pracovnik muze kdykoliv vytisknout
 
@@ -19,34 +14,20 @@ pak dashboard s loginama, navstevama apod.. FE resit az nakonec
 //vykaz jeste nikde neni, tak proc bych nemel sbirat smetanu
 //slevit se da vzdycky az bude konkurence
 
-
 //API
 /// v edookitu nakej vykaz prace je, mrknu na to
 
 //takze neni zadny pravni predpis ze by musel byt vykaz podepsanej, takze proste jen vygenerovat pdf a poslat mailem
-//do napovedy a manualu taky zapojim AI
 
 //V2, do DB se bude brat z edookitu kazdy den odpracovana hodina, jeste mrknout na priznaky
 //sjednotit ty nazvy v DB, cestinu apod, pak samozrejme ty seeds a migrace upravit
 //skolni prazniny holt rucne a svatky budu nacitat z api
-//ma tyden zacinat pondelim? asi ne, at zacina 1.ho
-
-// dulezity je mit zaklad, kterymu budu rozumnet a pak ho dodelavat, protoze jak si moc vymejslim tak uz se nemam sanci se v tom zorientovat a je to moc prekombinovany
-// to ejs je zbytecne slozity na to ze mi kostra staci resit na FE
-// pozdeji stejne bu muset ten fetch na fe zrusit a resit pres sablony, aby nebyly videt endpointy
 
 //komenty na BE nemusim mazat, coz je vyhoda
 // v dashboard admin by dole v tabulce meli byt vsichni uzivatele s jejich zakladnima statistikama, vyber z opionu je zybtecnej 
 
-//ted je tu problem, v tom, ze pokud ulozi vykaz, tak se nic nekontroluje a muze ho ulozit vicekrat
-to muzu vyresit tim, ze bude moct vykaz za ten aktualni mesic smazat a udelat ho znova, coz nebude problem, ptze to bude easy
-ale jeste musim osetrit, aby nemohli vykaz poslat vicekrat
-
-
-//dalsi problem, co kdyz neco pokazi? jak upravi? 
 //Blby je ze kdyz je fetch na ge tak jsou ty endpointy videt v prohlizeci
 
 //asi bych měl osetrit aby vykaz nesel smazat po nejakem datumu, ale to pocka
 
-//poprve nebude mit uzivatel uvazek, tak to vyhodi chybu v konzoli, ale to se hned spravi, jak si nastavi uvazek, ale mohl bych nastavit default 4 hodiny
-//!!! smazat posledni vykaz nesmaze data z work_logs, dodelat!!!
+

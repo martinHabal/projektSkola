@@ -34,7 +34,7 @@ router.get("/api/uvazky", async (req, res) => {
 
     try {
         const [rows] = await pool.query(
-            "SELECT po, ut, st, ct, pa FROM uvazky WHERE id = ?",
+            "SELECT po, ut, st, ct, pa FROM uvazky WHERE user_id = ?",
             [req.session.user.id],
         );
         console.log(rows[0]);

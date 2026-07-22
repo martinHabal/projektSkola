@@ -23,7 +23,7 @@ router.get("/vykaz-novy-novy", async (req, res) => {
     );
     // odevzdano[0].maOdevzdano vrátí 1 (true) nebo 0 (false)
     const maOdevzdano = odevzdano[0].maOdevzdano === 1;
-console.log("ma odevzdano " + maOdevzdano)
+// console.log("ma odevzdano " + maOdevzdano)
     res.render("vykaz-novy-novy", {
       title: "Seznam učitelů (prepared statement)",
       users: users[0],

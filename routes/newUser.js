@@ -39,11 +39,40 @@ router.post('/users/create', async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Vložení do databáze
-        await pool.execute(
-            `INSERT INTO users (first_name, last_name, username, password, role) 
-             VALUES (?, ?, ?, ?, ?)`,
-            [name, surname, login, hashedPassword, role || 'user']
-        );
+        // await pool.execute(
+        //     `INSERT INTO users (first_name, last_name, username, password, role) 
+        //      VALUES (?, ?, ?, ?, ?)`,
+        //     [name, surname, login, hashedPassword, role || 'user']
+        // );
+
+//pri vytvoreni usera taky vlozi default zaznam s uvazkem 4 pro kazdy den
+        const connection = await pool.getConnection();
+await connection.beginTransaction();
+
+try {
+    // Vložení uživatele a získání jeho ID
+    const [result] = await connection.execute(
+        `INSERT INTO users (first_name, last_name, username, password, role) 
+         VALUES (?, ?, ?, ?, ?)`,
+        [name, surname, login, hashedPassword, role || 'user']
+    );
+    
+    const userId = result.insertId; // ID nově vytvořeného uživatele
+    
+    // Vložení záznamu do uvazky s user_id
+    await connection.execute(
+        `INSERT INTO uvazky (user_id, po, ut, st, ct, pa) 
+         VALUES (?, ?, ?, ?, ?, ?)`,
+        [userId, 4, 4, 4, 4, 4]
+    );
+    
+    await connection.commit();
+} catch (error) {
+    await connection.rollback();
+    throw error;
+} finally {
+    connection.release();
+}
 
         res.render('new-user', { 
             error: null,
