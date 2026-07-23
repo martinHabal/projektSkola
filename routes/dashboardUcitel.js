@@ -7,6 +7,8 @@ import bcrypt from "bcrypt";
 //DASHBOARD VYKAZ - ZOBRAZENI STATISTIKY JEDNOHO UZIVATELE
 router.get("/dashboard-ucitel", async (req, res) => {
     // Kontrola přihlášení - měla by být na začátku
+    console.log(res.locals.isAdmin)
+    console.log(res.locals.isSuperadmin)
     if (!req.session.user) {
         return res.redirect("/");
     }

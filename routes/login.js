@@ -13,15 +13,22 @@ import bcrypt from "bcrypt";
 //     success: null,
 //   });
 // });
+
 // MIDDLEWARE pro předání session do všech šablon
 router.use((req, res, next) => {
     res.locals.session = req.session;
     res.locals.isAdmin = req.session.user && req.session.user.role === 'admin';
+    res.locals.isSuperadmin = req.session.user && req.session.user.role === 'superadmin';
     next();
 });
 router.get('/', (req, res) => {
     
-    res.render("login", { error: "Vyplňte všechny údaje" });
+     const errorMessage = req.query.error || null;
+    
+    res.render("login", { 
+        error: errorMessage
+    });
+   
 });
 // PŘIHLÁŠENÍ - pouze login page a pak presmerovani na dashboard
 router.post("/login", async (req, res) => {

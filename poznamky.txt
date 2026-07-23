@@ -33,3 +33,4 @@
 //asi jim to dam na prvni rok na vyzkouseni zdarma, tem prvnim
 //pak to musim udelat tak, aby uz nemohli odejit
 
+//agent bude mit pristup k DB, takze i reditelka se ho muze ptat na ruzny veci, treba kdo oddelal nejvic apod.

@@ -53,28 +53,28 @@
       style="background-color: #38d0c0;">
       <span class="material-icons">help_center</span>
     </button>
-    <% if (isAdmin) { %>
+    <% if (isAdmin || isSuperadmin) { %>
       <button class="tooltip" data-tooltip="Dashboard" onclick="window.location.href='/dashboard'"
         style="background-color: rgb(140, 16, 211);">
         <span class="material-icons">dashboard</span>
       </button>
       <% } %>
-        <% if (isAdmin) { %>
+        <% if (isAdmin || isSuperadmin) { %>
           <button class="tooltip" data-tooltip="Nový uživatel" onclick="window.location.href='/new-user'"
             style="background-color: rgb(140, 16, 211);">
             <span class="material-icons">person_add</span>
           </button>
           <% } %>
-            <button style="cursor: pointer" class="tooltip" data-tooltip="Odhlášení"
-              onclick="window.location.href='/logout'" style="background-color: red;">
-              <span class="material-icons">logout</span>
-            </button>
-            <% if (isAdmin) { %>
-              <button style="cursor: pointer" class="tooltip" data-tooltip="Nová škola"
-              onclick="window.location.href='/nova-skola'" style="background-color: rgb(140, 16, 211);">
-              <span class="material-icons">home</span>
-            </button>
-            <% } %>
+          <% if (isSuperadmin) { %>
+            <button style="cursor: pointer;background-color: rgb(140, 16, 211);" class="tooltip" data-tooltip="Nová škola"
+            onclick="window.location.href='/nova-skola'">
+            <span class="material-icons">home</span>
+          </button>
+          <% } %>
+          <button style="cursor: pointer" class="tooltip" data-tooltip="Odhlášení"
+            onclick="window.location.href='/logout'" style="background-color: red;">
+            <span class="material-icons">logout</span>
+          </button>
           </div>
       <!-- on vlastne header jako takovej neni, jsou to jen ty button odkazy, ale vypada to amatersky... musim tad dat klasickej header -->
       <div id="popup" style="
