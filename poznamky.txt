@@ -34,3 +34,14 @@
 //pak to musim udelat tak, aby uz nemohli odejit
 
 //agent bude mit pristup k DB, takze i reditelka se ho muze ptat na ruzny veci, treba kdo oddelal nejvic apod.
+//muzu jim udelat agenta na web
+//musim dodelat tu kolonku na praci o vikendu
+//Schvalovací proces - doresit akceptaci
+//pak poresit naduvazky apod. ale to az pak s reditelkou
+//ten skolni rad je nahovno, tam potrebuju js jen pro AI a vyhledávání, nemusi to byt tak slozity. Ale to vyhledávání fakt pekne funguje no.
+
+
+//MARKETING
+//1. necham jim to na rok zdarma
+//2. budou mít na vyber, klidne jen vykaz za par konkurence
+//3. dulezity je s nima byt v kontaktu a jet PR a prebrat dalsi sluzby. Weby apod.

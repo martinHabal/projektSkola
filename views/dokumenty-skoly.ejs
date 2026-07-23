@@ -1,681 +1,406 @@
+<!DOCTYPE html>
+<html lang="cs">
 
     <style>
         /* * {
-            margin: 0;
-            padding: 0;
             box-sizing: border-box;
-        } */
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        }
 
         body {
-            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
-            background: #f1f5f9;
-            color: #0f172a;
-            padding: 2rem 1.5rem;
-        }
+            background-color: #f5f7fa;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        } */
 
-        .app {
-            max-width: 1440px;
+        .container {
+            max-width: 1200px;
             margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 25px;
         }
 
-        /* Hlavička */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            background: white;
-            padding: 1.2rem 2rem;
-            border-radius: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            border: 1px solid #e2e8f0;
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 5px;
+            padding-bottom: 10px;
+            font-size: clamp(1.5rem, 4vw, 2.2rem);
         }
 
-        .header h1 {
-            font-size: 1.8rem;
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 25px;
+            font-size: clamp(0.9rem, 2vw, 1.1rem);
+        }
+
+        .header-line {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #3498db, transparent);
+            margin-bottom: 25px;
+        }
+
+        /* Statistiky */
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border-left: 4px solid #3498db;
+        }
+
+        .stat-card .stat-number {
+            font-size: 2rem;
             font-weight: 700;
-            letter-spacing: -0.5px;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
+            color: #2c3e50;
+            display: block;
         }
 
-        .header-actions {
-            display: flex;
-            gap: 0.8rem;
-            flex-wrap: wrap;
-        }
-
-        .badge-count {
-            background: #e2e8f0;
-            padding: 0.3rem 1rem;
-            border-radius: 40px;
+        .stat-card .stat-label {
             font-size: 0.85rem;
-            font-weight: 500;
-            color: #1e293b;
+            color: #7f8c8d;
         }
 
-        .btn {
-            padding: 0.6rem 1.4rem;
-            border-radius: 40px;
-            border: 1px solid #d1d9e6;
-            background: white;
-            font-weight: 500;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.15s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: #1e293b;
-        }
-
-        .btn-primary {
-            background: #1e293b;
-            border-color: #1e293b;
-            color: white;
-        }
-        .btn-primary:hover { background: #0f172a; }
-
-        .btn-success {
-            background: #0b3b2c;
-            border-color: #0b3b2c;
-            color: white;
-        }
-        .btn-success:hover { background: #064e3b; }
-
-        .btn-outline:hover { background: #eef2f6; }
-        .btn-danger { color: #b91c1c; border-color: #fca5a5; }
-        .btn-danger:hover { background: #fef2f2; }
-
-        /* Toolbar */
-        .toolbar {
+        /* Filtr a vyhledávání */
+        .filter-section {
             display: flex;
             flex-wrap: wrap;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            background: white;
-            padding: 1rem 1.5rem;
-            border-radius: 16px;
-            border: 1px solid #e2e8f0;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
             align-items: center;
         }
 
-        .toolbar input,
-        .toolbar select {
-            padding: 0.55rem 1rem;
-            border: 1px solid #d1d9e6;
-            border-radius: 40px;
+        .filter-section label {
+            font-weight: 600;
+            color: #2c3e50;
             font-size: 0.9rem;
-            background: #fafcff;
+            white-space: nowrap;
+        }
+
+        .filter-section select,
+        .filter-section input {
+            padding: 8px 12px;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+            font-size: 0.95rem;
+            background-color: white;
+        }
+
+        .filter-section input {
             flex: 1 1 200px;
-            min-width: 140px;
+            min-width: 150px;
         }
 
-        .toolbar input:focus,
-        .toolbar select:focus {
-            outline: 2px solid #3b82f6;
-            border-color: transparent;
+        .filter-section select {
+            min-width: 150px;
         }
 
-        .toolbar .filter-group {
+        .filter-clear {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: background-color 0.3s;
+        }
+
+        .filter-clear:hover {
+            background-color: #c0392b;
+        }
+
+        /* Legenda */
+        .legenda {
             display: flex;
-            gap: 0.6rem;
             flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .legenda-item {
+            display: flex;
             align-items: center;
+            gap: 8px;
+            font-size: clamp(0.8rem, 1.8vw, 0.9rem);
         }
 
-        /* HLAVNÍ GRID */
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1fr 380px;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+        .color-box {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+            border: 1px solid #ddd;
+            flex-shrink: 0;
         }
 
-        @media (max-width: 1024px) {
-            .main-grid {
-                grid-template-columns: 1fr 320px;
-            }
-        }
-
-        @media (max-width: 820px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Mřížka dokumentů */
-        .doc-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
+        /* Seznam dokumentů */
+        .documents-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 10px;
         }
 
         .doc-card {
-            background: white;
-            border-radius: 20px;
-            padding: 1.5rem 1.5rem 1.2rem;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
-            transition: all 0.2s;
-            display: flex;
-            flex-direction: column;
+            background-color: white;
+            border: 1px solid #e8e8e8;
+            border-radius: 10px;
+            padding: 18px 22px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            transition: box-shadow 0.3s, transform 0.2s;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 15px 20px;
+            align-items: center;
         }
 
         .doc-card:hover {
-            border-color: #b9c9dd;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
             transform: translateY(-2px);
         }
 
-        .doc-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 0.8rem;
-            margin-bottom: 0.6rem;
+        .doc-card .doc-icon {
+            font-size: 2rem;
+            text-align: center;
+            min-width: 50px;
         }
 
-        .doc-icon {
-            font-size: 1.8rem;
-            line-height: 1;
-            margin-right: 0.3rem;
-        }
-
-        .doc-title {
-            font-weight: 600;
-            font-size: 1.05rem;
-            color: #0f172a;
+        .doc-card .doc-body {
             flex: 1;
         }
 
-        .doc-category {
+        .doc-card .doc-title {
+            font-weight: 600;
+            font-size: clamp(1rem, 2vw, 1.15rem);
+            color: #2c3e50;
+            margin-bottom: 4px;
+        }
+
+        .doc-card .doc-description {
+            color: #555;
+            font-size: clamp(0.85rem, 1.8vw, 0.95rem);
+            line-height: 1.5;
+            word-break: break-word;
+            margin-top: 4px;
+        }
+
+        .doc-card .doc-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 8px;
+            font-size: 0.85rem;
+            color: #7f8c8d;
+        }
+
+        .doc-card .doc-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .doc-card .doc-tag {
+            display: inline-block;
+            padding: 2px 12px;
+            border-radius: 20px;
             font-size: 0.7rem;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.4px;
-            padding: 0.2rem 0.7rem;
-            border-radius: 40px;
-            background: #eef2f6;
-            color: #334155;
+            letter-spacing: 0.3px;
             white-space: nowrap;
         }
 
-        .doc-meta {
+        .doc-tag-official {
+            background-color: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .doc-tag-study {
+            background-color: #fff3e0;
+            color: #e65100;
+        }
+
+        .doc-tag-forms {
+            background-color: #fce4ec;
+            color: #c62828;
+        }
+
+        .doc-tag-schedule {
+            background-color: #f3e5f5;
+            color: #6a1b9a;
+        }
+
+        .doc-tag-other {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .doc-card .doc-actions {
             display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem 1rem;
-            font-size: 0.8rem;
-            color: #475569;
-            margin: 0.4rem 0 0.8rem 0;
-            border-top: 1px dashed #e2e8f0;
-            padding-top: 0.6rem;
+            gap: 8px;
+            align-self: flex-start;
+            margin-top: 4px;
         }
 
-        .doc-meta span {
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-
-        .doc-preview {
-            font-size: 0.9rem;
-            color: #334155;
-            background: #f8fafc;
-            padding: 0.7rem 1rem;
-            border-radius: 12px;
-            border-left: 3px solid #94a3b8;
-            margin: 0.4rem 0 0.8rem 0;
-            line-height: 1.5;
-            max-height: 80px;
-            overflow: hidden;
-            position: relative;
-            font-family: 'Times New Roman', Times, serif;
-            font-size: 0.85rem;
-        }
-
-        .doc-preview::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 30px;
-            background: linear-gradient(transparent, #f8fafc);
-        }
-
-        .doc-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
-            flex-wrap: wrap;
-            border-top: 1px solid #eef2f6;
-            padding-top: 0.8rem;
-        }
-
-        .doc-actions .btn {
-            padding: 0.3rem 1rem;
-            font-size: 0.8rem;
-            border-radius: 30px;
-        }
-
-        .btn-small {
-            padding: 0.25rem 0.9rem;
-            font-size: 0.78rem;
-            border-radius: 30px;
-        }
-
-        .empty-state {
-            grid-column: 1 / -1;
-            text-align: center;
-            padding: 4rem 1rem;
-            color: #64748b;
-            background: white;
-            border-radius: 24px;
-            border: 1px dashed #cbd5e1;
-        }
-
-        .empty-state h3 { font-weight: 500; margin-bottom: 0.3rem; }
-
-        /* ============================================================
-           CHAT PANEL
-           ============================================================ */
-        .chat-panel {
-            background: white;
-            border-radius: 20px;
-            border: 1px solid #e2e8f0;
-            display: flex;
-            flex-direction: column;
-            max-height: 620px;
-            min-height: 450px;
-            position: sticky;
-            top: 1rem;
-        }
-
-        .chat-header {
-            padding: 14px 18px;
-            border-bottom: 1px solid #e2ebf5;
+        .doc-card .doc-actions .btn-download {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 5px;
+            cursor: pointer;
             font-weight: 600;
-            color: #0a2a44;
-            display: flex;
+            font-size: 0.85rem;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            display: inline-flex;
             align-items: center;
-            gap: 8px;
-            background: #f2f8ff;
-            border-radius: 20px 20px 0 0;
-            flex-wrap: wrap;
+            gap: 5px;
         }
 
-        .chat-header .chat-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex: 1;
+        .doc-card .doc-actions .btn-download:hover {
+            background-color: #2980b9;
         }
 
-        .chat-header-right {
-            display: flex;
+        .doc-card .doc-actions .btn-preview {
+            background-color: #95a5a6;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            display: inline-flex;
             align-items: center;
-            gap: 6px;
-            margin-left: auto;
+            gap: 5px;
         }
 
-        .server-status {
-            font-size: 0.7rem;
+        .doc-card .doc-actions .btn-preview:hover {
+            background-color: #7f8c8d;
+        }
+
+        /* Stav, když nejsou dokumenty */
+        .no-documents {
+            text-align: center;
+            padding: 50px 20px;
+            color: #7f8c8d;
+            font-style: italic;
+            background-color: #fafafa;
+            border-radius: 10px;
+            border: 2px dashed #ddd;
+        }
+
+        .no-documents .icon {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        /* Počet dokumentů */
+        .doc-count {
+            text-align: right;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-bottom: 10px;
+        }
+
+        .doc-count strong {
+            color: #2c3e50;
+        }
+
+        /* Informace o aktualizaci */
+        .update-info {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #95a5a6;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .update-info .badge {
+            display: inline-block;
+            background-color: #27ae60;
+            color: white;
             padding: 2px 10px;
             border-radius: 20px;
-        }
-        .server-status.online {
-            background: #dcfce7;
-            color: #166534;
-        }
-        .server-status.offline {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-        .server-status.checking {
-            background: #fef3c7;
-            color: #92400e;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 8px;
         }
 
-        .clear-chat-btn {
-            background: none;
-            border: none;
-            color: #94a3b8;
-            cursor: pointer;
-            font-size: 0.8rem;
-            padding: 4px 8px;
-            border-radius: 20px;
-            transition: 0.15s;
-        }
-        .clear-chat-btn:hover {
-            background: #fee2e2;
-            color: #ef4444;
-        }
-
-        .ai-status {
-            font-size: 0.75rem;
-            color: #475569;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            padding: 0 6px;
-        }
-
-        .ai-status .dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            display: inline-block;
-            background: #22c55e;
-            transition: background 0.3s;
-        }
-        .ai-status .dot.loading {
-            background: #f59e0b;
-            animation: pulse 1s infinite;
-        }
-        .ai-status .dot.error {
-            background: #ef4444;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
-        .chat-messages {
-            flex: 1;
-            padding: 14px 16px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            min-height: 200px;
-            background: #fafcff;
-            border-radius: 0 0 20px 20px;
-        }
-
-        .message {
-            max-width: 88%;
-            padding: 10px 14px;
-            border-radius: 16px;
-            line-height: 1.5;
-            font-size: 0.9rem;
-            word-break: break-word;
-            animation: fadeUp 0.2s ease;
-        }
-
-        .message.user {
-            background: #dce6f5;
-            align-self: flex-end;
-            border-bottom-right-radius: 4px;
-            color: #0b1e33;
-        }
-
-        .message.assistant {
-            background: white;
-            align-self: flex-start;
-            border-bottom-left-radius: 4px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            border: 1px solid #e6edf6;
-            color: #152b40;
-        }
-
-        .message.assistant.error {
-            background: #fee2e2;
-            border-color: #fca5a5;
-            color: #991b1b;
-        }
-
-        .message .msg-icon {
-            margin-right: 6px;
-        }
-
-        .typing-indicator {
-            display: inline-flex;
-            gap: 4px;
-        }
-        .typing-indicator span {
-            width: 6px;
-            height: 6px;
-            background: #94a3b8;
-            border-radius: 50%;
-            animation: typing 1.2s infinite;
-        }
-        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-
-        @keyframes typing {
-            0%, 60%, 100% { transform: translateY(0); }
-            30% { transform: translateY(-6px); }
-        }
-
-        /* CHAT INPUT */
-        .chat-input-area {
-            display: flex;
-            gap: 6px;
-            padding: 10px 16px 14px;
-            border-top: 1px solid #e2ebf5;
-            background: white;
-            border-radius: 0 0 20px 20px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .chat-input-area input {
-            flex: 1;
-            padding: 10px 16px;
-            border-radius: 40px;
-            border: 1px solid #d0dbe8;
-            font-size: 0.9rem;
-            outline: none;
-            transition: 0.2s;
-            background: #fafcff;
-            min-width: 100px;
-        }
-
-        .chat-input-area input:focus {
-            border-color: #2a7de1;
-            box-shadow: 0 0 0 3px rgba(42,125,225,0.12);
-        }
-
-        .chat-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            padding: 10px 16px;
-            border-radius: 40px;
-            border: 1px solid #d0dbe8;
-            background: white;
-            color: #1e293b;
-            font-size: 0.85rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.15s;
-            white-space: nowrap;
-            min-width: 40px;
-        }
-
-        .chat-btn:hover {
-            background: #f1f5f9;
-            border-color: #b0c4d9;
-        }
-
-        .chat-btn-primary {
-            background: #1e293b;
-            border-color: #1e293b;
-            color: white;
-        }
-        .chat-btn-primary:hover {
-            background: #0f172a;
-            border-color: #0f172a;
-        }
-
-        .chat-btn-voice {
-            background: #eef3fa;
-            border-color: #d0dbe8;
-        }
-        .chat-btn-voice:hover {
-            background: #e2eaf5;
-            border-color: #b6cbe0;
-        }
-        .chat-btn-voice.recording {
-            background: #fce8e8;
-            border-color: #d94a4a;
-            color: #b33;
-        }
-        .chat-btn-voice.recording i {
-            color: #c42;
-        }
-
-        .chat-btn-icon {
-            font-size: 1.1rem;
-        }
-
-        .voice-indicator {
-            font-size: 0.75rem;
-            background: #e1ebf6;
-            padding: 4px 12px;
-            border-radius: 30px;
-            display: none;
-            align-items: center;
-            gap: 6px;
-            color: #1f4973;
-        }
-
-        .voice-indicator.active {
-            display: flex;
-        }
-
-        @keyframes fadeUp {
-            0% { opacity: 0; transform: translateY(6px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        /* MODAL */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(15, 23, 42, 0.5);
-            backdrop-filter: blur(4px);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            padding: 1.5rem;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .modal {
-            background: white;
-            border-radius: 28px;
-            max-width: 720px;
-            width: 100%;
-            max-height: 85vh;
-            padding: 2rem 2.2rem;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.2);
-            overflow-y: auto;
-            position: relative;
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 1rem;
-            right: 1.4rem;
-            background: none;
-            border: none;
-            font-size: 1.8rem;
-            cursor: pointer;
-            color: #64748b;
-            padding: 0.2rem 0.6rem;
-            border-radius: 40px;
-        }
-        .modal-close:hover { background: #f1f5f9; }
-
-        .modal h2 {
-            font-size: 1.5rem;
-            margin-bottom: 0.3rem;
-        }
-
-        .modal .doc-full-content {
-            font-family: 'Times New Roman', Times, serif;
-            font-size: 1.05rem;
-            line-height: 1.7;
-            background: #fafcff;
-            padding: 1.5rem;
-            border-radius: 16px;
-            border: 1px solid #e2e8f0;
-            margin: 1rem 0 1.5rem 0;
-            white-space: pre-wrap;
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 0.8rem;
-            flex-wrap: wrap;
-        }
-
-        /* VIEW TOGGLE */
-        .view-toggle {
-            display: flex;
-            gap: 0.3rem;
-            background: #eef2f6;
-            padding: 0.2rem;
-            border-radius: 40px;
-        }
-        .view-toggle button {
-            background: transparent;
-            border: none;
-            padding: 0.3rem 1rem;
-            border-radius: 40px;
-            font-weight: 500;
-            font-size: 0.8rem;
-            cursor: pointer;
-            color: #475569;
-        }
-        .view-toggle button.active {
-            background: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            color: #0f172a;
-        }
-
-        .stats {
-            display: flex;
-            gap: 2rem;
-            flex-wrap: wrap;
-            background: white;
-            padding: 0.8rem 1.5rem;
-            border-radius: 40px;
-            border: 1px solid #e2e8f0;
-            font-size: 0.9rem;
-        }
-        .stats strong { color: #0f172a; }
-
-        @media (max-width: 820px) {
-            .main-grid {
+        /* Responzivní úpravy */
+        @media (max-width: 768px) {
+            .doc-card {
                 grid-template-columns: 1fr;
+                gap: 8px;
             }
-            .chat-panel {
-                max-height: 450px;
-                min-height: 300px;
-                position: relative;
-                top: 0;
+
+            .doc-card .doc-icon {
+                text-align: left;
+                font-size: 1.5rem;
+                min-width: auto;
             }
-            .header { flex-direction: column; align-items: stretch; }
-            .toolbar { flex-direction: column; align-items: stretch; }
-            .modal { padding: 1.5rem; }
+
+            .doc-card .doc-actions {
+                align-self: stretch;
+                justify-content: flex-start;
+                flex-wrap: wrap;
+            }
+
+            .filter-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-section label {
+                white-space: normal;
+            }
+
+            .stats-section {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
-        @media (max-width: 600px) {
-            .doc-grid { grid-template-columns: 1fr; }
-            .chat-panel { max-height: 400px; min-height: 250px; }
-            .chat-input-area input { width: 100%; }
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .doc-card {
+                break-inside: avoid;
+                border: 1px solid #ccc;
+                box-shadow: none !important;
+            }
+            .container {
+                box-shadow: none !important;
+            }
+            .stats-section {
+                display: none !important;
+            }
         }
     </style>
 
@@ -684,913 +409,378 @@
     <body>
 
         <%- include('./partials/header') %>
-<div class="app">
-    <!-- Hlavička -->
-    <header class="header">
-        <h1>
-            <span>📚</span> Dokumenty školy
-            <span class="badge-count" id="docCount">0</span>
-        </h1>
-        <div class="header-actions">
-            <div class="stats">
-                <span>📄 <strong id="totalCount">0</strong> celkem</span>
-                <span>📁 <strong id="categoryCount">0</strong> kategorií</span>
-            </div>
-            <button class="btn btn-primary" id="addDocBtn">➕ Nový dokument</button>
-        </div>
-    </header>
+    <div class="container" id="app">
+        <h1>📚 Školní dokumenty</h1>
+        <p class="subtitle">Přehled důležitých dokumentů a formulářů</p>
+        <hr class="header-line">
 
-    <!-- Toolbar -->
-    <div class="toolbar">
-        <input type="text" id="searchInput" placeholder="🔍 Hledat v názvu, obsahu..." />
-        <div class="filter-group">
-            <select id="categoryFilter">
+        <!-- Statistiky -->
+        <div class="stats-section no-print">
+            <div class="stat-card">
+                <span class="stat-number" id="totalDocs">0</span>
+                <span class="stat-label">📄 Celkem dokumentů</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="officialDocs">0</span>
+                <span class="stat-label">🏛️ Oficiální</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="studyDocs">0</span>
+                <span class="stat-label">📖 Studijní</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="formsDocs">0</span>
+                <span class="stat-label">📋 Formuláře</span>
+            </div>
+        </div>
+
+        <!-- Filtr -->
+        <div class="filter-section no-print">
+            <label for="filterCategory">🔍 Filtrovat:</label>
+            <select id="filterCategory">
                 <option value="all">Všechny kategorie</option>
-                <option value="výchovná">Výchovná</option>
-                <option value="organizační">Organizační</option>
-                <option value="hlášení">Hlášení & výkazy</option>
-                <option value="gdpr">GDPR & souhlasy</option>
-                <option value="metodický">Metodické postupy</option>
-                <option value="ostatní">Ostatní</option>
+                <option value="official">Oficiální dokumenty</option>
+                <option value="study">Studijní materiály</option>
+                <option value="forms">Formuláře</option>
+                <option value="schedule">Rozvrhy a plány</option>
+                <option value="other">Ostatní</option>
             </select>
-            <div class="view-toggle">
-                <button class="active" data-view="grid" id="viewGrid">🖼️ Karty</button>
-                <button data-view="list" id="viewList">📋 Seznam</button>
+            <input type="text" id="filterSearch" placeholder="Hledat v názvu nebo popisu...">
+            <button class="filter-clear" id="clearFilterBtn">✕ Vymazat filtr</button>
+        </div>
+
+        <!-- Legenda -->
+        <div class="legenda no-print">
+            <div class="legenda-item"><span class="color-box" style="background-color:#e3f2fd;"></span> Oficiální dokumenty</div>
+            <div class="legenda-item"><span class="color-box" style="background-color:#fff3e0;"></span> Studijní materiály</div>
+            <div class="legenda-item"><span class="color-box" style="background-color:#fce4ec;"></span> Formuláře</div>
+            <div class="legenda-item"><span class="color-box" style="background-color:#f3e5f5;"></span> Rozvrhy a plány</div>
+            <div class="legenda-item"><span class="color-box" style="background-color:#e8f5e9;"></span> Ostatní</div>
+        </div>
+
+        <!-- Počet dokumentů -->
+        <div class="doc-count" id="docCount">Celkem: <strong>0</strong> dokumentů</div>
+
+        <!-- Seznam dokumentů -->
+        <div class="documents-list" id="documentsList">
+            <div class="no-documents">
+                <span class="icon">📭</span>
+                Zatím zde nejsou žádné dokumenty.
             </div>
+        </div>
+
+        <div class="update-info no-print">
+            📊 Zobrazeno <strong id="totalDocsDisplay">0</strong> dokumentů 
+            <span class="badge">Demo data</span>
         </div>
     </div>
 
-    <!-- HLAVNÍ GRID -->
-    <div class="main-grid">
-        <!-- LEVÁ ČÁST: Dokumenty -->
-        <div>
-            <div class="doc-grid" id="docGrid"></div>
-        </div>
+    <script>
+        (function() {
+            "use strict";
 
-        <!-- PRAVÁ ČÁST: Chat -->
-        <div class="chat-panel">
-            <div class="chat-header">
-                <div class="chat-title">
-                    <i class="fas fa-comment-dots" style="color: #1f6bc0;"></i>
-                    AI agent
-                </div>
-                <div class="chat-header-right">
-                    <span class="server-status checking" id="serverStatus">⏳</span>
-                    <span class="ai-status">
-                        <span class="dot" id="aiStatusDot"></span>
-                        <span id="aiStatusText">Připraven</span>
-                    </span>
-                    <button class="clear-chat-btn" id="clearChatBtn" title="Smazat konverzaci">✕</button>
-                </div>
-            </div>
-            <div class="chat-messages" id="chatMessages">
-                <div class="message assistant">
-                    <span class="msg-icon">🤖</span> Dobrý den, jsem AI agent. Zeptejte se mě na cokoli ohledně dokumentů školy – odpovídám na základě jejich obsahu.
-                </div>
-            </div>
-            <div class="chat-input-area">
-                <input type="text" id="chatInput" placeholder="Napište dotaz..." />
-                <button class="chat-btn chat-btn-primary" id="sendChatBtn">
-                    <i class="fas fa-paper-plane chat-btn-icon"></i>
-                </button>
-                <button class="chat-btn chat-btn-voice" id="voiceInputBtn">
-                    <i class="fas fa-microphone chat-btn-icon"></i>
-                    <span id="voiceLabel">Hlas</span>
-                </button>
-                <button class="chat-btn chat-btn-voice" id="voiceOutputBtn">
-                    <i class="fas fa-volume-up chat-btn-icon"></i>
-                    <span>Přečíst</span>
-                </button>
-                <span id="voiceIndicator" class="voice-indicator">
-                    <i class="fas fa-circle" style="color: #d94a4a; font-size: 0.5rem;"></i> poslouchám...
-                </span>
-            </div>
-        </div>
-    </div>
+            // --- DOM odkazy ---
+            const documentsList = document.getElementById('documentsList');
+            const docCount = document.getElementById('docCount');
+            const totalDocsDisplay = document.getElementById('totalDocsDisplay');
+            const totalDocs = document.getElementById('totalDocs');
+            const officialDocs = document.getElementById('officialDocs');
+            const studyDocs = document.getElementById('studyDocs');
+            const formsDocs = document.getElementById('formsDocs');
+            const filterCategory = document.getElementById('filterCategory');
+            const filterSearch = document.getElementById('filterSearch');
+            const clearFilterBtn = document.getElementById('clearFilterBtn');
 
-    <!-- MODAL -->
-    <div class="modal-overlay" id="detailModal">
-        <div class="modal">
-            <button class="modal-close" id="modalClose">✕</button>
-            <h2 id="modalTitle">Název dokumentu</h2>
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin: 0.2rem 0 0.8rem 0;">
-                <span id="modalCategory" class="doc-category">kategorie</span>
-                <span id="modalDate" style="font-size:0.85rem; color:#64748b;">📅 datum</span>
-            </div>
-            <div class="doc-full-content" id="modalContent"></div>
-            <div class="modal-actions">
-                <button class="btn btn-success" id="modalPrint">🖨️ Tisk</button>
-                <button class="btn btn-outline" id="modalEdit">✏️ Upravit</button>
-                <button class="btn btn-danger" id="modalDelete">🗑️ Smazat</button>
-                <button class="btn btn-outline" id="modalCloseBtn">Zavřít</button>
-            </div>
-        </div>
-    </div>
-</div>
+            // --- UKÁZKOVÁ DATA (simulace dat od vedení školy) ---
+            const documents = [
+                {
+                    id: 1,
+                    title: "Školní řád 2024/2025",
+                    description: "Kompletní školní řád pro akademický rok 2024/2025. Obsahuje práva a povinnosti studentů, provozní řád a důležité informace.",
+                    category: "official",
+                    icon: "📜",
+                    fileSize: "2.4 MB",
+                    updated: "1.9.2024",
+                    downloadUrl: "#",
+                    previewUrl: "#"
+                },
+                {
+                    id: 2,
+                    title: "Učební plán - IT obor",
+                    description: "Podrobný učební plán pro obor Informační technologie. Obsahuje přehled předmětů, hodinových dotací a doporučené literatury.",
+                    category: "study",
+                    icon: "💻",
+                    fileSize: "1.8 MB",
+                    updated: "15.8.2024",
+                    downloadUrl: "#",
+                    previewUrl: "#"
+                },
+                {
+                    id: 3,
+                    title: "Přihláška k maturitní zkoušce",
+                    description: "Formulář pro přihlášení k maturitní zkoušce. Vyplňte a odevzdejte do 31. ledna 2025.",
+                    category: "forms",
+                    icon: "📝",
+                    fileSize: "0.5 MB",
+                    updated: "10.10.2024",
+                    downloadUrl: "#",
+                    previewUrl: "#"
+                },
+                {
+                    id: 4,
+                    title: "Rozvrh hodin - zimní semestr",
+                    description: "Aktuální rozvrh hodin pro zimní semestr 2024/2025. Zahrnuje všechny ročníky a obory.",
+                    category: "schedule",
+                    icon: "📅",
+                    fileSize: "3.2 MB",
+                    updated: "1.9.2024",
+                    downloadUrl: "#",
+                    previewUrl: "#"
+                },
+                {
+                    id: 5,
+                    title: "Studijní a zkušební řád",
+                    description: "Studijní a zkušební řád školy. Upravuje průběh studia, zkoušky, klasifikaci a uznávání předmětů.",
+                    category: "official",
+                    icon: "⚖️",
+                    fileSize: "1.2 MB",
+                    updated: "20.8.2024",
+                    downloadUrl: "#",
+                    previewUrl: "#"
+                },
+                {
+                    id: 6,
+                    title: "Materiály k maturitě",
+                    description: "Kompletní přehled maturitních témat, seznam literatury a vzorové testy pro všechny předměty.",
+                    category: "study",
+                    icon: "📚",
+                    fileSize: "8.5 MB",
+                    updated: "5.10.2024",
+                    downloadUrl: "#",
+                    previewUrl: "#"
+                },
+                {
+                    id: 7,
+                    title: "Žádost o ubytování na koleji",
+                    description: "Formulář pro podání žádosti o ubytování na studentské koleji. Termín podání do 31.5.2025.",
+                    category: "forms",
+                    icon: "🏠",
+                    fileSize: "0.3 MB",
+                    updated: "1.9.2024",
+                    downloadUrl: "#",
+                    previewUrl: "#"
+                },
+                {
+                    id: 8,
+                    title: "Kalendář akademického roku",
+                    description: "Důležité termíny a události akademického roku 2024/2025 - zkoušková období, prázdniny, státní svátky.",
+                    category: "schedule",
+                    icon: "📆",
+                    fileSize: "0.8 MB",
+                    updated: "25.8.2024",
+                    downloadUrl: "#",
+                    previewUrl: "#"
+                },
+                {
+                    id: 9,
+                    title: "Etický kodex školy",
+                    description: "Etický kodex školy - zásady chování, akademická integrita a pravidla slušného jednání.",
+                    category: "official",
+                    icon: "🤝",
+                    fileSize: "0.6 MB",
+                    updated: "1.9.2024",
+                    downloadUrl: "#",
+                    previewUrl: "#"
+                },
+                {
+                    id: 10,
+                    title: "Skripta - Programování v Pythonu",
+                    description: "Kompletní učební materiály pro předmět Programování v Pythonu. Obsahuje teoretické základy i praktické příklady.",
+                    category: "study",
+                    icon: "🐍",
+                    fileSize: "12.0 MB",
+                    updated: "15.9.2024",
+                    downloadUrl: "#",
+                    previewUrl: "#"
+                },
+                {
+                    id: 11,
+                    title: "Žádost o stipendium",
+                    description: "Formulář pro podání žádosti o prospěchové nebo sociální stipendium. Vyplňte a doložte potřebné dokumenty.",
+                    category: "forms",
+                    icon: "💰",
+                    fileSize: "0.4 MB",
+                    updated: "1.10.2024",
+                    downloadUrl: "#",
+                    previewUrl: "#"
+                },
+                {
+                    id: 12,
+                    title: "Informace k přijímacímu řízení",
+                    description: "Kompletní informace k přijímacímu řízení pro akademický rok 2025/2026 - termíny, požadavky, přihlášky.",
+                    category: "official",
+                    icon: "📋",
+                    fileSize: "1.5 MB",
+                    updated: "1.11.2024",
+                    downloadUrl: "#",
+                    previewUrl: "#"
+                },
+                {
+                    id: 13,
+                    title: "Rozvrh zkoušek - leden 2025",
+                    description: "Rozvrh zkouškového období na leden 2025. Obsahuje termíny, místnosti a zkušební komise.",
+                    category: "schedule",
+                    icon: "📝",
+                    fileSize: "0.9 MB",
+                    updated: "10.12.2024",
+                    downloadUrl: "#",
+                    previewUrl: "#"
+                },
+                {
+                    id: 14,
+                    title: "Metodické pokyny pro závěrečné práce",
+                    description: "Podrobné metodické pokyny pro vypracování závěrečných prací - formátování, citace, struktura a hodnocení.",
+                    category: "study",
+                    icon: "✍️",
+                    fileSize: "2.1 MB",
+                    updated: "1.10.2024",
+                    downloadUrl: "#",
+                    previewUrl: "#"
+                },
+                {
+                    id: 15,
+                    title: "Návrh na změnu studijního plánu",
+                    description: "Formulář pro podání návrhu na změnu individuálního studijního plánu. Vyplňte a odevzdejte studijnímu oddělení.",
+                    category: "forms",
+                    icon: "📄",
+                    fileSize: "0.2 MB",
+                    updated: "1.9.2024",
+                    downloadUrl: "#",
+                    previewUrl: "#"
+                }
+            ];
 
-<script>
-    (function() {
-        "use strict";
-
-        // ============================================================
-        // 📄 TEST DATA – Dokumenty školy (VIDÍTE JE ZDE)
-        // ============================================================
-        let documents = [
-            {
-                id: 'doc1',
-                title: 'Školní řád',
-                category: 'organizační',
-                date: '2026-08-28',
-                content: `ŠKOLNÍ ŘÁD HOTELOVÉ ŠKOLY MARIÁNSKÉ LÁZNĚ
-
-Čl. 1 – Úvodní ustanovení
-Školní řád upravuje v souladu se školským zákonem podmínky soužití na škole. Je závazný pro všechny žáky, jejich zákonné zástupce a zaměstnance školy.
-
-Čl. 2 – Práva žáků
-1. Žák má právo na kvalitní vzdělání odpovídající současným trendům.
-2. Žák má právo na informace o průběhu a výsledcích svého vzdělávání.
-3. Žák má právo volit a být volen do školské rady.
-4. Žák má právo zakládat samosprávné orgány žáků.
-
-Čl. 3 – Povinnosti žáků
-1. Žák je povinen řádně docházet do školy a řádně se vzdělávat.
-2. Žák je povinen dodržovat školní řád a pokyny školy k ochraně zdraví.
-3. Žák je povinen respektovat pokyny pedagogických pracovníků.
-4. Žák je povinen šetřit školní majetek.
-
-Čl. 4 – Zákazy
-1. Žákům je zakázáno vstupovat do školy pod vlivem alkoholu.
-2. Žákům je zakázáno požívat alkohol a omamné látky.
-3. Žákům je zakázáno kouřit v prostorách školy.
-4. Žákům je zakázáno nosit do školy nebezpečné předměty.
-
-Čl. 5 – Hodnocení žáků
-Hodnocení žáků se řídí klasifikačním řádem, který je nedílnou součástí školního řádu.`,
-                icon: '📜'
-            },
-            {
-                id: 'doc2',
-                title: 'Klasifikační řád',
-                category: 'metodický',
-                date: '2026-08-28',
-                content: `KLASIFIKAČNÍ ŘÁD HOTELOVÉ ŠKOLY MARIÁNSKÉ LÁZNĚ
-
-Čl. 1 – Zásady hodnocení
-1. Hodnocení žáků je nedílnou součástí výchovně-vzdělávacího procesu.
-2. Hodnocení vychází z cílů vzdělávání a požadavků stanovených ŠVP.
-
-Čl. 2 – Stupně hodnocení
-1 – výborný
-2 – chvalitebný
-3 – dobrý
-4 – dostatečný
-5 – nedostatečný
-
-Čl. 3 – Kritéria hodnocení
-1. Při hodnocení se přihlíží k úplnosti a přesnosti osvojení poznatků.
-2. Hodnotí se také aktivita, samostatnost a tvořivost žáka.
-
-Čl. 4 – Opravné zkoušky
-1. Žák, který je hodnocen stupněm 5, může konat opravnou zkoušku.
-2. Termín opravné zkoušky stanoví ředitel školy.`,
-                icon: '📘'
-            },
-            {
-                id: 'doc3',
-                title: 'Provozní řád školy',
-                category: 'organizační',
-                date: '2026-08-20',
-                content: `PROVOZNÍ ŘÁD HOTELOVÉ ŠKOLY MARIÁNSKÉ LÁZNĚ
-
-Čl. 1 – Otevírací doba
-1. Škola je otevřena od 6:00 do 18:00 hodin.
-2. Vyučování začíná v 8:00 hodin.
-
-Čl. 2 – Vstup do budovy
-1. Žáci vstupují do budovy hlavním vchodem od 7:30 hodin.
-2. Každý žák je povinen zaznamenat svůj příchod čipem.
-
-Čl. 3 – Šatny
-1. Každý žák má přidělenu vlastní šatní skříňku.
-2. Žák je povinen šatní skříňku zamykat.
-3. Za cennosti uložené ve skříňce škola neručí.
-
-Čl. 4 – Stravování
-1. Žáci se stravují ve školní jídelně podle stanoveného rozvrhu.
-2. Polední přestávka je v době 11:30–12:30.`,
-                icon: '🏫'
-            },
-            {
-                id: 'doc4',
-                title: 'Bezpečnostní pokyny',
-                category: 'organizační',
-                date: '2026-08-15',
-                content: `BEZPEČNOSTNÍ POKYNY HOTELOVÉ ŠKOLY MARIÁNSKÉ LÁZNĚ
-
-1. Žáci jsou povinni dodržovat zásady bezpečnosti a ochrany zdraví.
-2. Každý úraz musí být neprodleně hlášen vyučujícímu.
-3. V případě požáru se žáci řídí evakuačním plánem budovy.
-4. Evakuační cesty musí být vždy volně průchozí.
-5. Manipulace s elektrickými spotřebiči je povolena pouze pod dohledem vyučujícího.
-6. Ve cvičné kuchyni je nutné dodržovat hygienické předpisy.`,
-                icon: '🛡️'
-            },
-            {
-                id: 'doc5',
-                title: 'Pravidla pro omlouvání absence',
-                category: 'organizační',
-                date: '2026-08-22',
-                content: `PRAVIDLA PRO OMLOUVÁNÍ ABSENCE
-
-Čl. 1 – Omlouvání předem
-1. Žádost o uvolnění z vyučování se podává předem.
-2. Absenci do 2 dnů povoluje třídní učitel.
-3. Absenci 3 a více dnů povoluje ředitel školy.
-
-Čl. 2 – Omlouvání dodatečně
-1. Nepřítomnost je nutné ohlásit první den absence.
-2. Omluvenku je třeba doložit do 3 dnů od nástupu do školy.
-3. Omluvný list podepisuje zákonný zástupce žáka.
-
-Čl. 3 – Neomluvená absence
-1. Neomluvená absence je považována za hrubé porušení školního řádu.
-2. Za neomluvenou absenci mohou následovat výchovná opatření.`,
-                icon: '📋'
-            },
-            {
-                id: 'doc6',
-                title: 'Výchovná opatření',
-                category: 'výchovná',
-                date: '2026-08-18',
-                content: `VÝCHOVNÁ OPATŘENÍ HOTELOVÉ ŠKOLY MARIÁNSKÉ LÁZNĚ
-
-Čl. 1 – Pochvaly
-1. Pochvala třídního učitele – za výrazný projev školní iniciativy.
-2. Pochvala ředitele školy – za mimořádný projev občanské iniciativy.
-
-Čl. 2 – Kázeňská opatření
-1. Napomenutí třídního učitele – za méně závažná provinění.
-2. Důtka třídního učitele – za závažnější provinění.
-3. Důtka ředitele školy – za opakovaná závažná provinění.
-4. Podmíněné vyloučení ze studia – za hrubé porušení školního řádu.
-5. Vyloučení ze studia – za zvlášť hrubé porušení školního řádu.`,
-                icon: '⚖️'
-            },
-            {
-                id: 'doc7',
-                title: 'GDPR – Souhlas se zpracováním osobních údajů',
-                category: 'gdpr',
-                date: '2026-08-10',
-                content: `SOUHLAS SE ZPRACOVÁNÍM OSOBNÍCH ÚDAJŮ
-
-Já, níže podepsaný/á, uděluji souhlas Hotelové škole Mariánské Lázně se zpracováním osobních údajů mého dítěte pro účely vedení školní evidence, klasifikace a komunikace se zákonnými zástupci.
-
-Rozsah zpracovávaných údajů:
-- Jméno a příjmení žáka
-- Datum narození
-- Adresa trvalého bydliště
-- Kontaktní údaje zákonných zástupců
-- Zdravotní údaje (pojišťovna, omezení)
-
-Souhlas je udělen na dobu nezbytně nutnou pro splnění účelu. Souhlas mohu kdykoli odvolat písemnou formou.`,
-                icon: '🔐'
-            },
-            {
-                id: 'doc8',
-                title: 'Souhlas s fotografováním',
-                category: 'gdpr',
-                date: '2026-08-12',
-                content: `SOUHLAS S FOTOGRAFOVÁNÍM A ZVEŘEJNĚNÍM
-
-Já, níže podepsaný/á, uděluji souhlas s pořizováním fotografií a videozáznamů mého dítěte při školních akcích a jejich zveřejněním na webových stránkách školy a v propagačních materiálech.
-
-Prohlašuji, že jsem byl/a seznámen/a s tím, že fotografie budou použity výhradně pro prezentaci školy a nebudou použity pro komerční účely.
-
-Tento souhlas platí po dobu studia mého dítěte na škole.`,
-                icon: '📸'
-            },
-            {
-                id: 'doc9',
-                title: 'Metodický postup – Hodnocení žáků',
-                category: 'metodický',
-                date: '2026-08-25',
-                content: `METODICKÝ POSTUP – HODNOCENÍ ŽÁKŮ
-
-Cíl: Sjednotit přístup k hodnocení žáků na střední škole.
-
-1. Hodnocení prospěchu
-   - Známky 1–5 dle váhy ověření znalostí.
-   - Každý předmět má stanovenou váhu jednotlivých forem ověření.
-
-2. Hodnocení chování
-   - Chování se hodnotí známkou 1–3.
-   - Kritéria hodnocení vycházejí ze školního řádu.
-
-3. Sebehodnocení žáka
-   - Žák provádí sebehodnocení 1x za pololetí.
-   - Sebehodnocení je součástí portfolia žáka.
-
-4. Slovní hodnocení
-   - Doporučeno u žáků s individuálním vzdělávacím plánem.
-   - Slovní hodnocení nahrazuje známku v případě potřeby.
-
-Platnost od: 1. 9. 2026
-Schválil: Mgr. Helena Novotná, ředitelka školy`,
-                icon: '📘'
-            },
-            {
-                id: 'doc10',
-                title: 'Metodický postup – BOZ na akcích',
-                category: 'metodický',
-                date: '2026-08-14',
-                content: `METODICKÝ POSTUP – BOZ NA ŠKOLNÍCH AKCÍCH
-
-1. Před akcí
-   - Získat písemný souhlas zákonného zástupce.
-   - Provést poučení žáků o bezpečnosti.
-   - Zkontrolovat zdravotní způsobilost žáků.
-
-2. Během akce
-   - Vedoucí akce má seznam všech účastníků.
-   - Lékárnička je vždy k dispozici.
-   - Mobilní kontakt na vedoucího je znám všem.
-
-3. Po akci
-   - Vyhodnocení akce a případných rizik.
-   - Záznam o případném úrazu do knihy úrazů.
-   - Vyúčtování akce dle platných předpisů.
-
-Schválil: Mgr. Helena Novotná, 5. 5. 2026`,
-                icon: '📘'
-            },
-            {
-                id: 'doc11',
-                title: 'Cestovní příkaz',
-                category: 'organizační',
-                date: '2026-08-20',
-                content: `CESTOVNÍ PŘÍKAZ
-
-Jméno: Mgr. Helena Novotná
-Cíl cesty: Školení BOZ, Hradec Králové
-Datum: 25. 6. 2026
-Účel: služební cesta
-Dopravní prostředek: vlak
-
-Schvaluji: Mgr. Helena Novotná
-V Hotelové škole Mariánské Lázně, 25. 6. 2026`,
-                icon: '🚗'
-            },
-            {
-                id: 'doc12',
-                title: 'Propustka z vyučování',
-                category: 'organizační',
-                date: '2026-08-16',
-                content: `PROPUSTKA Z VYUČOVÁNÍ
-
-Žák: Adam Novák, třída 9.A
-Důvod uvolnění: návštěva lékaře
-Čas uvolnění: 10:30
-Podpis zákonného zástupce: Jana Nováková
-
-V Hotelové škole Mariánské Lázně, 17. 6. 2026
-
-Mgr. Helena Novotná`,
-                icon: '🚪'
+            // --- Pomocné funkce ---
+            function getCategoryLabel(category) {
+                const labels = {
+                    'official': 'Oficiální',
+                    'study': 'Studijní',
+                    'forms': 'Formuláře',
+                    'schedule': 'Rozvrh',
+                    'other': 'Ostatní'
+                };
+                return labels[category] || 'Ostatní';
             }
-        ];
 
-        // ============================================================
-        // STAV
-        // ============================================================
-        let currentView = 'grid';
-        let currentFilter = 'all';
-        let searchQuery = '';
-        let lastAssistantReply = 'Dobrý den, jsem AI agent. Zeptejte se mě na cokoli ohledně dokumentů školy.';
-        let conversationHistory = [];
+            function getCategoryClass(category) {
+                switch (category) {
+                    case 'official': return 'doc-tag-official';
+                    case 'study': return 'doc-tag-study';
+                    case 'forms': return 'doc-tag-forms';
+                    case 'schedule': return 'doc-tag-schedule';
+                    default: return 'doc-tag-other';
+                }
+            }
 
-        // DOM
-        const docGrid = document.getElementById('docGrid');
-        const searchInput = document.getElementById('searchInput');
-        const categoryFilter = document.getElementById('categoryFilter');
-        const viewGridBtn = document.getElementById('viewGrid');
-        const viewListBtn = document.getElementById('viewList');
-        const addDocBtn = document.getElementById('addDocBtn');
-        const modalOverlay = document.getElementById('detailModal');
-        const modalClose = document.getElementById('modalClose');
-        const modalCloseBtn = document.getElementById('modalCloseBtn');
-        const modalTitle = document.getElementById('modalTitle');
-        const modalCategory = document.getElementById('modalCategory');
-        const modalDate = document.getElementById('modalDate');
-        const modalContent = document.getElementById('modalContent');
-        const modalPrint = document.getElementById('modalPrint');
-        const modalEdit = document.getElementById('modalEdit');
-        const modalDelete = document.getElementById('modalDelete');
-        const docCount = document.getElementById('docCount');
-        const totalCount = document.getElementById('totalCount');
-        const categoryCount = document.getElementById('categoryCount');
+            function escapeHtml(text) {
+                if (!text) return '';
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
 
-        // AI DOM
-        const chatMessages = document.getElementById('chatMessages');
-        const chatInput = document.getElementById('chatInput');
-        const sendBtn = document.getElementById('sendChatBtn');
-        const voiceInputBtn = document.getElementById('voiceInputBtn');
-        const voiceOutputBtn = document.getElementById('voiceOutputBtn');
-        const voiceLabel = document.getElementById('voiceLabel');
-        const voiceIndicator = document.getElementById('voiceIndicator');
-        const aiStatusText = document.getElementById('aiStatusText');
-        const aiStatusDot = document.getElementById('aiStatusDot');
-        const serverStatus = document.getElementById('serverStatus');
-        const clearChatBtn = document.getElementById('clearChatBtn');
+            // --- Filtrování ---
+            function getFilteredDocuments() {
+                const categoryFilter = filterCategory.value;
+                const searchTerm = filterSearch.value.toLowerCase().trim();
 
-        // ============================================================
-        // KONTROLA BACKENDU
-        // ============================================================
-        async function checkBackend() {
-            try {
-                const response = await fetch('/api/test');
-                if (response.ok) {
-                    serverStatus.className = 'server-status online';
-                    serverStatus.textContent = '✅ Online';
+                return documents.filter(doc => {
+                    if (categoryFilter !== 'all' && doc.category !== categoryFilter) return false;
+                    if (searchTerm) {
+                        const title = (doc.title || '').toLowerCase();
+                        const desc = (doc.description || '').toLowerCase();
+                        if (!title.includes(searchTerm) && !desc.includes(searchTerm)) return false;
+                    }
                     return true;
-                } else {
-                    throw new Error('Backend neodpovídá');
+                });
+            }
+
+            // --- Aktualizace statistik ---
+            function updateStats() {
+                const total = documents.length;
+                const official = documents.filter(d => d.category === 'official').length;
+                const study = documents.filter(d => d.category === 'study').length;
+                const forms = documents.filter(d => d.category === 'forms').length;
+
+                totalDocs.textContent = total;
+                officialDocs.textContent = official;
+                studyDocs.textContent = study;
+                formsDocs.textContent = forms;
+            }
+
+            // --- Vykreslení dokumentů ---
+            function renderDocuments() {
+                const filtered = getFilteredDocuments();
+
+                if (filtered.length === 0) {
+                    documentsList.innerHTML = `
+                        <div class="no-documents">
+                            <span class="icon">📭</span>
+                            ${documents.length === 0 ? 'Zatím zde nejsou žádné dokumenty.' : 'Žádné dokumenty neodpovídají zadanému filtru.'}
+                        </div>
+                    `;
+                    docCount.innerHTML = `Celkem: <strong>0</strong> dokumentů`;
+                    totalDocsDisplay.textContent = '0';
+                    return;
                 }
-            } catch (e) {
-                serverStatus.className = 'server-status offline';
-                serverStatus.textContent = '❌ Offline';
-                return false;
-            }
-        }
 
-        // ============================================================
-        // POMOCNÉ FUNKCE
-        // ============================================================
-        function formatDate(dateStr) {
-            if (!dateStr) return 'bez data';
-            const d = new Date(dateStr);
-            return d.toLocaleDateString('cs-CZ');
-        }
+                let html = '';
+                filtered.forEach(doc => {
+                    const categoryLabel = getCategoryLabel(doc.category);
+                    const categoryClass = getCategoryClass(doc.category);
 
-        function getCategoryLabel(cat) {
-            const map = {
-                'výchovná': 'Výchovná',
-                'organizační': 'Organizační',
-                'hlášení': 'Hlášení & výkazy',
-                'gdpr': 'GDPR & souhlasy',
-                'metodický': 'Metodické postupy',
-                'ostatní': 'Ostatní'
-            };
-            return map[cat] || cat;
-        }
-
-        function getCategoryColor(cat) {
-            const map = {
-                'výchovná': '#f59e0b',
-                'organizační': '#3b82f6',
-                'hlášení': '#ef4444',
-                'gdpr': '#8b5cf6',
-                'metodický': '#10b981',
-                'ostatní': '#6b7280'
-            };
-            return map[cat] || '#6b7280';
-        }
-
-        // ============================================================
-        // AI AGENT
-        // ============================================================
-        function getDocumentsText() {
-            return documents.map(doc => {
-                return `=== ${doc.title} (${getCategoryLabel(doc.category)}) ===\n${doc.content}\n`;
-            }).join('\n');
-        }
-
-        function addMessage(text, type, isError = false) {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = `message ${type}${isError ? ' error' : ''}`;
-            const icon = type === 'user' ? '🧑' : '🤖';
-            msgDiv.innerHTML = `<span class="msg-icon">${icon}</span> ${text}`;
-            chatMessages.appendChild(msgDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        function addTypingIndicator() {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = 'message assistant';
-            msgDiv.id = 'typingIndicator';
-            msgDiv.innerHTML = `
-                <span class="msg-icon">🤖</span>
-                <span class="typing-indicator"><span></span><span></span><span></span></span>
-            `;
-            chatMessages.appendChild(msgDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        function removeTypingIndicator() {
-            const el = document.getElementById('typingIndicator');
-            if (el) el.remove();
-        }
-
-        function updateStatus(text, type) {
-            aiStatusText.textContent = text;
-            aiStatusDot.className = 'dot ' + type;
-        }
-
-        async function processUserQuery(query) {
-            if (!query.trim()) return;
-
-            const isOnline = await checkBackend();
-            if (!isOnline) {
-                addMessage('❌ Backend není dostupný. Spusťte server příkazem: node server.js', 'assistant', true);
-                return;
-            }
-
-            addMessage(query, 'user');
-            chatInput.value = '';
-            sendBtn.disabled = true;
-            updateStatus('Přemýšlím...', 'loading');
-            addTypingIndicator();
-
-            try {
-                conversationHistory.push({ role: 'user', content: query });
-
-                // ⚠️ POSÍLÁME VŠECHNY DOKUMENTY NA BACKEND
-                const allDocumentsText = getDocumentsText();
-
-                const response = await fetch('/api/chat/dokumenty', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        messages: conversationHistory,
-                        documents: allDocumentsText
-                    })
+                    html += `
+                        <div class="doc-card">
+                            <div class="doc-icon">${doc.icon || '📄'}</div>
+                            <div class="doc-body">
+                                <div class="doc-title">${escapeHtml(doc.title)}</div>
+                                ${doc.description ? `<div class="doc-description">${escapeHtml(doc.description)}</div>` : ''}
+                                <div class="doc-meta">
+                                    <span class="doc-tag ${categoryClass}">${categoryLabel}</span>
+                                    ${doc.fileSize ? `<span>📦 ${doc.fileSize}</span>` : ''}
+                                    ${doc.updated ? `<span>🔄 ${doc.updated}</span>` : ''}
+                                </div>
+                            </div>
+                            <div class="doc-actions no-print">
+                                <a href="${doc.previewUrl || '#'}" class="btn-preview" target="_blank">👁️ Náhled</a>
+                                <a href="${doc.downloadUrl || '#'}" class="btn-download" download>⬇️ Stáhnout</a>
+                            </div>
+                        </div>
+                    `;
                 });
 
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || 'Neznámá chyba');
-                }
-
-                const data = await response.json();
-                removeTypingIndicator();
-
-                conversationHistory.push({ role: 'assistant', content: data.reply });
-                addMessage(data.reply, 'assistant');
-                lastAssistantReply = data.reply;
-                updateStatus('Odpovězeno', 'online');
-                setTimeout(() => updateStatus('Připraven', 'online'), 2000);
-
-            } catch (error) {
-                removeTypingIndicator();
-                addMessage(`❌ Chyba: ${error.message}`, 'assistant', true);
-                updateStatus('Chyba', 'error');
-                setTimeout(() => updateStatus('Připraven', 'online'), 3000);
-            } finally {
-                sendBtn.disabled = false;
+                documentsList.innerHTML = html;
+                const countText = filtered.length === documents.length 
+                    ? `Celkem: <strong>${filtered.length}</strong> dokumentů`
+                    : `Celkem: <strong>${filtered.length}</strong> dokumentů (z ${documents.length} celkem)`;
+                docCount.innerHTML = countText;
+                totalDocsDisplay.textContent = filtered.length;
             }
-        }
 
-        // ============================================================
-        // CHAT EVENTY
-        // ============================================================
-        sendBtn.addEventListener('click', () => processUserQuery(chatInput.value));
-        chatInput.addEventListener('keyup', (e) => {
-            if (e.key === 'Enter') processUserQuery(chatInput.value);
-        });
+            // --- Filtry ---
+            filterCategory.addEventListener('change', renderDocuments);
+            filterSearch.addEventListener('input', renderDocuments);
 
-        clearChatBtn.addEventListener('click', function() {
-            if (!confirm('Opravdu chcete smazat konverzaci?')) return;
-            conversationHistory = [];
-            chatMessages.innerHTML = `
-                <div class="message assistant">
-                    <span class="msg-icon">🤖</span> Konverzace byla vymazána. Zeptejte se mě na cokoli ohledně dokumentů školy.
-                </div>
-            `;
-            lastAssistantReply = 'Konverzace byla vymazána.';
-            updateStatus('Připraven', 'online');
-        });
-
-        // ============================================================
-        // HLASOVÝ VSTUP
-        // ============================================================
-        let recognition = null;
-        let isRecording = false;
-
-        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            recognition = new SpeechRecognition();
-            recognition.lang = 'cs-CZ';
-            recognition.continuous = false;
-            recognition.interimResults = false;
-
-            recognition.onstart = function() {
-                isRecording = true;
-                voiceInputBtn.classList.add('recording');
-                voiceLabel.textContent = 'Poslouchám...';
-                voiceIndicator.classList.add('active');
-                updateStatus('Poslouchám hlas...', 'loading');
-            };
-
-            recognition.onresult = function(event) {
-                const transcript = event.results[0][0].transcript;
-                voiceInputBtn.classList.remove('recording');
-                voiceLabel.textContent = 'Hlas';
-                voiceIndicator.classList.remove('active');
-                chatInput.value = transcript;
-                processUserQuery(transcript);
-            };
-
-            recognition.onerror = function(event) {
-                voiceInputBtn.classList.remove('recording');
-                voiceLabel.textContent = 'Hlas';
-                voiceIndicator.classList.remove('active');
-                if (event.error === 'not-allowed') {
-                    addMessage('⚠️ Povolte prosím přístup k mikrofonu.', 'assistant', true);
-                }
-                updateStatus('Chyba mikrofonu', 'error');
-                setTimeout(() => updateStatus('Připraven', 'online'), 2000);
-            };
-
-            recognition.onend = function() {
-                isRecording = false;
-                voiceInputBtn.classList.remove('recording');
-                voiceLabel.textContent = 'Hlas';
-                voiceIndicator.classList.remove('active');
-            };
-        }
-
-        voiceInputBtn.addEventListener('click', function() {
-            if (!recognition) {
-                alert('Váš prohlížeč nepodporuje rozpoznávání řeči.');
-                return;
-            }
-            if (isRecording) { recognition.stop(); return; }
-            try { recognition.start(); } catch (e) {}
-        });
-
-        // ============================================================
-        // HLASOVÝ VÝSTUP
-        // ============================================================
-        voiceOutputBtn.addEventListener('click', function() {
-            const text = lastAssistantReply;
-            if (!text || text === 'Dobrý den, jsem AI agent. Zeptejte se mě na cokoli ohledně dokumentů školy.') {
-                alert('Žádná odpověď k přehrání.');
-                return;
-            }
-            if ('speechSynthesis' in window) {
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'cs-CZ';
-                utterance.rate = 1.0;
-                speechSynthesis.speak(utterance);
-                updateStatus('Přehrávám...', 'loading');
-                utterance.onend = () => updateStatus('Připraven', 'online');
-            }
-        });
-
-        // ============================================================
-        // FILTRACE A RENDER
-        // ============================================================
-        function getFilteredDocs() {
-            return documents.filter(doc => {
-                const matchSearch = doc.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                                   doc.content.toLowerCase().includes(searchQuery.toLowerCase());
-                const matchCategory = currentFilter === 'all' || doc.category === currentFilter;
-                return matchSearch && matchCategory;
+            clearFilterBtn.addEventListener('click', function() {
+                filterCategory.value = 'all';
+                filterSearch.value = '';
+                renderDocuments();
             });
-        }
 
-        function render() {
-            const filtered = getFilteredDocs();
-            const total = documents.length;
-            const cats = new Set(documents.map(d => d.category));
-            docCount.textContent = filtered.length;
-            totalCount.textContent = total;
-            categoryCount.textContent = cats.size;
-
-            if (filtered.length === 0) {
-                docGrid.innerHTML = `
-                    <div class="empty-state">
-                        <h3>📭 Žádné dokumenty nenalezeny</h3>
-                        <p>Zkuste upravit filtr nebo přidejte nový dokument.</p>
-                    </div>
-                `;
-                return;
-            }
-
-            if (currentView === 'grid') {
-                docGrid.className = 'doc-grid';
-                docGrid.innerHTML = filtered.map(doc => `
-                    <div class="doc-card" data-id="${doc.id}">
-                        <div class="doc-header">
-                            <span class="doc-icon">${doc.icon || '📄'}</span>
-                            <span class="doc-title">${doc.title}</span>
-                            <span class="doc-category" style="background:${getCategoryColor(doc.category)}20; color:${getCategoryColor(doc.category)};">
-                                ${getCategoryLabel(doc.category)}
-                            </span>
-                        </div>
-                        <div class="doc-meta">
-                            <span>📅 ${formatDate(doc.date)}</span>
-                            <span>📂 ${getCategoryLabel(doc.category)}</span>
-                        </div>
-                        <div class="doc-preview">${doc.content.substring(0, 120)}${doc.content.length > 120 ? '...' : ''}</div>
-                        <div class="doc-actions">
-                            <button class="btn btn-small btn-outline view-doc" data-id="${doc.id}">👁️ Detail</button>
-                            <button class="btn btn-small btn-outline edit-doc" data-id="${doc.id}">✏️</button>
-                            <button class="btn btn-small btn-danger delete-doc" data-id="${doc.id}">🗑️</button>
-                        </div>
-                    </div>
-                `).join('');
-
-                document.querySelectorAll('.view-doc').forEach(btn => {
-                    btn.addEventListener('click', () => openDetail(btn.dataset.id));
-                });
-                document.querySelectorAll('.edit-doc').forEach(btn => {
-                    btn.addEventListener('click', () => editDocument(btn.dataset.id));
-                });
-                document.querySelectorAll('.delete-doc').forEach(btn => {
-                    btn.addEventListener('click', () => deleteDocument(btn.dataset.id));
-                });
-
-            } else {
-                docGrid.className = 'doc-grid';
-                docGrid.style.display = 'block';
-                docGrid.innerHTML = `
-                    <div style="background:white; border-radius:20px; border:1px solid #e2e8f0; overflow:hidden;">
-                        <table style="width:100%; border-collapse:collapse; font-size:0.9rem;">
-                            <thead style="background:#f8fafc; border-bottom:1px solid #e2e8f0;">
-                                <tr>
-                                    <th style="padding:0.8rem 1rem; text-align:left;">Název</th>
-                                    <th style="padding:0.8rem 1rem; text-align:left;">Kategorie</th>
-                                    <th style="padding:0.8rem 1rem; text-align:left;">Datum</th>
-                                    <th style="padding:0.8rem 1rem; text-align:right;">Akce</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${filtered.map(doc => `
-                                    <tr style="border-bottom:1px solid #f1f5f9;" data-id="${doc.id}">
-                                        <td style="padding:0.7rem 1rem;"><strong>${doc.icon || '📄'} ${doc.title}</strong></td>
-                                        <td style="padding:0.7rem 1rem;"><span class="doc-category" style="background:${getCategoryColor(doc.category)}20; color:${getCategoryColor(doc.category)};">${getCategoryLabel(doc.category)}</span></td>
-                                        <td style="padding:0.7rem 1rem; color:#475569;">${formatDate(doc.date)}</td>
-                                        <td style="padding:0.7rem 1rem; text-align:right;">
-                                            <button class="btn btn-small btn-outline view-doc" data-id="${doc.id}">👁️</button>
-                                            <button class="btn btn-small btn-outline edit-doc" data-id="${doc.id}">✏️</button>
-                                            <button class="btn btn-small btn-danger delete-doc" data-id="${doc.id}">🗑️</button>
-                                        </td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                `;
-                docGrid.style.display = 'grid';
-
-                document.querySelectorAll('.view-doc').forEach(btn => {
-                    btn.addEventListener('click', () => openDetail(btn.dataset.id));
-                });
-                document.querySelectorAll('.edit-doc').forEach(btn => {
-                    btn.addEventListener('click', () => editDocument(btn.dataset.id));
-                });
-                document.querySelectorAll('.delete-doc').forEach(btn => {
-                    btn.addEventListener('click', () => deleteDocument(btn.dataset.id));
-                });
-            }
-        }
-
-        // ============================================================
-        // CRUD OPERACE
-        // ============================================================
-        function openDetail(id) {
-            const doc = documents.find(d => d.id === id);
-            if (!doc) return;
-            modalTitle.textContent = doc.title;
-            modalCategory.textContent = getCategoryLabel(doc.category);
-            modalCategory.style.background = getCategoryColor(doc.category) + '20';
-            modalCategory.style.color = getCategoryColor(doc.category);
-            modalDate.textContent = '📅 ' + formatDate(doc.date);
-            modalContent.textContent = doc.content;
-            modalOverlay.classList.add('active');
-            modalOverlay.dataset.docId = id;
-        }
-
-        function closeModal() {
-            modalOverlay.classList.remove('active');
-        }
-
-        function editDocument(id) {
-            const doc = documents.find(d => d.id === id);
-            if (!doc) return;
-            const newTitle = prompt('Upravit název:', doc.title);
-            if (newTitle !== null && newTitle.trim() !== '') doc.title = newTitle.trim();
-            const newContent = prompt('Upravit obsah:', doc.content);
-            if (newContent !== null && newContent.trim() !== '') doc.content = newContent.trim();
-            const newCategory = prompt('Kategorie (výchovná, organizační, hlášení, gdpr, metodický, ostatní):', doc.category);
-            if (newCategory !== null && ['výchovná','organizační','hlášení','gdpr','metodický','ostatní'].includes(newCategory.trim())) {
-                doc.category = newCategory.trim();
-            }
-            render();
-        }
-
-        function deleteDocument(id) {
-            if (!confirm('Opravdu chcete smazat tento dokument?')) return;
-            documents = documents.filter(d => d.id !== id);
-            closeModal();
-            render();
-        }
-
-        function addDocument() {
-            const title = prompt('Zadejte název dokumentu:', 'Nový dokument');
-            if (!title || title.trim() === '') return;
-            const content = prompt('Zadejte obsah dokumentu:', 'Obsah...');
-            if (content === null) return;
-            const category = prompt('Kategorie (výchovná, organizační, hlášení, gdpr, metodický, ostatní):', 'ostatní');
-            let cat = 'ostatní';
-            if (category && ['výchovná','organizační','hlášení','gdpr','metodický','ostatní'].includes(category.trim())) {
-                cat = category.trim();
-            }
-            documents.push({
-                id: 'doc' + Date.now(),
-                title: title.trim(),
-                content: content.trim() || 'Obsah dokumentu',
-                category: cat,
-                date: new Date().toISOString().split('T')[0],
-                icon: '📄'
-            });
-            render();
-        }
-
-        function printModalDoc() {
-            const id = modalOverlay.dataset.docId;
-            const doc = documents.find(d => d.id === id);
-            if (!doc) return;
-            const win = window.open('', '_blank', 'width=600,height=500');
-            win.document.write(`
-                <!DOCTYPE html>
-                <html><head><meta charset="UTF-8"><title>${doc.title}</title>
-                <style>body { font-family: 'Times New Roman', Times, serif; padding: 2rem; max-width: 700px; margin: 0 auto; line-height:1.6; }</style>
-                </head><body><h2>${doc.title}</h2><p>${formatDate(doc.date)} • ${getCategoryLabel(doc.category)}</p><hr><pre style="white-space:pre-wrap; font-family:inherit;">${doc.content}</pre></body></html>
-            `);
-            win.document.close();
-            win.print();
-        }
-
-        // ============================================================
-        // EVENTY
-        // ============================================================
-        searchInput.addEventListener('input', () => {
-            searchQuery = searchInput.value;
-            render();
-        });
-
-        categoryFilter.addEventListener('change', () => {
-            currentFilter = categoryFilter.value;
-            render();
-        });
-
-        viewGridBtn.addEventListener('click', () => {
-            currentView = 'grid';
-            viewGridBtn.classList.add('active');
-            viewListBtn.classList.remove('active');
-            render();
-        });
-
-        viewListBtn.addEventListener('click', () => {
-            currentView = 'list';
-            viewListBtn.classList.add('active');
-            viewGridBtn.classList.remove('active');
-            render();
-        });
-
-        addDocBtn.addEventListener('click', addDocument);
-
-        modalClose.addEventListener('click', closeModal);
-        modalCloseBtn.addEventListener('click', closeModal);
-        modalOverlay.addEventListener('click', (e) => {
-            if (e.target === modalOverlay) closeModal();
-        });
-
-        modalPrint.addEventListener('click', printModalDoc);
-
-        modalEdit.addEventListener('click', () => {
-            const id = modalOverlay.dataset.docId;
-            if (id) { closeModal(); editDocument(id); }
-        });
-
-        modalDelete.addEventListener('click', () => {
-            const id = modalOverlay.dataset.docId;
-            if (id) { closeModal(); deleteDocument(id); }
-        });
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeModal();
-        });
-
-        // ============================================================
-        // INICIALIZACE
-        // ============================================================
-        checkBackend();
-        render();
-        console.log('✅ Aplikace načtena. Backend: http://localhost:3000');
-        console.log('📄 Načteno dokumentů:', documents.length);
-    })();
-</script>
+            // --- Inicializace ---
+            updateStats();
+            renderDocuments();
+        })();
+    </script>
 </body>
 </html>

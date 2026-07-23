@@ -53,6 +53,11 @@ const maturitaRoutes = {
     description: 'Informace o systému výkazů',
     // username: req.session.user.username 
   }),
+'/sprava-udalosti': (req, res) => res.render('sprava-udalosti', {
+    title: 'Výkaz - systém',
+    description: 'Informace o systému výkazů',
+    // username: req.session.user.username 
+  }),
 
   
   '/vykaz': (req, res) => {
