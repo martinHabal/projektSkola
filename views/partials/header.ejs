@@ -1,20 +1,23 @@
 <header id="header">
-  <h1>Školní intranet Hotelové školy Mariánské Lázně - <%= username || 'Nepřihlášen' %></h1>
+  <h1>Školní intranet Hotelové školy Mariánské Lázně - <%= username || 'Nepřihlášen' %>
+  </h1>
   <div class="header-right">
-   
-    
-   
-    <button class="tooltip" data-tooltip=" vykaz-novy-novy " onclick="window.location.href='/vykaz-novy-novy'" style="background-color: #95c2f2;">
+
+
+
+    <button class="tooltip" data-tooltip=" vykaz-novy-novy " onclick="window.location.href='/vykaz-novy-novy'"
+      style="background-color: #95c2f2;">
       <span class="material-icons">data_object</span>
     </button>
     <!-- <button class="tooltip" data-tooltip=" Výkaz tisk " onclick="window.location.href='/work-report'" style="background-color: red;">
       <span class="material-icons">print</span>
     </button> -->
- 
-    <button class="tooltip" data-tooltip="Dashboard výkaz" onclick="window.location.href='/dashboard-ucitel'" style="background-color: #95c2f2;">
+
+    <button class="tooltip" data-tooltip="Dashboard výkaz" onclick="window.location.href='/dashboard-ucitel'"
+      style="background-color: #95c2f2;">
       <span class="material-icons">analytics</span>
     </button>
-    
+
 
     <!-- tu maturitu pak dam nekam do ostatnich apek - sem to tak nejak nepatri -->
     <!-- <button class="tooltip" data-tooltip="Maturita" onclick="window.location.href='/maturita'" style="background-color: #95c2f2;">
@@ -30,39 +33,51 @@
     <!-- <button class="tooltip" data-tooltip="Výkaz tabulka" onclick="window.location.href='/vykaz-system'" style="background-color: #95c2f2;;">
         <span class="material-icons">area_chart</span>
     </button> -->
-    <button class="tooltip" data-tooltip="Školní řád" onclick="window.location.href='/skolni-rad'" style="background-color: #38d0c0;">
+    <button class="tooltip" data-tooltip="Školní řád" onclick="window.location.href='/skolni-rad'"
+      style="background-color: #38d0c0;">
       <span class="material-icons">policy</span>
     </button>
-    <button class="tooltip" data-tooltip="Organizace roku" onclick="window.location.href='/kalendar'" style="background-color: #38d0c0;">
+    <button class="tooltip" data-tooltip="Organizace roku" onclick="window.location.href='/kalendar'"
+      style="background-color: #38d0c0;">
       <span class="material-icons">format_list_numbered</span>
     </button>
-    <button class="tooltip" data-tooltip="Generátor dokumentů" onclick="window.location.href='/generator-dokumentu'" style="background-color: #38d0c0;">
+    <button class="tooltip" data-tooltip="Generátor dokumentů" onclick="window.location.href='/generator-dokumentu'"
+      style="background-color: #38d0c0;">
       <span class="material-icons">assignment_add</span>
     </button>
-    <button class="tooltip" data-tooltip="Dokumenty školy" onclick="window.location.href='/dokumenty-skoly'" style="background-color: #38d0c0;">
+    <button class="tooltip" data-tooltip="Dokumenty školy" onclick="window.location.href='/dokumenty-skoly'"
+      style="background-color: #38d0c0;">
       <span class="material-icons">find_in_page</span>
     </button>
-    <button class="tooltip" data-tooltip="Manuál" onclick="window.location.href='/manual'" style="background-color: #38d0c0;">
+    <button class="tooltip" data-tooltip="Manuál" onclick="window.location.href='/manual'"
+      style="background-color: #38d0c0;">
       <span class="material-icons">help_center</span>
     </button>
     <% if (isAdmin) { %>
-    <button class="tooltip" data-tooltip="Dashboard" onclick="window.location.href='/dashboard'" style="background-color: rgb(140, 16, 211);">
-      <span class="material-icons">dashboard</span>
-    </button>
-    <% } %>
-      <% if (isAdmin) { %>
-    <button class="tooltip" data-tooltip="Nový uživatel" onclick="window.location.href='/new-user'" style="background-color: rgb(140, 16, 211);">
-        <span class="material-icons">person_add</span>
-    </button>
-<% } %>
-    <button style="cursor: pointer" class="tooltip" data-tooltip="Odhlášení" onclick="window.location.href='/logout'" style="background-color: red;">
-      <span class="material-icons">logout</span>
-    </button>
-  </div>
-  <!-- <button class="tooltip" data-tooltip="Poslat zprávu" onclick="window.location.href='/fip-upload'"><span class="material-icons">home</span></button> -->
-
-  <!-- on vlastne header jako takovej neni, jsou to jen ty button odkazy, ale vypada to amatersky... musim tad dat klasickej header -->
-   <div id="popup" style="
+      <button class="tooltip" data-tooltip="Dashboard" onclick="window.location.href='/dashboard'"
+        style="background-color: rgb(140, 16, 211);">
+        <span class="material-icons">dashboard</span>
+      </button>
+      <% } %>
+        <% if (isAdmin) { %>
+          <button class="tooltip" data-tooltip="Nový uživatel" onclick="window.location.href='/new-user'"
+            style="background-color: rgb(140, 16, 211);">
+            <span class="material-icons">person_add</span>
+          </button>
+          <% } %>
+            <button style="cursor: pointer" class="tooltip" data-tooltip="Odhlášení"
+              onclick="window.location.href='/logout'" style="background-color: red;">
+              <span class="material-icons">logout</span>
+            </button>
+            <% if (isAdmin) { %>
+              <button style="cursor: pointer" class="tooltip" data-tooltip="Nová škola"
+              onclick="window.location.href='/nova-skola'" style="background-color: rgb(140, 16, 211);">
+              <span class="material-icons">home</span>
+            </button>
+            <% } %>
+          </div>
+      <!-- on vlastne header jako takovej neni, jsou to jen ty button odkazy, ale vypada to amatersky... musim tad dat klasickej header -->
+      <div id="popup" style="
   display:none;
   position:fixed;
   top:50%;
@@ -73,26 +88,26 @@
   border:1px solid black;
   box-shadow:0 0 10px rgba(0,0,0,0.3);
 ">
-  <p>cv,zahrady-stavby,vykaz-tabulka,vykaz-info,vykaz,maturita,js-uvod</p>
-  <button onclick="closePopup()">Zavřít</button>
-</div>
+        <p>cv,zahrady-stavby,vykaz-tabulka,vykaz-info,vykaz,maturita,js-uvod</p>
+        <button onclick="closePopup()">Zavřít</button>
+      </div>
 
-<script>
-  let clickCount = 0;
-const div = document.getElementById("header");
-const popup = document.getElementById("popup");
+      <script>
+        let clickCount = 0;
+        const div = document.getElementById("header");
+        const popup = document.getElementById("popup");
 
-div.addEventListener("click", () => {
-  clickCount++;
+        div.addEventListener("click", () => {
+          clickCount++;
 
-  if (clickCount === 8) {
-    popup.style.display = "block";
-    clickCount = 0; // reset (volitelné)
-  }
-});
+          if (clickCount === 8) {
+            popup.style.display = "block";
+            clickCount = 0; // reset (volitelné)
+          }
+        });
 
-function closePopup() {
-  popup.style.display = "none";
-}
-</script>
+        function closePopup() {
+          popup.style.display = "none";
+        }
+      </script>
 </header>

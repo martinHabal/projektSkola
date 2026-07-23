@@ -12,6 +12,7 @@ import routerNewUser from './routes/newUser.js';
 import routerTisk from './routes/tisk.js';
 import openAI from './routes/openAI.js';
 import routerApi from './routes/api.js';
+import routerNovaSkola from './routes/novaSkola.js';
 //favicon
 import path from 'path';
 import favicon from "serve-favicon";
@@ -69,6 +70,7 @@ app.use('/', routerNewUser);
 app.use('/', openAI);
 app.use('/', routerTisk);
 app.use('/', routerApi);
+app.use('/', routerNovaSkola);
 
 
 app.listen(PORT, () => {

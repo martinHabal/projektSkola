@@ -1,6 +1,6 @@
 
 
-//login - admin -> OK
+
 
 //zacnu tak ze seed zadam rucne, jinak se nikam neposunu
 
@@ -30,4 +30,6 @@
 
 //asi bych měl osetrit aby vykaz nesel smazat po nejakem datumu, ale to pocka
 
+//asi jim to dam na prvni rok na vyzkouseni zdarma, tem prvnim
+//pak to musim udelat tak, aby uz nemohli odejit
 
