@@ -27,7 +27,7 @@ const maturitaRoutes = {
     description: 'Informace o statistickém zpracování dat',
     // username: req.session.user.username 
   }),
-  
+
   '/vykaz-tabulka': (req, res) => res.render('vykaz-tabulka', {
     title: 'Výkaz - tabulka',
     description: 'Informace o mikroekonomii - státnice',
@@ -38,28 +38,28 @@ const maturitaRoutes = {
     description: 'Informace o systému výkazů',
     // username: req.session.user.username 
   }),
-'/vykaz-novy': (req, res) => res.render('vykaz-novy', {
+  '/vykaz-novy': (req, res) => res.render('vykaz-novy', {
     title: 'Výkaz - systém',
     description: 'Informace o systému výkazů',
     // username: req.session.user.username 
   }),
-'/nova-skola': (req, res) => res.render('nova-skola', {
+  '/nova-skola': (req, res) => res.render('nova-skola', {
     title: 'Výkaz - systém',
     description: 'Informace o systému výkazů',
     // username: req.session.user.username 
   }),
-'/cennik': (req, res) => res.render('cennik', {
+  '/cennik': (req, res) => res.render('cennik', {
     title: 'Výkaz - systém',
     description: 'Informace o systému výkazů',
     // username: req.session.user.username 
   }),
-'/sprava-udalosti': (req, res) => res.render('sprava-udalosti', {
-    title: 'Výkaz - systém',
-    description: 'Informace o systému výkazů',
-    // username: req.session.user.username 
-  }),
+  // '/sprava-udalosti': (req, res) => res.render('sprava-udalosti', {
+  //   title: 'Výkaz - systém',
+  //   description: 'Informace o systému výkazů',
+  //   // username: req.session.user.username 
+  // }),
 
-  
+
   '/vykaz': (req, res) => {
     // Funkce, která načte všechna data za zadaný měsíc
     async function fetchLessonsForMonth(year, month, credentials) {
@@ -165,27 +165,10 @@ const maturitaRoutes = {
     const credentials = btoa('test_vykaz:Test_088'); // tvoje přihlašovací údaje
     fetchLessonsForMonth(2025, 10, credentials);
     //konec fetch
-    
+
   },
-'/kalendar': async (req, res) => {
-    try {
-        // Načtení pouze vlastních událostí z databáze
-        const [rows] = await pool.query(
-            'SELECT * FROM events ORDER BY event_date ASC'
-        );
-        
-        res.render('kalendar', { 
-            customEvents: rows,
-            currentYear: new Date().getFullYear()
-        });
-    } catch (err) {
-        console.error('Chyba:', err);
-        res.render('kalendar', { 
-            customEvents: [],
-            currentYear: new Date().getFullYear()
-        });
-    }
-}}
+  
+}
 
 
 // Dynamický router

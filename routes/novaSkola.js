@@ -116,6 +116,13 @@ router.post("/register-school", async (req, res) => {
     datum TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     users_id INT NOT NULL
             );`
+            `CREATE TABLE meetings (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    date DATE NOT NULL,
+    type VARCHAR(50) NOT NULL,
+    description TEXT
+);`
         ];
 
         // Spuštění všech SQL dotazů pro vytvoření tabulek

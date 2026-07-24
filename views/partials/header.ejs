@@ -37,7 +37,7 @@
       style="background-color: #38d0c0;">
       <span class="material-icons">policy</span>
     </button>
-    <button class="tooltip" data-tooltip="Organizace roku" onclick="window.location.href='/kalendar'"
+    <button class="tooltip" data-tooltip="Firemní události" onclick="window.location.href='/firemni-udalosti'"
       style="background-color: #38d0c0;">
       <span class="material-icons">format_list_numbered</span>
     </button>
@@ -69,6 +69,12 @@
             <button style="cursor: pointer;background-color: rgb(140, 16, 211);" class="tooltip" data-tooltip="Nová škola"
             onclick="window.location.href='/nova-skola'">
             <span class="material-icons">home</span>
+          </button>
+          <% } %>
+          <% if (isAdmin || isSuperadmin) { %>
+            <button style="cursor: pointer;background-color: rgb(140, 16, 211);" class="tooltip" data-tooltip="Správa událostí"
+            onclick="window.location.href='/sprava-udalosti'">
+            <span class="material-icons">area_chart</span>
           </button>
           <% } %>
           <button style="cursor: pointer" class="tooltip" data-tooltip="Odhlášení"

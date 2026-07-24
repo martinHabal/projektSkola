@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Přehled firemních událostí</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
     <style>
+        /* Vlož všechny CSS styly, které jsi poskytl */
         * {
             box-sizing: border-box;
             font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
@@ -40,6 +41,31 @@
             color: #7f8c8d;
             margin-bottom: 25px;
             font-size: clamp(0.9rem, 2vw, 1.1rem);
+        }
+
+        /* Notifikace */
+        .notification {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            display: none;
+        }
+
+        .notification.show {
+            display: block;
+        }
+
+        .notification-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .notification-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
         }
 
         /* Sekce pro vedení (přidávání událostí) */
@@ -109,6 +135,16 @@
         .form-group textarea:focus {
             outline: 2px solid #9b59b6;
             border-color: transparent;
+        }
+
+        .form-group .error-text {
+            color: #e74c3c;
+            font-size: 0.8rem;
+            margin-top: 3px;
+        }
+
+        .form-group .field-error {
+            border-color: #e74c3c !important;
         }
 
         .btn-add {
@@ -182,10 +218,28 @@
             font-weight: 600;
             font-size: 0.9rem;
             transition: background-color 0.3s;
+            text-decoration: none;
+            display: inline-block;
         }
 
         .filter-clear:hover {
             background-color: #c0392b;
+        }
+
+        .btn-filter {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: background-color 0.3s;
+        }
+
+        .btn-filter:hover {
+            background-color: #2980b9;
         }
 
         /* Legenda */
@@ -331,6 +385,11 @@
             margin-top: 4px;
         }
 
+        .event-card .event-actions button,
+        .event-card .event-actions form {
+            display: inline-block;
+        }
+
         .event-card .event-actions button {
             background: none;
             border: none;
@@ -369,7 +428,7 @@
             margin-bottom: 10px;
         }
 
-        /* Tlačítko pro smazání všech */
+        /* Tlačítka admin */
         .admin-actions {
             display: flex;
             gap: 15px;
@@ -390,21 +449,6 @@
 
         .btn-danger:hover {
             background-color: #e74c3c;
-        }
-
-        .btn-export {
-            background-color: #27ae60;
-            color: white;
-            padding: 8px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background-color 0.3s;
-        }
-
-        .btn-export:hover {
-            background-color: #1e8449;
         }
 
         /* Počet událostí */
@@ -493,244 +537,354 @@
             background-color: #8e44ad;
         }
 
-        /* Responzivní úpravy */
         @media (max-width: 768px) {
             .event-card {
                 grid-template-columns: 1fr;
-                gap: 8px;
-            }
-
-            .event-card .event-date {
-                min-width: auto;
-                display: flex;
-                align-items: center;
                 gap: 10px;
-                flex-wrap: wrap;
             }
-
-            .event-card .event-date .day-name {
-                display: inline;
+            
+            .event-card .event-date {
+                min-width: unset;
             }
-
-            .event-card .event-actions {
-                align-self: flex-end;
-                margin-top: 5px;
-            }
-
+            
             .admin-form {
                 flex-direction: column;
             }
-
-            .form-group {
-                flex: 1 1 auto;
-                width: 100%;
-            }
-
+            
             .btn-add {
                 width: 100%;
                 align-self: stretch;
             }
-
+            
             .filter-section {
                 flex-direction: column;
                 align-items: stretch;
-            }
-
-            .filter-section label {
-                white-space: normal;
-            }
-        }
-
-        @media print {
-            .no-print {
-                display: none !important;
-            }
-            .event-card {
-                break-inside: avoid;
-                border: 1px solid #ccc;
-                box-shadow: none !important;
-            }
-            .container {
-                box-shadow: none !important;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container" id="app">
-        <h1>📅 Firemní události</h1>
-        <p class="subtitle">Přehled všech plánovaných událostí</p>
+    <div class="container">
+        <h1>📅 Správa událostí</h1>
+        <p class="subtitle">Přehled a správa všech plánovaných událostí</p>
 
-        <!-- ADMIN sekce - přidávání událostí -->
-        <div class="admin-section no-print">
-            <h3>🔧 Správa událostí <span class="badge">vedení</span></h3>
-            <div class="admin-form" id="eventForm">
+        <!-- Notifikace -->
+        <% if (locals.success) { %>
+            <div class="notification notification-success show">
+                ✅ Událost byla úspěšně přidána!
+            </div>
+        <% } %>
+        
+        <% if (locals.deleted) { %>
+            <div class="notification notification-success show">
+                🗑 Událost byla smazána!
+            </div>
+        <% } %>
+        
+        <% if (locals.updated) { %>
+            <div class="notification notification-success show">
+                ✅ Událost byla úspěšně upravena!
+            </div>
+        <% } %>
+        
+        <% if (locals.error) { %>
+            <div class="notification notification-error show">
+                ❌ Došlo k chybě při zpracování!
+            </div>
+        <% } %>
+
+        <!-- Sekce pro přidávání -->
+        <div class="admin-section">
+            <h3>
+                ➕ Přidat novou událost
+                <span class="badge">Admin</span>
+            </h3>
+            
+            <!-- KONTROLA EXISTENCE errors -->
+            <% if (typeof errors !== 'undefined' && errors && errors.length > 0) { %>
+                <div class="notification notification-error show">
+                    <strong>Chyby ve formuláři:</strong>
+                    <ul style="margin: 5px 0 0 20px;">
+                        <% errors.forEach(err => { %>
+                            <li><%= err %></li>
+                        <% }) %>
+                    </ul>
+                </div>
+            <% } %>
+            
+            <form action="/add-event" method="POST" class="admin-form">
                 <div class="form-group">
-                    <label for="eventTitle">Název události *</label>
-                    <input type="text" id="eventTitle" placeholder="Např. Školení bezpečnosti" required>
+                    <label for="eventTitle">Název *</label>
+                    <input 
+                        type="text" 
+                        id="eventTitle" 
+                        name="title" 
+                        value="<%= (typeof formData !== 'undefined' && formData && formData.title) ? formData.title : '' %>"
+                        placeholder="Např. Čtvrtletní porada" 
+                        class="<%= (typeof errors !== 'undefined' && errors && errors.length > 0) ? 'field-error' : '' %>"
+                        required 
+                    />
                 </div>
                 <div class="form-group">
                     <label for="eventDate">Datum *</label>
-                    <input type="date" id="eventDate" required>
+                    <input 
+                        type="date" 
+                        id="eventDate" 
+                        name="date" 
+                        value="<%= (typeof formData !== 'undefined' && formData && formData.date) ? formData.date : new Date().toISOString().slice(0,10) %>"
+                        class="<%= (typeof errors !== 'undefined' && errors && errors.length > 0) ? 'field-error' : '' %>"
+                        required 
+                    />
                 </div>
                 <div class="form-group">
-                    <label for="eventType">Typ</label>
-                    <select id="eventType">
-                        <option value="meeting">Porada / Meeting</option>
-                        <option value="training">Školení</option>
-                        <option value="social">Společenská akce</option>
-                        <option value="deadline">Termín odevzdání</option>
-                        <option value="other">Jiné</option>
+                    <label for="eventType">Typ *</label>
+                    <select 
+                        id="eventType" 
+                        name="type"
+                        class="<%= (typeof errors !== 'undefined' && errors && errors.length > 0) ? 'field-error' : '' %>"
+                        required
+                    >
+                        <option value="">-- Vyberte --</option>
+                        <option value="meeting" <%= (typeof formData !== 'undefined' && formData && formData.type === 'meeting') ? 'selected' : '' %>>Meeting</option>
+                        <option value="training" <%= (typeof formData !== 'undefined' && formData && formData.type === 'training') ? 'selected' : '' %>>Školení</option>
+                        <option value="social" <%= (typeof formData !== 'undefined' && formData && formData.type === 'social') ? 'selected' : '' %>>Společenská</option>
+                        <option value="deadline" <%= (typeof formData !== 'undefined' && formData && formData.type === 'deadline') ? 'selected' : '' %>>Deadline</option>
+                        <option value="other" <%= (typeof formData !== 'undefined' && formData && formData.type === 'other') ? 'selected' : '' %>>Jiné</option>
                     </select>
                 </div>
-                <div class="form-group" style="flex:2;">
+                <div class="form-group">
                     <label for="eventDescription">Popis</label>
-                    <textarea id="eventDescription" placeholder="Podrobnosti o události..."></textarea>
+                    <textarea 
+                        id="eventDescription" 
+                        name="description" 
+                        placeholder="Podrobný popis události..."
+                    ><%= (typeof formData !== 'undefined' && formData && formData.description) ? formData.description : '' %></textarea>
                 </div>
-                <button class="btn-add" id="addEventBtn">➕ Přidat</button>
-            </div>
-            <div class="admin-actions">
-                <button class="btn-danger" id="deleteAllBtn">🗑️ Smazat všechny</button>
-                <button class="btn-export" id="exportBtn">📤 Exportovat (JSON)</button>
-            </div>
+                <button type="submit" class="btn-add">Přidat</button>
+            </form>
         </div>
 
-        <!-- Filtr -->
-        <div class="filter-section no-print">
-            <label for="filterType">🔍 Filtrovat:</label>
-            <select id="filterType">
-                <option value="all">Všechny typy</option>
-                <option value="meeting">Porada / Meeting</option>
-                <option value="training">Školení</option>
-                <option value="social">Společenská akce</option>
-                <option value="deadline">Termín odevzdání</option>
-                <option value="other">Jiné</option>
+        <!-- Filtrování -->
+        <form action="/filter" method="GET" class="filter-section">
+            <label for="filterType">🔍 Filtr:</label>
+            <select id="filterType" name="type">
+                <option value="all" <%= (typeof filterType !== 'undefined' && filterType === 'all') ? 'selected' : '' %>>Všechny typy</option>
+                <option value="meeting" <%= (typeof filterType !== 'undefined' && filterType === 'meeting') ? 'selected' : '' %>>Meeting</option>
+                <option value="training" <%= (typeof filterType !== 'undefined' && filterType === 'training') ? 'selected' : '' %>>Školení</option>
+                <option value="social" <%= (typeof filterType !== 'undefined' && filterType === 'social') ? 'selected' : '' %>>Společenská</option>
+                <option value="deadline" <%= (typeof filterType !== 'undefined' && filterType === 'deadline') ? 'selected' : '' %>>Deadline</option>
+                <option value="other" <%= (typeof filterType !== 'undefined' && filterType === 'other') ? 'selected' : '' %>>Jiné</option>
             </select>
-            <input type="text" id="filterSearch" placeholder="Hledat v názvu nebo popisu...">
-            <button class="filter-clear" id="clearFilterBtn">✕ Vymazat filtr</button>
-        </div>
+            <input 
+                type="text" 
+                name="search" 
+                placeholder="Hledat podle názvu..." 
+                value="<%= (typeof searchQuery !== 'undefined') ? searchQuery : '' %>"
+            />
+            <button type="submit" class="btn-filter">🔍 Filtrovat</button>
+            <a href="/" class="filter-clear">✕ Zrušit filtry</a>
+        </form>
 
         <!-- Legenda -->
-        <div class="legenda no-print">
-            <div class="legenda-item"><span class="color-box" style="background-color:#e3f2fd;"></span> Porada / Meeting</div>
-            <div class="legenda-item"><span class="color-box" style="background-color:#fff3e0;"></span> Školení</div>
-            <div class="legenda-item"><span class="color-box" style="background-color:#fce4ec;"></span> Společenská akce</div>
-            <div class="legenda-item"><span class="color-box" style="background-color:#f3e5f5;"></span> Termín odevzdání</div>
-            <div class="legenda-item"><span class="color-box" style="background-color:#e8f5e9;"></span> Jiné</div>
+        <div class="legenda">
+            <div class="legenda-item">
+                <span class="color-box" style="background-color: #e3f2fd;"></span>
+                Meeting
+            </div>
+            <div class="legenda-item">
+                <span class="color-box" style="background-color: #fff3e0;"></span>
+                Školení
+            </div>
+            <div class="legenda-item">
+                <span class="color-box" style="background-color: #fce4ec;"></span>
+                Společenská
+            </div>
+            <div class="legenda-item">
+                <span class="color-box" style="background-color: #f3e5f5;"></span>
+                Deadline
+            </div>
+            <div class="legenda-item">
+                <span class="color-box" style="background-color: #e8f5e9;"></span>
+                Jiné
+            </div>
         </div>
 
-        <!-- Počet událostí -->
-        <div class="event-count no-print" id="eventCount">Celkem: <strong>0</strong> událostí</div>
+        <!-- Počet a seznam událostí -->
+        <div class="event-count">
+            Celkem: <strong><%= (typeof totalCount !== 'undefined') ? totalCount : 0 %></strong> událostí
+            <% if (typeof events !== 'undefined' && events && events.length !== totalCount) { %>
+                (zobrazeno: <strong><%= events.length %></strong>)
+            <% } %>
+        </div>
 
-        <!-- Seznam událostí -->
-        <div class="events-list" id="eventsList">
-            <div class="no-events">
-                <span class="icon">📭</span>
-                Zatím zde nejsou žádné události. Přidejte je pomocí formuláře výše.
-            </div>
+        <div class="events-list">
+            <% if (typeof events !== 'undefined' && events && events.length > 0) { %>
+                <% events.forEach(event => { %>
+                    <div class="event-card">
+                        <div class="event-date">
+                            <%= new Date(event.date).toLocaleDateString('cs-CZ') %>
+                            <span class="day-name">
+                                <%= ['Neděle', 'Pondělí', 'Úterý', 'Středa', 'Čtvrtek', 'Pátek', 'Sobota'][new Date(event.date + 'T00:00:00').getDay()] %>
+                            </span>
+                        </div>
+                        <div class="event-body">
+                            <div class="event-title"><%= event.title %></div>
+                            <% if (event.description) { %>
+                                <div class="event-description"><%= event.description %></div>
+                            <% } %>
+                            <div class="event-meta">
+                                <span class="event-type event-type-<%= event.type %>"><%= event.type %></span>
+                                <span>🆔 #<%= event.id %></span>
+                            </div>
+                        </div>
+                        <div class="event-actions">
+                            <button class="btn-edit-event" onclick="openEditModal(<%= event.id %>)" title="Upravit">✏️</button>
+                            <form action="/delete-event/<%= event.id %>" method="POST" style="display:inline;" onsubmit="return confirm('Opravdu chcete smazat tuto událost?');">
+                                <button type="submit" class="btn-delete-event" title="Smazat">🗑</button>
+                            </form>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <div class="no-events">
+                    <span class="icon">📭</span>
+                    <p>Žádné události nenalezeny</p>
+                    <small style="color: #999;">Zkuste upravit filtry nebo přidejte novou událost</small>
+                </div>
+            <% } %>
+        </div>
+
+        <!-- Admin akce -->
+        <div class="admin-actions">
+            <form action="/delete-all" method="POST" onsubmit="return confirm('Opravdu chcete smazat VŠECHNY události? Tato akce je nevratná!');">
+                <button type="submit" class="btn-danger">🗑 Smazat všechny události</button>
+            </form>
         </div>
     </div>
 
     <!-- Modal pro úpravu -->
-    <div class="modal-overlay" id="editModal">
+    <div id="editModal" class="modal-overlay">
         <div class="modal-content">
             <h3>✏️ Upravit událost</h3>
-            <div class="form-group">
-                <label for="editTitle">Název *</label>
-                <input type="text" id="editTitle">
-            </div>
-            <div class="form-group">
-                <label for="editDate">Datum *</label>
-                <input type="date" id="editDate">
-            </div>
-            <div class="form-group">
-                <label for="editType">Typ</label>
-                <select id="editType">
-                    <option value="meeting">Porada / Meeting</option>
-                    <option value="training">Školení</option>
-                    <option value="social">Společenská akce</option>
-                    <option value="deadline">Termín odevzdání</option>
-                    <option value="other">Jiné</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="editDescription">Popis</label>
-                <textarea id="editDescription" rows="3"></textarea>
-            </div>
-            <div class="modal-buttons">
-                <button class="btn-modal-cancel" id="modalCancel">Zrušit</button>
-                <button class="btn-modal-save" id="modalSave">Uložit změny</button>
-            </div>
+            <form id="editForm" action="" method="POST">
+                <input type="hidden" id="editId" name="id" />
+                <div class="form-group">
+                    <label for="editTitle">Název *</label>
+                    <input type="text" id="editTitle" name="title" required />
+                </div>
+                <div class="form-group">
+                    <label for="editDate">Datum *</label>
+                    <input type="date" id="editDate" name="date" required />
+                </div>
+                <div class="form-group">
+                    <label for="editType">Typ *</label>
+                    <select id="editType" name="type" required>
+                        <option value="meeting">Meeting</option>
+                        <option value="training">Školení</option>
+                        <option value="social">Společenská</option>
+                        <option value="deadline">Deadline</option>
+                        <option value="other">Jiné</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editDescription">Popis</label>
+                    <textarea id="editDescription" name="description" rows="3"></textarea>
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="btn-modal-cancel" onclick="closeModal()">Zrušit</button>
+                    <button type="submit" class="btn-modal-save">Uložit změny</button>
+                </div>
+            </form>
         </div>
     </div>
 
     <script>
-        (function() {
+        // ============================================
+        // FRONTEND JAVASCRIPT - POUZE PRO MODAL
+        // ============================================
+
+        const editModal = document.getElementById('editModal');
+        const editForm = document.getElementById('editForm');
+
+        // Otevření modalu a načtení dat přes API
+        async function openEditModal(id) {
+            try {
+                const response = await fetch(`/api/event/${id}`);
+                if (!response.ok) throw new Error('Chyba při načítání dat');
+                
+                const event = await response.json();
+                
+                // Nastavení hodnot do formuláře
+                document.getElementById('editId').value = event.id;
+                document.getElementById('editTitle').value = event.title;
+                document.getElementById('editDate').value = event.date;
+                document.getElementById('editType').value = event.type;
+                document.getElementById('editDescription').value = event.description || '';
+                
+                // Nastavení action formuláře
+                editForm.action = `/update-event/${event.id}`;
+                
+                // Zobrazení modalu
+                editModal.classList.add('active');
+                
+            } catch (error) {
+                console.error('Chyba:', error);
+                alert('Nepodařilo se načíst data události');
+            }
+        }
+
+        // Zavření modalu
+        function closeModal() {
+            editModal.classList.remove('active');
+        }
+
+        // Zavření kliknutím mimo modal
+        editModal.addEventListener('click', (e) => {
+            if (e.target === editModal) {
+                closeModal();
+            }
+        });
+
+        // Zavření ESC klávesou
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Automatické skrytí notifikací po 5 sekundách
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                document.querySelectorAll('.notification').forEach(notif => {
+                    notif.classList.remove('show');
+                });
+            }, 5000);
+        });
+
+        // Pokud je edit_error, otevřít modal pro dané ID
+        <% if (typeof editId !== 'undefined' && editId) { %>
+            document.addEventListener('DOMContentLoaded', () => {
+                openEditModal(<%= editId %>);
+            });
+        <% } %>
+
+
+        //funkce z sablony firemni-udalosti na vykresleni udalosti
+          (function() {
             "use strict";
 
             // --- DOM odkazy ---
             const eventsList = document.getElementById('eventsList');
             const eventCount = document.getElementById('eventCount');
-            const addBtn = document.getElementById('addEventBtn');
-            const titleInput = document.getElementById('eventTitle');
-            const dateInput = document.getElementById('eventDate');
-            const typeSelect = document.getElementById('eventType');
-            const descInput = document.getElementById('eventDescription');
+            const totalEventsSpan = document.getElementById('totalEvents');
             const filterType = document.getElementById('filterType');
             const filterSearch = document.getElementById('filterSearch');
             const clearFilterBtn = document.getElementById('clearFilterBtn');
-            const deleteAllBtn = document.getElementById('deleteAllBtn');
-            const exportBtn = document.getElementById('exportBtn');
+const events = <%- JSON.stringify(meetings) %>
+console.log(events)
+           
 
-            // Modal
-            const editModal = document.getElementById('editModal');
-            const editTitle = document.getElementById('editTitle');
-            const editDate = document.getElementById('editDate');
-            const editType = document.getElementById('editType');
-            const editDescription = document.getElementById('editDescription');
-            const modalCancel = document.getElementById('modalCancel');
-            const modalSave = document.getElementById('modalSave');
-
-            // --- Stav ---
-            let events = [];
-            let editingId = null;
-            let nextId = 1;
-
-            // --- Načtení dat z localStorage ---
-            function loadEvents() {
-                const stored = localStorage.getItem('companyEvents');
-                if (stored) {
-                    try {
-                        events = JSON.parse(stored);
-                        if (!Array.isArray(events)) events = [];
-                        // Zajištění, že každý event má id
-                        let maxId = 0;
-                        events.forEach(e => {
-                            if (e.id && e.id > maxId) maxId = e.id;
-                        });
-                        nextId = maxId + 1;
-                    } catch (e) {
-                        events = [];
-                    }
-                } else {
-                    // Výchozí ukázkové události
-                    events = [];
-                    nextId = 1;
-                }
-                renderEvents();
-            }
-
-            // --- Uložení dat do localStorage ---
-            function saveEvents() {
-                localStorage.setItem('companyEvents', JSON.stringify(events));
-            }
-
-            // --- Generování ID ---
-            function generateId() {
-                return nextId++;
-            }
-
-            // --- Formátování data ---
+            // --- Pomocné funkce ---
             function formatDate(dateStr) {
                 const d = new Date(dateStr + 'T00:00:00');
                 const day = d.getDate();
@@ -747,7 +901,6 @@
                 return days[d.getDay()];
             }
 
-            // --- Získání typu události pro CSS ---
             function getTypeClass(type) {
                 switch (type) {
                     case 'meeting': return 'event-type-meeting';
@@ -768,22 +921,32 @@
                 }
             }
 
+            function isPastEvent(dateStr) {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const eventDate = new Date(dateStr + 'T00:00:00');
+                return eventDate < today;
+            }
+
+            function escapeHtml(text) {
+                if (!text) return '';
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
             // --- Filtrování ---
             function getFilteredEvents() {
                 const typeFilter = filterType.value;
                 const searchTerm = filterSearch.value.toLowerCase().trim();
 
                 return events.filter(event => {
-                    // Filtrování podle typu
                     if (typeFilter !== 'all' && event.type !== typeFilter) return false;
-
-                    // Filtrování podle vyhledávání
                     if (searchTerm) {
                         const title = (event.title || '').toLowerCase();
                         const desc = (event.description || '').toLowerCase();
                         if (!title.includes(searchTerm) && !desc.includes(searchTerm)) return false;
                     }
-
                     return true;
                 });
             }
@@ -799,10 +962,11 @@
                     eventsList.innerHTML = `
                         <div class="no-events">
                             <span class="icon">📭</span>
-                            ${events.length === 0 ? 'Zatím zde nejsou žádné události. Přidejte je pomocí formuláře výše.' : 'Žádné události neodpovídají zadanému filtru.'}
+                            ${events.length === 0 ? 'Zatím zde nejsou žádné události.' : 'Žádné události neodpovídají zadanému filtru.'}
                         </div>
                     `;
                     eventCount.innerHTML = `Celkem: <strong>0</strong> událostí`;
+                    totalEventsSpan.textContent = '0';
                     return;
                 }
 
@@ -813,12 +977,13 @@
                     const typeClass = getTypeClass(event.type);
                     const typeLabel = getTypeLabel(event.type);
                     const description = event.description || '';
+                    const past = isPastEvent(event.date);
 
                     html += `
-                        <div class="event-card" data-id="${event.id}">
+                        <div class="event-card" style="${past ? 'opacity: 0.6;' : ''}">
                             <div class="event-date">
                                 ${dateStr}
-                                <span class="day-name">${dayName}</span>
+                                <span class="day-name">${dayName}${past ? ' (proběhlo)' : ''}</span>
                             </div>
                             <div class="event-body">
                                 <div class="event-title">${escapeHtml(event.title)}</div>
@@ -827,196 +992,16 @@
                                     <span class="event-type ${typeClass}">${typeLabel}</span>
                                 </div>
                             </div>
-                            <div class="event-actions no-print">
-                                <button class="btn-edit-event" data-id="${event.id}" title="Upravit">✏️</button>
-                                <button class="btn-delete-event" data-id="${event.id}" title="Smazat">🗑️</button>
-                            </div>
                         </div>
                     `;
                 });
 
                 eventsList.innerHTML = html;
-                eventCount.innerHTML = `Celkem: <strong>${filtered.length}</strong> událostí${events.length !== filtered.length ? ` (z ${events.length} celkem)` : ''}`;
-
-                // Posluchači pro tlačítka mazání a úprav
-                document.querySelectorAll('.btn-delete-event').forEach(btn => {
-                    btn.addEventListener('click', function(e) {
-                        const id = parseInt(this.dataset.id, 10);
-                        deleteEvent(id);
-                    });
-                });
-
-                document.querySelectorAll('.btn-edit-event').forEach(btn => {
-                    btn.addEventListener('click', function(e) {
-                        const id = parseInt(this.dataset.id, 10);
-                        openEditModal(id);
-                    });
-                });
-            }
-
-            // --- Jednoduché escapování HTML ---
-            function escapeHtml(text) {
-                if (!text) return '';
-                const div = document.createElement('div');
-                div.textContent = text;
-                return div.innerHTML;
-            }
-
-            // --- Přidání události ---
-            function addEvent() {
-                const title = titleInput.value.trim();
-                const date = dateInput.value;
-                const type = typeSelect.value;
-                const description = descInput.value.trim();
-
-                if (!title) {
-                    alert('Prosím zadejte název události.');
-                    titleInput.focus();
-                    return;
-                }
-                if (!date) {
-                    alert('Prosím vyberte datum.');
-                    dateInput.focus();
-                    return;
-                }
-
-                const newEvent = {
-                    id: generateId(),
-                    title: title,
-                    date: date,
-                    type: type,
-                    description: description
-                };
-
-                events.push(newEvent);
-                saveEvents();
-                renderEvents();
-
-                // Vyčištění formuláře
-                titleInput.value = '';
-                dateInput.value = '';
-                descInput.value = '';
-                typeSelect.value = 'meeting';
-                titleInput.focus();
-            }
-
-            // --- Smazání události ---
-            function deleteEvent(id) {
-                if (!confirm('Opravdu chcete smazat tuto událost?')) return;
-                events = events.filter(e => e.id !== id);
-                saveEvents();
-                renderEvents();
-            }
-
-            // --- Smazání všech událostí ---
-            function deleteAllEvents() {
-                if (events.length === 0) return;
-                if (!confirm('Opravdu chcete smazat VŠECHNY události?')) return;
-                events = [];
-                saveEvents();
-                renderEvents();
-            }
-
-            // --- Otevření modálu pro úpravu ---
-            function openEditModal(id) {
-                const event = events.find(e => e.id === id);
-                if (!event) return;
-
-                editingId = id;
-                editTitle.value = event.title || '';
-                editDate.value = event.date || '';
-                editType.value = event.type || 'other';
-                editDescription.value = event.description || '';
-
-                editModal.classList.add('active');
-            }
-
-            // --- Uložení úprav z modálu ---
-            function saveEditedEvent() {
-                const title = editTitle.value.trim();
-                const date = editDate.value;
-                const type = editType.value;
-                const description = editDescription.value.trim();
-
-                if (!title) {
-                    alert('Prosím zadejte název události.');
-                    return;
-                }
-                if (!date) {
-                    alert('Prosím vyberte datum.');
-                    return;
-                }
-
-                const event = events.find(e => e.id === editingId);
-                if (!event) return;
-
-                event.title = title;
-                event.date = date;
-                event.type = type;
-                event.description = description;
-
-                saveEvents();
-                renderEvents();
-                closeModal();
-            }
-
-            function closeModal() {
-                editModal.classList.remove('active');
-                editingId = null;
-            }
-
-            // --- Export do JSON ---
-            function exportEvents() {
-                if (events.length === 0) {
-                    alert('Žádné události k exportu.');
-                    return;
-                }
-                const json = JSON.stringify(events, null, 2);
-                const blob = new Blob([json], { type: 'application/json' });
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                const dateStr = new Date().toISOString().slice(0, 10);
-                link.download = `udalosti_${dateStr}.json`;
-                link.click();
-                URL.revokeObjectURL(link.href);
-            }
-
-            // --- Import JSON (přes hidden input) ---
-            function importEvents() {
-                // Pro jednoduchost - import přes upload
-                const input = document.createElement('input');
-                input.type = 'file';
-                input.accept = '.json';
-                input.onchange = function(e) {
-                    const file = this.files[0];
-                    if (!file) return;
-                    const reader = new FileReader();
-                    reader.onload = function(ev) {
-                        try {
-                            const imported = JSON.parse(ev.target.result);
-                            if (Array.isArray(imported) && imported.length > 0) {
-                                // Přidání importovaných událostí
-                                let maxId = 0;
-                                events.forEach(e => { if (e.id > maxId) maxId = e.id; });
-                                imported.forEach(e => {
-                                    if (!e.id) e.id = generateId();
-                                    if (e.id > maxId) maxId = e.id;
-                                    events.push(e);
-                                });
-                                nextId = maxId + 1;
-                                saveEvents();
-                                renderEvents();
-                                alert(`Úspěšně importováno ${imported.length} událostí.`);
-                            } else {
-                                alert('Neplatný soubor nebo prázdný seznam.');
-                            }
-                        } catch (err) {
-                            alert('Chyba při načítání souboru: ' + err.message);
-                        }
-                    };
-                    reader.readAsText(file);
-                };
-                input.click();
+                const countText = filtered.length === events.length 
+                    ? `Celkem: <strong>${filtered.length}</strong> událostí`
+                    : `Celkem: <strong>${filtered.length}</strong> událostí (z ${events.length} celkem)`;
+                eventCount.innerHTML = countText;
+                totalEventsSpan.textContent = filtered.length;
             }
 
             // --- Filtry ---
@@ -1029,46 +1014,10 @@
                 renderEvents();
             });
 
-            // --- Event Listeners ---
-            addBtn.addEventListener('click', addEvent);
-
-            // Enter ve formuláři
-            document.getElementById('eventForm').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    addEvent();
-                }
-            });
-
-            deleteAllBtn.addEventListener('click', deleteAllEvents);
-            exportBtn.addEventListener('click', exportEvents);
-
-            // Modal
-            modalCancel.addEventListener('click', closeModal);
-            modalSave.addEventListener('click', saveEditedEvent);
-
-            // Zavření modálu kliknutím mimo
-            editModal.addEventListener('click', function(e) {
-                if (e.target === this) closeModal();
-            });
-
-            // Klávesa Escape pro zavření modálu
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && editModal.classList.contains('active')) {
-                    closeModal();
-                }
-            });
-
-            // Nastavení výchozího data na dnešek
-            const today = new Date();
-            const year = today.getFullYear();
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const day = String(today.getDate()).padStart(2, '0');
-            dateInput.value = `${year}-${month}-${day}`;
-
-            // Inicializace
-            loadEvents();
+            // --- Inicializace ---
+            renderEvents();
         })();
+        
     </script>
 </body>
 </html>

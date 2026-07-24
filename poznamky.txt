@@ -39,6 +39,7 @@
 //Schvalovací proces - doresit akceptaci
 //pak poresit naduvazky apod. ale to az pak s reditelkou
 //ten skolni rad je nahovno, tam potrebuju js jen pro AI a vyhledávání, nemusi to byt tak slozity. Ale to vyhledávání fakt pekne funguje no.
+//u loginu musi byt i stredisko, podle toho se pak bude vybirat databaze
 
 
 //MARKETING
