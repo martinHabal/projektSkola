@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="cs">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><%= title %></title>
+
     <style>
         /* Vlož všechny CSS styly, které jsi poskytl */
         * {
@@ -562,8 +559,11 @@
             }
         }
     </style>
-</head>
+
+<%- include('./partials/head') %>
 <body>
+   
+      <%- include('./partials/header') %>
     <div class="container">
         <h1>📅 Správa událostí</h1>
         <p class="subtitle">Přehled a správa všech plánovaných událostí</p>
@@ -665,7 +665,7 @@
         </div>
 
         <!-- Filtrování -->
-        <form action="/filter" method="GET" class="filter-section">
+        <form class="filter-section">
             <label for="filterType">🔍 Filtr:</label>
             <select id="filterType" name="type">
                 <option value="all" <%= (typeof filterType !== 'undefined' && filterType === 'all') ? 'selected' : '' %>>Všechny typy</option>
@@ -678,11 +678,13 @@
             <input 
                 type="text" 
                 name="search" 
+                id="filterSearch"
                 placeholder="Hledat podle názvu..." 
                 value="<%= (typeof searchQuery !== 'undefined') ? searchQuery : '' %>"
             />
             <button type="submit" class="btn-filter">🔍 Filtrovat</button>
-            <a href="/" class="filter-clear">✕ Zrušit filtry</a>
+           <!-- <button type="button" class="filter-clear">✕ Zrušit filtry</button> -->
+           <button type="button" class="filter-clear" id="clearFilterBtn">✕ Zrušit filtry</button>
         </form>
 
         <!-- Legenda -->
@@ -710,14 +712,14 @@
         </div>
 
         <!-- Počet a seznam událostí -->
-        <div class="event-count">
+        <div class="event-count" id="eventCount">
             Celkem: <strong><%= (typeof totalCount !== 'undefined') ? totalCount : 0 %></strong> událostí
             <% if (typeof events !== 'undefined' && events && events.length !== totalCount) { %>
                 (zobrazeno: <strong><%= events.length %></strong>)
             <% } %>
         </div>
 
-        <div class="events-list">
+        <div class="events-list" id="eventsList">
             <% if (typeof events !== 'undefined' && events && events.length > 0) { %>
                 <% events.forEach(event => { %>
                     <div class="event-card">
@@ -795,6 +797,10 @@
                     <button type="submit" class="btn-modal-save">Uložit změny</button>
                 </div>
             </form>
+        </div>
+         <div class="update-info no-print">
+            📊 Zobrazeno <strong id="totalEvents">0</strong> událostí 
+            <span class="badge">Demo data</span>
         </div>
     </div>
 

@@ -43,6 +43,11 @@
 
 
 //MARKETING
-//1. necham jim to na rok zdarma
+//1. necham jim to na rok zdarma, pak je nechat vybrat si jaky sluzby chteji
 //2. budou mít na vyber, klidne jen vykaz za par konkurence
 //3. dulezity je s nima byt v kontaktu a jet PR a prebrat dalsi sluzby. Weby apod.
+//4.nemuze to byt zase podezrele levny, takze neco zdarma a pak 300.- mes treba
+
+//LEGISLATIVA
+//zjistit nejaky nalezitosti jako GDPR apod.
+//cookies
