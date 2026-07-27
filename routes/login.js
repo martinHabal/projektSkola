@@ -61,7 +61,7 @@ router.post("/login", async (req, res) => {
       role: user.role
     };
 
-    res.redirect("/dashboard-ucitel");
+    res.redirect("/vykaz-novy-novy");
     // console.log(req.session.user);
   } catch (error) {
     console.error(error);
@@ -75,14 +75,44 @@ router.get("/logout", (req, res) => {
   res.redirect("/");
 });
 
-//Dashboard se zobrazi po prihlaseni
-router.get("/dashboard", (req, res) => {
+// Dashboard pro redditele
+router.get("/dashboard", async (req, res) => {
   if (!req.session.user) {
     return res.redirect("/");
   }
-  res.render("dashboard", {
-    username: req.session.user.username,
-  });
+
+   try {
+        const result = await pool.query(`
+            SELECT 
+                us.id,
+                us.first_name,
+                us.last_name,  
+                uv.id as uvazek_id,
+                uv.total_hodiny,
+                wl.id as work_log_id,
+                wl.hours_worked,
+                wl.hours_subbed,
+                wl.hours_missed
+            FROM 
+                users us
+            LEFT JOIN 
+                uvazky uv ON us.id = uv.user_id
+            LEFT JOIN 
+                work_logs wl ON us.id = wl.users_id
+            ORDER BY 
+                us.id, wl.work_date DESC;
+        `);
+        
+        // res.json(result.rows);
+        console.log(result[0])
+        res.render("dashboard", {
+          username: req.session.user.username,
+          result: result[0]
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+
 });
 
 

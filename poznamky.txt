@@ -1,36 +1,27 @@
 
 
-
-
-//zacnu tak ze seed zadam rucne, jinak se nikam neposunu
-
-//rozvrh bude zacinat skolnim rokem a svatky, vikendy prazdniny si holt necham kazdej rok vygenerovat do jsonu
-
 //do profilu se nacte pocet hodin z API edookitu toho uzivatele -> budetam kontrola zda mu to sedi
+//V2, do DB se bude brat z edookitu kazdy den odpracovana hodina, jeste mrknout na priznaky
+//API
+/// v edookitu nakej vykaz prace je, mrknu na to
 
-//tisk budu mit pro jednotlive usera a pak i vedouci pracovnik muze kdykoliv vytisknout
+
 
 //CENOTVORBA
 //vykaz jeste nikde neni, tak proc bych nemel sbirat smetanu
 //slevit se da vzdycky az bude konkurence
 
-//API
-/// v edookitu nakej vykaz prace je, mrknu na to
-
 //takze neni zadny pravni predpis ze by musel byt vykaz podepsanej, takze proste jen vygenerovat pdf a poslat mailem
 
-//V2, do DB se bude brat z edookitu kazdy den odpracovana hodina, jeste mrknout na priznaky
 //sjednotit ty nazvy v DB, cestinu apod, pak samozrejme ty seeds a migrace upravit
 //skolni prazniny holt rucne a svatky budu nacitat z api
 
-//komenty na BE nemusim mazat, coz je vyhoda
 // v dashboard admin by dole v tabulce meli byt vsichni uzivatele s jejich zakladnima statistikama, vyber z opionu je zybtecnej 
 
 //Blby je ze kdyz je fetch na ge tak jsou ty endpointy videt v prohlizeci
 
 //asi bych měl osetrit aby vykaz nesel smazat po nejakem datumu, ale to pocka
 
-//asi jim to dam na prvni rok na vyzkouseni zdarma, tem prvnim
 //pak to musim udelat tak, aby uz nemohli odejit
 
 //agent bude mit pristup k DB, takze i reditelka se ho muze ptat na ruzny veci, treba kdo oddelal nejvic apod.
@@ -48,6 +39,12 @@
 //3. dulezity je s nima byt v kontaktu a jet PR a prebrat dalsi sluzby. Weby apod.
 //4.nemuze to byt zase podezrele levny, takze neco zdarma a pak 300.- mes treba
 
+//Na skolach se to nyni zavadi v famci automatizaci workflow, reditelum se ted i meni skoleni, aby spise manazeri a teamleaderi.
+
 //LEGISLATIVA
 //zjistit nejaky nalezitosti jako GDPR apod.
 //cookies
+
+
+//NEDULEZITY
+//tisk budu mit pro jednotlive usera a pak i vedouci pracovnik muze kdykoliv vytisknout -> neni dulezity, protoze to ma online vzdycky dostupny

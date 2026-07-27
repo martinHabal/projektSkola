@@ -42,14 +42,14 @@
         margin-right: 10px;
     }
 
-    .badge-date {
+    /* .badge-date {
         background: white;
         padding: 0.5rem 1.2rem;
         border-radius: 40px;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
         font-weight: 500;
         border: 1px solid #e2e8f0;
-    }
+    } */
 
     .badge-date i {
         color: #64748b;
@@ -240,7 +240,7 @@
                 <div class="header">
                     <h1><i class="fas fa-chalkboard-teacher"></i> Celkové statistiky pedagoga <%- user.username %> </h1>
 
-                    <div class="badge-date"><i class="far fa-calendar-alt"></i> Vykazovací období: 2025/2026</div>
+                    <div class="badge-date"><i class="far fa-calendar-alt"></i> Vykazovací období: <%= new Date().getFullYear() %>/<%= new Date().getFullYear() + 1 %></div>
                 </div>
 
                 <!-- KPI karty -->
@@ -252,13 +252,13 @@
                     </div>
                     <div class="kpi-card">
                         <div class="kpi-label"><i class="fas fa-calendar-check kpi-icon"></i> Celkem dní
-                            (hodin)</div>
+                           </div>
                         <div class="kpi-value"><%- totalStats.total_days %></div>
                         <!-- <div class="kpi-sub">z 200 plánovaných</div> -->
                     </div>
                     <div class="kpi-card">
                         <div class="kpi-label"><i class="fas fa-users kpi-icon"></i> Průměrně hodin</div>
-                        <div class="kpi-value"><%- totalStats.avg_hours %></div>
+                        <div class="kpi-value"><%- Math.round(totalStats.avg_hours) %></div>
                         <!-- <div class="kpi-sub">60,9 % z celkového úvazku</div> -->
                     </div>
                     <div class="kpi-card">

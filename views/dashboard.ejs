@@ -448,421 +448,96 @@
                 </div>
             </div>
 
-            <!-- Výběr uživatele -->
-            <div style="margin-bottom: 1.5rem;">
-                <div class="user-selector" style="border-radius: 16px; padding: 0.8rem 1.2rem; background: white; border: 1px solid #e2e8f0;">
-                    <label for="userSelect"><i class="fas fa-user-circle" style="color: #3b82f6;"></i> Vyber uživatele:</label>
-                    <select id="userSelect" onchange="loadUserData(this.value)">
-                        <option value="">— vyber uživatele —</option>
-                    </select>
-                    <span style="font-size: 0.8rem; color: #94a3b8; margin-left: auto;" id="selectedUserInfo"></span>
-                </div>
-            </div>
+    
+         <div class="container">
+        <!-- Hlavička -->
+       
 
-            <!-- Detail vybraného uživatele -->
-            <div id="userDetail">
-                <div class="loading" id="loadingIndicator">
-                    <i class="fas fa-spinner"></i>
-                    <p style="margin-top: 0.5rem;">Vyber uživatele pro zobrazení detailu</p>
-                </div>
-
-                <div id="userContent" style="display: none;">
-                    <!-- KPI karty uživatele -->
-                    <div class="kpi-grid" id="userKpi">
-                        <!-- Dynamicky generováno -->
-                    </div>
-
-                    <!-- Grafy -->
-                    <div class="charts-grid">
-                        <div class="chart-card">
-                            <h3><i class="fas fa-chart-pie"></i> Struktura hodin</h3>
-                            <div class="chart-wrapper">
-                                <canvas id="userPieChart"></canvas>
-                            </div>
-                        </div>
-                        <div class="chart-card">
-                            <h3><i class="fas fa-chart-bar"></i> Měsíční přehled</h3>
-                            <div class="chart-wrapper">
-                                <canvas id="userBarChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Tabulka aktivit uživatele -->
-                    <div class="table-section">
-                        <h3><i class="fas fa-table"></i> Aktivity uživatele</h3>
-                        <div class="table-responsive">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Činnost</th>
-                                        <th>Kategorie</th>
-                                        <th>Hodin</th>
-                                        <th>Žáků / skupin</th>
-                                        <th>Období</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="userActivities">
-                                    <!-- Dynamicky generováno -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="footer-note">
-                <i class="fas fa-shield-alt"></i> Administrátorský přístup • data aktualizována k 1. 7. 2026
+        <!-- POUZE TABULKA S PŘEHLEDEM DAT -->
+        <div class="table-section">
+            <h3><i class="fas fa-table"></i> Seznam uživatelů</h3>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Jméno</th>
+                            
+                            <th>Celkem hodin</th>
+                            <th>Průměr hodin</th>
+                            <th>Suplované</th>
+                            <th>Odpadnuté</th>
+                          
+                        </tr>
+                    </thead>
+                    <tbody id="userTableBody">
+                        <!-- Dynamicky naplněno z usersData -->
+                    </tbody>
+                </table>
             </div>
         </div>
 
-        <script>
-            // ---------- DATA ----------
-            // Simulovaná data uživatelů (v reálu by přišla z API)
-            const usersData = {
-                users: [{
-                        id: 1,
-                        username: 'novakj',
-                        fullName: 'Jan Novák',
-                        total_hours: 436,
-                        avg_hours: 24.2,
-                        total_subbed: 124,
-                        total_missed: 18,
-                        activities: [
-                            { name: 'Matematika – 8.A', category: 'Přímá výuka', hours: 96, students: 24, period: 'Září–červen',
-                                status: 'Dokončeno' },
-                            { name: 'Matematika – 8.B', category: 'Přímá výuka', hours: 92, students: 22, period: 'Září–červen',
-                                status: 'Dokončeno' },
-                            { name: 'Fyzika – 9.A', category: 'Přímá výuka', hours: 78, students: 20, period: 'Září–červen',
-                                status: 'Dokončeno' },
-                            { name: 'Příprava DUM', category: 'Nepřímá', hours: 48, students: '—', period: 'Celoročně',
-                                status: 'Probíhá' },
-                            { name: 'Korektura písemek', category: 'Nepřímá', hours: 36, students: '—', period: 'Průběžně',
-                                status: 'Dokončeno' },
-                            { name: 'Školní projekt "Věda hrou"', category: 'Nepřímá', hours: 28, students: 15,
-                                period: 'Březen–květen', status: 'Dokončeno' },
-                            { name: 'Konzultace s rodiči', category: 'Nepřímá', hours: 18, students: '—',
-                                period: 'Listopad, duben', status: 'Dokončeno' },
-                            { name: 'Doučování – 9.B', category: 'Přímá výuka', hours: 32, students: 6,
-                                period: 'Únor–květen', status: 'Dokončeno' },
-                            { name: 'Školení "Inovace"', category: 'Nepřímá', hours: 8, students: '—', period: 'Červen',
-                                status: 'Plánováno' }
-                        ]
-                    },
-                    {
-                        id: 2,
-                        username: 'svobodap',
-                        fullName: 'Petra Svobodová',
-                        total_hours: 520,
-                        avg_hours: 28.9,
-                        total_subbed: 156,
-                        total_missed: 22,
-                        activities: [
-                            { name: 'Čeština – 6.A', category: 'Přímá výuka', hours: 110, students: 26,
-                                period: 'Září–červen', status: 'Dokončeno' },
-                            { name: 'Čeština – 6.B', category: 'Přímá výuka', hours: 108, students: 24,
-                                period: 'Září–červen', status: 'Dokončeno' },
-                            { name: 'Literatura – 7.A', category: 'Přímá výuka', hours: 84, students: 22,
-                                period: 'Září–červen', status: 'Dokončeno' },
-                            { name: 'Čtenářský klub', category: 'Nepřímá', hours: 40, students: 12, period: 'Celoročně',
-                                status: 'Dokončeno' },
-                            { name: 'Příprava maturit', category: 'Nepřímá', hours: 52, students: '—', period: 'Únor–květen',
-                                status: 'Dokončeno' },
-                            { name: 'Korektura slohů', category: 'Nepřímá', hours: 42, students: '—', period: 'Průběžně',
-                                status: 'Probíhá' },
-                            { name: 'Školní časopis', category: 'Nepřímá', hours: 30, students: 8, period: 'Celoročně',
-                                status: 'Dokončeno' },
-                            { name: 'Konzultace s rodiči', category: 'Nepřímá', hours: 20, students: '—',
-                                period: 'Listopad, duben', status: 'Dokončeno' },
-                            { name: 'Doučování – 9.A', category: 'Přímá výuka', hours: 34, students: 5,
-                                period: 'Únor–květen', status: 'Dokončeno' }
-                        ]
-                    },
-                    {
-                        id: 3,
-                        username: 'horakm',
-                        fullName: 'Martin Horák',
-                        total_hours: 382,
-                        avg_hours: 21.2,
-                        total_subbed: 98,
-                        total_missed: 30,
-                        activities: [
-                            { name: 'Fyzika – 7.A', category: 'Přímá výuka', hours: 82, students: 22,
-                                period: 'Září–červen', status: 'Dokončeno' },
-                            { name: 'Fyzika – 7.B', category: 'Přímá výuka', hours: 78, students: 20,
-                                period: 'Září–červen', status: 'Dokončeno' },
-                            { name: 'Chemie – 8.A', category: 'Přímá výuka', hours: 64, students: 21,
-                                period: 'Září–červen', status: 'Dokončeno' },
-                            { name: 'Laboratorní cvičení', category: 'Nepřímá', hours: 44, students: 16,
-                                period: 'Celoročně', status: 'Dokončeno' },
-                            { name: 'Příprava pokusů', category: 'Nepřímá', hours: 34, students: '—', period: 'Průběžně',
-                                status: 'Probíhá' },
-                            { name: 'Korektura protokolů', category: 'Nepřímá', hours: 28, students: '—',
-                                period: 'Průběžně', status: 'Dokončeno' },
-                            { name: 'Přírodovědný projekt', category: 'Nepřímá', hours: 26, students: 10,
-                                period: 'Březen–květen', status: 'Dokončeno' },
-                            { name: 'Konzultace s rodiči', category: 'Nepřímá', hours: 14, students: '—',
-                                period: 'Listopad, duben', status: 'Dokončeno' },
-                            { name: 'Doučování – 8.B', category: 'Přímá výuka', hours: 12, students: 4,
-                                period: 'Únor–květen', status: 'Plánováno' }
-                        ]
-                    }
-                ]
-            };
+        <div class="footer-note">
+            <i class="fas fa-shield-alt"></i> Administrátorský přístup • data aktualizována k 1. 7. 2026
+        </div>
+    </div>
 
-            // Globální proměnné pro grafy
-            let userPieChart = null;
-            let userBarChart = null;
+    <script>
+      
+        let usersData = <%- JSON.stringify(result) %>;
+     
 
-            // ---------- NAČTENÍ DAT ----------
-            function initDashboard() {
-                // Naplnění selectu
-                const select = document.getElementById('userSelect');
-                usersData.users.forEach(user => {
-                    const option = document.createElement('option');
-                    option.value = user.id;
-                    option.textContent = `${user.fullName} (${user.username})`;
-                    select.appendChild(option);
-                });
+        // (pro EJS se předává result jako objekt)
+        if (typeof result !== 'undefined' && result && result.users) {
+            usersData = result.users;
+        }
 
-                // Výpočet celkových statistik
-                calculateTotalStats();
+        // ---------- RENDER TABULKY ----------
+        function renderTable(users) {
+            const tbody = document.getElementById('userTableBody');
+            if (!tbody) return;
 
-                // Automaticky vybrat prvního uživatele
-                if (usersData.users.length > 0) {
-                    select.value = usersData.users[0].id;
-                    loadUserData(usersData.users[0].id);
-                }
+            if (!users || users.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-muted" style="text-align:center; padding: 2rem;">Žádní uživatelé k zobrazení</td></tr>`;
+                return;
             }
 
-            // ---------- CELKOVÉ STATISTIKY ----------
-            function calculateTotalStats() {
-                const totalUsers = usersData.users.length;
-                let totalHours = 0;
-                let totalActivities = 0;
-                let maxHours = 0;
-                let topUser = '';
-
-                usersData.users.forEach(user => {
-                    totalHours += user.total_hours;
-                    totalActivities += user.activities.length;
-                    if (user.total_hours > maxHours) {
-                        maxHours = user.total_hours;
-                        topUser = user.fullName;
-                    }
-                });
-
-                const avgHours = (totalHours / totalUsers).toFixed(1);
-
-                document.getElementById('totalUsers').textContent = totalUsers;
-                document.getElementById('totalAllHours').textContent = totalHours;
-                document.getElementById('avgHoursPerUser').textContent = avgHours;
-                document.getElementById('topUser').textContent = topUser;
-                document.getElementById('topUserHours').textContent = `${maxHours} hodin`;
-                document.getElementById('totalActivities').textContent = totalActivities;
-            }
-
-            // ---------- NAČTENÍ DAT UŽIVATELE ----------
-            function loadUserData(userId) {
-                const loading = document.getElementById('loadingIndicator');
-                const content = document.getElementById('userContent');
-
-                if (!userId) {
-                    loading.style.display = 'block';
-                    content.style.display = 'none';
-                    return;
+            let html = '';
+            users.forEach(user => {
+                // Status badge
+                let statusClass = 'status-badge';
+                let statusText = user.status || 'Neznámý';
+                if (statusText.toLowerCase().includes('aktivní')) {
+                    statusClass += ' success';
+                } else if (statusText.toLowerCase().includes('neaktivní')) {
+                    statusClass += ' danger';
+                } else {
+                    statusClass += ' warning';
                 }
 
-                loading.style.display = 'none';
-                content.style.display = 'block';
-
-                const user = usersData.users.find(u => u.id === parseInt(userId));
-                if (!user) return;
-
-                // Aktualizace info
-                document.getElementById('selectedUserInfo').textContent = `${user.fullName} (${user.username})`;
-
-                // KPI karty
-                renderUserKpi(user);
-
-                // Tabulka aktivit
-                renderUserActivities(user);
-
-                // Grafy
-                renderUserCharts(user);
-            }
-
-            // ---------- RENDER KPI ----------
-            function renderUserKpi(user) {
-                const container = document.getElementById('userKpi');
-                container.innerHTML = `
-                    <div class="kpi-card">
-                        <div class="kpi-label"><i class="fas fa-clock kpi-icon"></i> Celkem hodin</div>
-                        <div class="kpi-value">${user.total_hours}</div>
-                        <div class="kpi-sub">⬆ +3,2 % oproti minulému roku</div>
-                    </div>
-                    <div class="kpi-card">
-                        <div class="kpi-label"><i class="fas fa-users kpi-icon"></i> Průměrně hodin</div>
-                        <div class="kpi-value">${user.avg_hours}</div>
-                        <div class="kpi-sub">60,9 % z celkového úvazku</div>
-                    </div>
-                    <div class="kpi-card">
-                        <div class="kpi-label"><i class="fas fa-tasks kpi-icon"></i> Suplované hodiny</div>
-                        <div class="kpi-value">${user.total_subbed}</div>
-                        <div class="kpi-sub">přípravy, korektury, projekty</div>
-                    </div>
-                    <div class="kpi-card">
-                        <div class="kpi-label"><i class="fas fa-user-graduate kpi-icon"></i> Odpadnuté hodiny</div>
-                        <div class="kpi-value">${user.total_missed}</div>
-                        <div class="kpi-sub">průměr 22 žáků / třída</div>
-                    </div>
-                    <div class="kpi-card">
-                        <div class="kpi-label"><i class="fas fa-calendar-check kpi-icon"></i> Úvazek</div>
-                        <div class="kpi-value">${user.activities.length}</div>
-                        <div class="kpi-sub">zaznamenaných činností</div>
-                    </div>
-                `;
-            }
-
-            // ---------- RENDER AKTIVIT ----------
-            function renderUserActivities(user) {
-                const tbody = document.getElementById('userActivities');
-                const statusMap = {
-                    'Dokončeno': 'success',
-                    'Probíhá': 'warning',
-                    'Plánováno': 'danger'
-                };
-
-                tbody.innerHTML = user.activities.map(act => `
+                html += `
                     <tr>
-                        <td>${act.name}</td>
-                        <td>${act.category}</td>
-                        <td>${act.hours}</td>
-                        <td>${act.students}</td>
-                        <td>${act.period}</td>
-                        <td><span class="status-badge ${statusMap[act.status] || ''}">${act.status}</span></td>
+                        <td><strong>${user.first_name + ' ' + user.last_name || '—'}</strong></td>
+                       
+                        <td>${user.total_hours ?? 0}</td>
+                        <td>${user.avg_hours ?? 0}</td>
+                        <td>${user.total_subbed ?? 0}</td>
+                        <td>${user.total_missed ?? 0}</td>
+                       
                     </tr>
-                `).join('');
-            }
+                `;
+            });
 
-            // ---------- RENDER GRAFŮ ----------
-            function renderUserCharts(user) {
-                // Data pro grafy
-                const directHours = user.activities
-                    .filter(a => a.category === 'Přímá výuka')
-                    .reduce((sum, a) => sum + a.hours, 0);
-                const indirectHours = user.activities
-                    .filter(a => a.category === 'Nepřímá')
-                    .reduce((sum, a) => sum + a.hours, 0);
+            tbody.innerHTML = html;
+        }
 
-                // Měsíční data (simulovaná)
-                const monthlyData = [68, 72, 70, 64, 60, 66, 74, 70, 68, 62];
-                const monthlyLabels = ['Září', 'Říj', 'Lis', 'Pro', 'Led', 'Úno', 'Bře', 'Dub', 'Kvě', 'Čer'];
+        // ---------- INICIALIZACE ----------
+        document.addEventListener('DOMContentLoaded', function() {
+            renderTable(usersData);
+        });
+    </script>
 
-                // ---- Koláčový graf ----
-                const pieCtx = document.getElementById('userPieChart').getContext('2d');
-
-                if (userPieChart) {
-                    userPieChart.destroy();
-                }
-
-                userPieChart = new Chart(pieCtx, {
-                    type: 'pie',
-                    data: {
-                        labels: ['Přímá výuka', 'Nepřímá činnost', 'Suplované', 'Odpadnuté'],
-                        datasets: [{
-                            data: [directHours || 200, indirectHours || 100, user.total_subbed || 50, user
-                                .total_missed || 20
-                            ],
-                            backgroundColor: ['#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444'],
-                            borderWidth: 0,
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: {
-                                    boxWidth: 12,
-                                    padding: 14,
-                                    font: { size: 11, weight: '500' },
-                                    color: '#1e293b'
-                                }
-                            }
-                        },
-                        cutout: '55%',
-                        layout: {
-                            padding: { top: 0, bottom: 0 }
-                        }
-                    }
-                });
-
-                // ---- Sloupcový graf ----
-                const barCtx = document.getElementById('userBarChart').getContext('2d');
-
-                if (userBarChart) {
-                    userBarChart.destroy();
-                }
-
-                userBarChart = new Chart(barCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: monthlyLabels,
-                        datasets: [{
-                            label: 'Celkem hodin',
-                            data: monthlyData,
-                            backgroundColor: '#3b82f6',
-                            borderRadius: 4,
-                        }, {
-                            label: 'Suplované',
-                            data: monthlyData.map(d => Math.round(d * 0.3)),
-                            backgroundColor: '#8b5cf6',
-                            borderRadius: 4,
-                        }, {
-                            label: 'Odpadnuté',
-                            data: monthlyData.map(d => Math.round(d * 0.15)),
-                            backgroundColor: '#f59e0b',
-                            borderRadius: 4,
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: {
-                                    boxWidth: 12,
-                                    padding: 14,
-                                    font: { size: 11, weight: '500' },
-                                    color: '#1e293b'
-                                }
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                grid: { color: '#e9edf2' },
-                                ticks: { font: { size: 10 } }
-                            },
-                            x: {
-                                grid: { display: false },
-                                ticks: { font: { size: 10 } }
-                            }
-                        },
-                        layout: {
-                            padding: { top: 10, bottom: 10 }
-                        }
-                    }
-                });
-            }
-
-            // ---------- INICIALIZACE ----------
-            document.addEventListener('DOMContentLoaded', initDashboard);
-        </script>
+    
+       
 
 </body>
 
