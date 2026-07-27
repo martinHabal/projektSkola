@@ -1,6 +1,104 @@
 <!DOCTYPE html>
 <html lang="cs">
 <style>
+    /* SWITCH */
+     /* ===== PŘEPÍNAČ (SWITCH) ===== */
+        .switch-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: #f1f5f9;
+            padding: 10px 20px;
+            border-radius: 40px;
+            margin: 16px 0 20px 0;
+            flex-wrap: wrap;
+            max-width: 50%
+        }
+        .switch-label {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 15px;
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 52px;
+            height: 28px;
+            flex-shrink: 0;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #94a3b8;
+            transition: .3s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background: white;
+            transition: .3s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .switch input:checked + .slider {
+            background: #2563eb;
+        }
+        .switch input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+        .switch-status {
+            font-weight: 500;
+            color: #475569;
+            min-width: 70px;
+        }
+        .switch-status.active {
+            color: #2563eb;
+        }
+
+    /* nestandardni doba tabulka */
+    input[type="date"],
+        input[type="number"],
+        input[type="text"] {
+            width: 100%;
+            padding: 8px 6px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+            box-sizing: border-box;
+            background: #f8fafc;
+            transition: 0.2s;
+        }
+        input:focus {
+            border-color: #2563eb;
+            outline: none;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+        }
+         table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0 20px 0;
+            font-size: 15px;
+            transition: opacity 0.3s ease;
+        }
+        table.hidden-table {
+            display: none;
+        }
+
     * {
         box-sizing: border-box;
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
@@ -951,6 +1049,38 @@
                 </div>
 
                 <!-- Sekce pro potvrzení -->
+                <!-- <p>Zadejte odpracované hodiny mimo běžnou pracovní dobu (víkendy, svátky, apod.)</p> -->
+                <div class="switch-wrapper">
+        <!-- <span class="switch-label">🔘 Zobrazit zjednodušenou tabulku:</span> -->
+        <label class="switch">
+            <input type="checkbox" id="toggleTable">
+            <span class="slider"></span>
+        </label>
+        <span class="switch-status" id="switchStatus">✕ skrytá</span>
+        <span style="font-size:13px; color:#64748b; margin-left:auto;">
+           Klikněte pokud zadáváte odpracované hodiny mimo běžnou pracovní dobu (víkendy, svátky, apod.)
+        </span>
+    </div>
+<table id="mainTable" class="hidden-table">
+        <thead>
+            <tr>
+                <!-- <th style="width:13%">Datum</th> -->
+                <th width="5%">Hodiny</th>
+                <th>Poznámka</th>
+            </tr>
+        </thead>
+        <tbody id="table-body">
+            <!-- Výchozí 3 řádky (ve stylu vašeho obrázku) -->
+            <tr>
+                <!-- <td><input type="date" value="2026-07-29"></td> -->
+                <td><input type="number" step="1" min="1" value="0"></td>
+                <td><input type="text" placeholder="Důvod / poznámka"></td>
+               
+            </tr>
+           
+        </tbody>
+    </table>
+
                 <div class="confirmation-section">
                     <input type="checkbox" id="confirm-correctness" />
                     <label for="confirm-correctness">Potvrzuji správnost všech zadaných údajů ve výkazu</label>
@@ -1884,6 +2014,34 @@ console.log('Rozvrh:', currentSchedule);
                         const modal = document.getElementById("printModal");
                         modal.style.display = "none";
                     }
+
+                      // ===== PŘEPÍNAČ ZOBRAZENÍ TABUKY PRO NESTANDARDNI HODINY=====
+    const toggle = document.getElementById('toggleTable');
+    const table = document.getElementById('mainTable');
+    const status = document.getElementById('switchStatus');
+
+      // Funkce pro aktualizaci stavu podle checkboxu
+    function updateTableVisibility() {
+        if (toggle.checked) {
+            table.classList.add('hidden-table');
+            status.textContent = '✓ viditelná';
+            status.className = 'switch-status active';
+        } else {
+            table.classList.remove('hidden-table');
+            status.textContent = '✕ skrytá';
+            status.className = 'switch-status';
+        }
+    }
+
+    // Při načtení stránky vždy nastaví výchozí stav (vypnutý)
+    toggle.checked = false;
+    updateTableVisibility();
+
+    // Při změně přepínače
+    toggle.addEventListener('change', function() {
+        updateTableVisibility();
+    });
+    
                 </script>
     </body>
 

@@ -84,23 +84,28 @@ router.get("/dashboard", async (req, res) => {
    try {
         const result = await pool.query(`
             SELECT 
-                us.id,
-                us.first_name,
-                us.last_name,  
-                uv.id as uvazek_id,
-                uv.total_hodiny,
-                wl.id as work_log_id,
-                wl.hours_worked,
-                wl.hours_subbed,
-                wl.hours_missed
-            FROM 
-                users us
-            LEFT JOIN 
-                uvazky uv ON us.id = uv.user_id
-            LEFT JOIN 
-                work_logs wl ON us.id = wl.users_id
-            ORDER BY 
-                us.id, wl.work_date DESC;
+    us.id,
+    us.first_name,
+    us.last_name,  
+    GROUP_CONCAT(DISTINCT uv.id) as uvazek_ids,
+    SUM(uv.total_hodiny) as total_hodiny,
+    COUNT(wl.id) as pocet_work_logu,
+    SUM(wl.hours_worked) as celkem_hodin,
+    MAX(wl.work_date) as posledni_work_date,  -- nejnovější datum
+    MIN(wl.work_date) as prvni_work_date,     -- nejstarší datum
+    od.odevzdano
+FROM 
+    users us
+LEFT JOIN 
+    uvazky uv ON us.id = uv.user_id
+LEFT JOIN 
+    work_logs wl ON us.id = wl.users_id
+LEFT JOIN 
+    odevzdano od ON us.id = od.users_id
+GROUP BY 
+    us.id, us.first_name, us.last_name, od.odevzdano
+ORDER BY 
+    us.id, posledni_work_date DESC;
         `);
         
         // res.json(result.rows);

@@ -16,21 +16,17 @@
 //sjednotit ty nazvy v DB, cestinu apod, pak samozrejme ty seeds a migrace upravit
 //skolni prazniny holt rucne a svatky budu nacitat z api
 
-// v dashboard admin by dole v tabulce meli byt vsichni uzivatele s jejich zakladnima statistikama, vyber z opionu je zybtecnej 
 
-//Blby je ze kdyz je fetch na ge tak jsou ty endpointy videt v prohlizeci
 
-//asi bych měl osetrit aby vykaz nesel smazat po nejakem datumu, ale to pocka
 
-//pak to musim udelat tak, aby uz nemohli odejit
 
 //agent bude mit pristup k DB, takze i reditelka se ho muze ptat na ruzny veci, treba kdo oddelal nejvic apod.
 //muzu jim udelat agenta na web
-//musim dodelat tu kolonku na praci o vikendu
-//Schvalovací proces - doresit akceptaci
-//pak poresit naduvazky apod. ale to az pak s reditelkou
-//ten skolni rad je nahovno, tam potrebuju js jen pro AI a vyhledávání, nemusi to byt tak slozity. Ale to vyhledávání fakt pekne funguje no.
-//u loginu musi byt i stredisko, podle toho se pak bude vybirat databaze
+//musim dodelat tu kolonku na praci o vikendu -> uz je dodelana, ale jeste se neposila na server
+
+
+
+
 
 
 //MARKETING
@@ -40,6 +36,8 @@
 //4.nemuze to byt zase podezrele levny, takze neco zdarma a pak 300.- mes treba
 
 //Na skolach se to nyni zavadi v famci automatizaci workflow, reditelum se ted i meni skoleni, aby spise manazeri a teamleaderi.
+//pak to musim udelat tak, aby uz nemohli odejit
+
 
 //LEGISLATIVA
 //zjistit nejaky nalezitosti jako GDPR apod.
@@ -48,3 +46,7 @@
 
 //NEDULEZITY
 //tisk budu mit pro jednotlive usera a pak i vedouci pracovnik muze kdykoliv vytisknout -> neni dulezity, protoze to ma online vzdycky dostupny
+//asi bych měl osetrit aby vykaz nesel smazat po nejakem datumu, ale to pocka
+//u loginu musi byt i stredisko, podle toho se pak bude vybirat databaze -> to reseni necham na pozdeji, je to slozitejsi
+//pak poresit naduvazky apod. ale to az pak s reditelkou
+//Schvalovací proces - doresit akceptaci -> zatim se zobrazuje v dashboardu, ze je odevzdano, pak to ale chce nejak zamknout a tim rict, ze uz je prevzaty
