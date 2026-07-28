@@ -28,23 +28,22 @@ router.get("/api/prazdniny", async (req, res) => {
     // );
 });
 
-// vraci pouze uvazky, taham do frontendu do vykazu do nastaveni uvazku
-router.get("/api/uvazky", async (req, res) => {
-    console.log("prijat pozadavek na uvazky");
+// vraci pouze uvazky, taham do frontendu do vykazu do nastaveni uvazku -> uz to nepotrebuju, je poreseno z BE
+// router.get("/api/uvazky", async (req, res) => {
+//     console.log("prijat pozadavek na uvazky");
 
-    try {
-        const [rows] = await pool.query(
-            "SELECT po, ut, st, ct, pa FROM uvazky WHERE user_id = ?",
-            [req.session.user.id],
-        );
-        console.log(rows[0]);
-        res.json(rows[0]);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+//     try {
+//         const [rows] = await pool.query(
+//             "SELECT po, ut, st, ct, pa FROM uvazky WHERE user_id = ?",
+//             [req.session.user.id],
+//         );
+//         console.log(rows[0]);
+//         res.json(rows[0]);
+//     } catch (error) {
+//         res.status(500).json({ error: error.message });
+//     }
 
-
-});
+// });
 //posilam z FE, ze je vykaz odevzdany -> toto nyní funguje
 router.post("/api/odevzdano", async (req, res) => {
     console.log("prijat pozadavek na odevzdano, kde chci vedet jestli uz je v aktualni mesic vykaz odevzadenj");

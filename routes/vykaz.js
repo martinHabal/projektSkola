@@ -11,9 +11,9 @@ router.get("/vykaz-novy-novy", async (req, res) => {
   try {
     // Dotaz na uživatele
     // console.log(req.session.user)
-    const [users] = await pool.query(`SELECT * FROM users LEFT JOIN uvazky ON users.id = uvazky.id WHERE users.id = ?`,[req.session.user.id],
-    );
-
+    const [users] = await pool.query(`SELECT * FROM users LEFT JOIN uvazky ON users.id = uvazky.id WHERE users.id = ?`,[req.session.user.id]);
+    const [rows] = await pool.query("SELECT po, ut, st, ct, pa FROM uvazky WHERE user_id = ?",[req.session.user.id])
+console.log(rows)
     //kontrola, zda je odevzdano, kvuli zobrazeni tlacitka na smazani posledniho vykazu
     const [odevzdano] = await pool.query(`SELECT EXISTS(SELECT 1 FROM odevzdano 
             WHERE users_id = ? 
@@ -30,7 +30,8 @@ router.get("/vykaz-novy-novy", async (req, res) => {
       stats: null,
       totalUsers: users.length,
       filter: "Pouze učitelé",
-      maOdevzdano: maOdevzdano
+      maOdevzdano: maOdevzdano,
+      uvazky: rows[0]
     });
   } catch (error) {
     console.error("Chyba při načítání uživatelů:", error);

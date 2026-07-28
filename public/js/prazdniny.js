@@ -1,3 +1,4 @@
+"use strict"
 function skolniPrazdniny() {
     
       // Důvody pro neoducené hodiny s nápovědou

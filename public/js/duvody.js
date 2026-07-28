@@ -1,3 +1,4 @@
+"use strict"
 function duvodyNepritomnosti() {
     
       // Důvody pro neoducené hodiny s nápovědou

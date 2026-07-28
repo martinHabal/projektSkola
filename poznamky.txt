@@ -37,6 +37,8 @@
 
 //Na skolach se to nyni zavadi v famci automatizaci workflow, reditelum se ted i meni skoleni, aby spise manazeri a teamleaderi.
 //pak to musim udelat tak, aby uz nemohli odejit
+//ono kdybych to hodil na skupinu ucitele, tak to pojede rychle, ale jen pro koncaky. Takze ne uplne to co by oni mohli hned pouzit. Pokud tam dam neco co muoz pouzit , pak by to bylo super
+
 
 
 //LEGISLATIVA
