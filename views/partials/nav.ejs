@@ -1,0 +1,71 @@
+<nav class="toolbar">
+
+    <a href="/logout" class="tool white">
+        <span class="material-symbols-rounded">logout</span>
+        <span>Odhlásit</span>
+
+    </a>
+    <% if (isAdmin || isSuperadmin) { %>
+    <a href="/sprava-udalosti" class="tool purple">
+        <span class="material-symbols-rounded">list_alt</span>
+        <span>Správa událostí</span>
+    </a>
+<% } %>
+<% if (isAdmin || isSuperadmin) { %>
+    <a href="/dashboard" class="tool purple">
+        <span class="material-symbols-rounded">monitoring</span>
+        <span>Reporty</span>
+    </a>
+    <% } %>
+  <% if (isAdmin || isSuperadmin) { %>
+    <a href="/new-user" class="tool purple">
+        <span class="material-symbols-rounded">group_add</span>
+        <span>Uživatelé</span>
+    </a>
+<% } %>
+    <a href="/manual" class="tool teal">
+        <span class="material-symbols-rounded">help</span>
+        <span>Nápověda</span>
+    </a>
+
+    <!-- <a href="/dashboard" class="tool blue">
+        <span class="material-symbols-rounded">bar_chart</span>
+        <span>Statistiky</span>
+    </a> -->
+
+    <a href="/skolni-rad" class="tool teal">
+        <span class="material-symbols-rounded">policy</span>
+        <span>Školní řád</span>
+    </a>
+    <a href="/dokumenty-skoly" class="tool teal">
+        <span class="material-symbols-rounded">find_in_page</span>
+        <span>Dokumenty</span>
+    </a>
+
+    <a href="/generator-dokumentu" class="tool teal">
+        <span class="material-symbols-rounded">assignment_add</span>
+        <span>Generátor</span>
+    </a>
+
+    <a href="/firemni-udalosti" class="tool teal">
+        <span class="material-symbols-rounded">dashboard_customize</span>
+        <span>Nástěnka</span>
+    </a>
+
+    <a href="/dashboard-ucitel" class="tool teal">
+        <span class="material-symbols-rounded">dashboard</span>
+        <span>Přehled</span>
+    </a>
+
+    <a href="/vykaz" class="tool teal">
+        <span class="material-symbols-rounded">add_task</span>
+        <span>Nový záznam</span>
+    </a>
+    <% if (isSuperadmin) { %>
+    <a href="/nova-skola" class="tool teal">
+        <span class="material-symbols-rounded">add_task</span>
+        <span>Nový záznam</span>
+    </a>
+<% } %>
+
+</nav>

@@ -61,7 +61,7 @@ router.post("/login", async (req, res) => {
       role: user.role
     };
 
-    res.redirect("/vykaz-novy-novy");
+    res.redirect("/vykaz");
     // console.log(req.session.user);
   } catch (error) {
     console.error(error);

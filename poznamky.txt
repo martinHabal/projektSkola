@@ -17,18 +17,6 @@
 //skolni prazniny holt rucne a svatky budu nacitat z api
 
 
-
-
-
-//agent bude mit pristup k DB, takze i reditelka se ho muze ptat na ruzny veci, treba kdo oddelal nejvic apod.
-//muzu jim udelat agenta na web
-//musim dodelat tu kolonku na praci o vikendu -> uz je dodelana, ale jeste se neposila na server
-
-
-
-
-
-
 //MARKETING
 //1. necham jim to na rok zdarma, pak je nechat vybrat si jaky sluzby chteji
 //2. budou mít na vyber, klidne jen vykaz za par konkurence
@@ -52,3 +40,6 @@
 //u loginu musi byt i stredisko, podle toho se pak bude vybirat databaze -> to reseni necham na pozdeji, je to slozitejsi
 //pak poresit naduvazky apod. ale to az pak s reditelkou
 //Schvalovací proces - doresit akceptaci -> zatim se zobrazuje v dashboardu, ze je odevzdano, pak to ale chce nejak zamknout a tim rict, ze uz je prevzaty
+//agent bude mit pristup k DB, takze i reditelka se ho muze ptat na ruzny veci, treba kdo oddelal nejvic apod. -> hmm, tak to je docela narocny, az nekdy pozdeji
+//muzu jim udelat agenta na web
+

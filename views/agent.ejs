@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI SQL Assistant</title>
+    <link rel="stylesheet" href="/css/agent.css">
+</head>
+<body>
+    <div class="app">
+        <header class="header">
+            <h1>🤖 AI SQL Assistant</h1>
+            <p>Zeptej se na cokoliv o databázi</p>
+        </header>
+
+        <main class="main">
+            <div class="chat-container">
+                <div id="messages" class="messages-container">
+                    <div class="empty-state">
+                        <p>💬 Zeptej se na cokoliv o databázi</p>
+                        <p class="example">Např: "Kolik máme zákazníků?"</p>
+                    </div>
+                </div>
+                
+                <form id="chatForm" class="input-form">
+                    <input 
+                        type="text" 
+                        id="questionInput" 
+                        placeholder="Napiš svou otázku..." 
+                        required
+                        autocomplete="off"
+                    >
+                    <button type="submit" id="sendButton">
+                        <span id="buttonText">📤 Odeslat</span>
+                        <span id="buttonLoading" style="display: none;">⏳ Zpracovávám...</span>
+                    </button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script src="/js/chat.js"></script>
+</body>
+</html>

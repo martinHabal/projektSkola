@@ -4,7 +4,7 @@ import pool from "#db/db"; //moderni import - nastaveny v package.json
 import bcrypt from "bcrypt";
 
 
-router.get("/vykaz-novy-novy", async (req, res) => {
+router.get("/vykaz", async (req, res) => {
   if (!req.session.user) {
     return res.redirect("/");
   }
@@ -24,7 +24,7 @@ console.log(rows)
     // odevzdano[0].maOdevzdano vrátí 1 (true) nebo 0 (false)
     const maOdevzdano = odevzdano[0].maOdevzdano === 1;
 // console.log("ma odevzdano " + maOdevzdano)
-    res.render("vykaz-novy-novy", {
+    res.render("vykaz", {
       title: "Seznam učitelů (prepared statement)",
       users: users[0],
       stats: null,
