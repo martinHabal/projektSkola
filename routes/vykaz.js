@@ -108,9 +108,9 @@ router.post("/api/process-number", async (req, res) => {
 
 //SAVE VYKAZ
 router.post("/api/uloz-vykaz", async (req, res) => {
-  const { data } = req.body;
+  const { data, nestandardHodiny, nestandardDuvod } = req.body;
 
-  //   console.log(data)
+    // console.log(nestandardHodiny)
   const dataMaped = data
     .filter((zaznam) => zaznam.Datum !== "CELKEM")
     .map((zaznam) => {
@@ -129,7 +129,7 @@ router.post("/api/uloz-vykaz", async (req, res) => {
     
       const sql = `
                 INSERT INTO work_logs 
-                (users_id, work_date, day_name, day_type, hours_worked, hours_subbed, hours_missed, reason_missed) 
+                (users_id, work_date, day_name, day_type, hours_worked, hours_subbed, hours_missed, reason_missed, nestandard_hodiny, nestandard_duvod) 
                 VALUES ?
             `;
 
@@ -142,14 +142,16 @@ router.post("/api/uloz-vykaz", async (req, res) => {
         log["Suplované hodiny"] === "-" ? 0 : log["Suplované hodiny"] || 0,
         log["Neodučené hodiny"] === "-" ? 0 : log["Neodučené hodiny"] || 0,
         log["Důvod neoducení"] === "-" ? null : log["Důvod neoducení"] || null,
+        nestandardHodiny,
+        nestandardDuvod,
       ]);
 
-      console.log(values);
+      // console.log(values);
 
       const [result] = await pool.query(sql, [values]);
 
 
-      console.log(`✅ Úspěšně vloženo ${result.affectedRows} záznamů`);
+      console.log(`✅ Úspěšně vloženo do tabulky work_logs ${result.affectedRows} záznamů`);
       console.log(`📊 Poslední ID: ${result.insertId}`);
 
       return result;

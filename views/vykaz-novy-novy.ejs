@@ -1113,8 +1113,8 @@
                      
                         <tr>
                          
-                            <td><input type="number" step="1" min="1" value="0"></td>
-                            <td><input type="text" placeholder="Důvod / poznámka"></td>
+                            <td><input id="nestandardHodiny" type="number" step="1" min="1" value="0"></td>
+                            <td><input id="nestandardDuvod" type="text" placeholder="Důvod / poznámka"></td>
 
                         </tr>
 
@@ -1188,12 +1188,12 @@
                 <script src="/js/duvody.js"></script>
                 <script src="/js/prazdniny.js"></script>
                 <script>
-"use strict"
+
                     // Aktuální datum
                     const currentDate = new Date();
                     let currentMonth = currentDate.getMonth();
                     let currentYear = currentDate.getFullYear();
-                    const uvazky = <% - JSON.stringify(uvazky) %>
+                    const uvazky = <%- JSON.stringify(uvazky) %>
 
                     // Důvody pro neoducené hodiny s nápovědou, načteno z duvody.js
                     const missedReasons = duvodyNepritomnosti()
@@ -1636,7 +1636,7 @@
                         }
                     }
 
-                    //ULOZENI VYKAZU START
+                    // ULOZENI VYKAZU START
                     // Event listener pro tlačítko ulozit
                     document.getElementById("btn-save").addEventListener("click", function () {
                         // Funkce pro získání dat z tabulky
@@ -1733,6 +1733,10 @@
 
                         const data = tableToObjectArray("workTable");
 
+                        //jeste nactu data z mimobezny prac. doby
+const nestandardHodiny = document.getElementById("nestandardHodiny").value
+const nestandardDuvod = document.getElementById("nestandardDuvod").value
+
                         fetch(`/api/uloz-vykaz`, {
                             method: "POST",
                             headers: {
@@ -1740,6 +1744,8 @@
                             },
                             body: JSON.stringify({
                                 data: data,
+                                nestandardHodiny: nestandardHodiny,
+                                nestandardDuvod: nestandardDuvod
                             }),
                         });
 

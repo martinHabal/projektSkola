@@ -87,6 +87,8 @@ router.post("/register-school", async (req, res) => {
     hours_missed INT DEFAULT 0,
     reason_missed VARCHAR(100) DEFAULT NULL,
     month TINYINT NOT NULL,
+    nestandard_hodiny TINYINT NOT NULL,
+    nestandard_duvod VARCHAR(100) NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (users_id) REFERENCES users(id) ON DELETE CASCADE
