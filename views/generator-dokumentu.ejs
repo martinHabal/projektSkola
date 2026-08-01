@@ -72,7 +72,7 @@
             margin-bottom: 0.3rem;
         }
         .form-group input, .form-group select {
-            width: 100%;
+            width: 67%;
             padding: 0.65rem 0.9rem;
             border: 1px solid #d1d9e6;
             border-radius: 14px;
@@ -210,15 +210,18 @@
 <body>
    
       <%- include('./partials/header') %><%- include('./partials/nav') %>
-<div class="app">
-    <h1>📋 Generátor školních formulářů</h1>
+<div class="container" id="app">
+    <!-- <h1>📋 Generátor školních formulářů</h1> -->
+    <div class="content-header">
+                        <h3>Generátor školních formulářů</h3>
+                    </div>
 
     <div class="grid">
         <!-- LEVÝ PANEL – proměnné -->
         <div class="form-panel">
-            <h2>🧑‍🏫 Údaje pro dokument</h2>
+            <h2>Údaje pro dokument</h2>
             <div class="form-group">
-                <label>👤 Jméno žáka / studenta</label>
+                <label>Jméno žáka / studenta</label>
                 <input type="text" id="studentName" value="Adam Novák" placeholder="např. Adam Novák" />
             </div>
             <div class="form-row">
@@ -232,15 +235,15 @@
                 </div>
             </div>
             <div class="form-group">
-                <label>👨‍🏫 Jméno učitele (třídní / vyučující)</label>
+                <label>Jméno učitele (třídní / vyučující)</label>
                 <input type="text" id="teacherName" value="Mgr. Helena Novotná" placeholder="Mgr. Helena Novotná" />
             </div>
             <div class="form-group">
-                <label>🏫 Název školy</label>
+                <label>Název školy</label>
                 <input type="text" id="schoolName" value="ZŠ a MŠ Pod Lípou, Praha" placeholder="ZŠ a MŠ ..." />
             </div>
             <div class="form-group">
-                <label>📋 Výběr formuláře (šablony)</label>
+                <label>Výběr formuláře (šablony)</label>
                 <select id="templateSelect">
                     <option value="pochvala_tridni">Pochvala třídního učitele</option>
                     <option value="napomenuti_tridni">Napomenutí třídního učitele</option>
@@ -267,7 +270,7 @@
                 <button class="btn btn-outline" id="resetDefaultsBtn">↺ Výchozí hodnoty</button>
             </div>
             <div style="margin-top: 1rem; font-size: 0.8rem; color: #475569; border-top: 1px dashed #d1d9e6; padding-top: 0.8rem;">
-                ⚡ Proměnné: <span class="badge">{jméno}</span> <span class="badge">{třída}</span> <span class="badge">{učitel}</span> <span class="badge">{škola}</span> <span class="badge">{datum}</span> <span class="badge">{poznámka}</span>
+                <!-- ⚡ Proměnné: <span class="badge">{jméno}</span> <span class="badge">{třída}</span> <span class="badge">{učitel}</span> <span class="badge">{škola}</span> <span class="badge">{datum}</span> <span class="badge">{poznámka}</span> -->
             </div>
         </div>
 

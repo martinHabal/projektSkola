@@ -954,7 +954,7 @@
         
             <div class="container">
                 <div class="content-header">
-                    <h3>Učitel: <%- users.first_name %> <%- users.last_name %></h3>
+                    <h3>Nový výkaz práce</h3>
                     <input style="display: none" disabled type="text" id="user-name" class="user-info-input"
                         placeholder="<%- users.first_name %> <%- users.last_name %>" />
 
@@ -1096,8 +1096,8 @@
                         <input type="checkbox" id="toggleTable">
                         <span class="slider"></span>
                     </label>
-                    <span class="switch-status" id="switchStatus">✕ skrytá</span>
-                    <span style="font-size:13px; color:#64748b; margin-left:auto;">
+                    <span class="switch-status" id="switchStatus">✕</span>
+                    <span style="font-size:13px; color:#64748b;">
                         Klikněte pokud zadáváte odpracované hodiny mimo běžnou pracovní dobu (víkendy, svátky, apod.)
                     </span>
                 </div>
@@ -1976,11 +1976,11 @@ const nestandardDuvod = document.getElementById("nestandardDuvod").value
                     function updateTableVisibility() {
                         if (toggle.checked) {
                             table.classList.remove('hidden-table');
-                            status.textContent = '✓ viditelná';
+                            status.textContent = '✓';
                             status.className = 'switch-status active';
                         } else {
                             table.classList.add('hidden-table');
-                            status.textContent = '✕ skrytá';
+                            status.textContent = '✕';
                             status.className = 'switch-status';
                         }
                     }

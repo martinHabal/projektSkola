@@ -19,6 +19,7 @@
 //musim sladit ten DOM
 //sjednotit semantiku, proste kde ma byt h1 a kde h3
 // je zajimavy ze se mi obcas rozhodi <%- na <% -
+//do headeru chci jmenoi a prijemni, ne login, ale problem je ze do ruznych sablon se posilaji jina data, musim do vsech poslat toho uzivatele
 
 //MARKETING
 //1. necham jim to na rok zdarma, pak je nechat vybrat si jaky sluzby chteji
