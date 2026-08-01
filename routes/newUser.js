@@ -61,7 +61,7 @@ try {
     
     // Vložení záznamu do uvazky s user_id
     await connection.execute(
-        `INSERT INTO uvazky (user_id, po, ut, st, ct, pa) 
+        `INSERT INTO uvazky (users_id, po, ut, st, ct, pa) 
          VALUES (?, ?, ?, ?, ?, ?)`,
         [userId, 4, 4, 4, 4, 4]
     );

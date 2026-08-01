@@ -15,7 +15,10 @@
 
 //sjednotit ty nazvy v DB, cestinu apod, pak samozrejme ty seeds a migrace upravit
 //skolni prazniny holt rucne a svatky budu nacitat z api
-
+//nenacitaji se uvazky hned po nacteni, ale az po zmene inputu!!
+//musim sladit ten DOM
+//sjednotit semantiku, proste kde ma byt h1 a kde h3
+// je zajimavy ze se mi obcas rozhodi <%- na <% -
 
 //MARKETING
 //1. necham jim to na rok zdarma, pak je nechat vybrat si jaky sluzby chteji
@@ -43,3 +46,5 @@
 //agent bude mit pristup k DB, takze i reditelka se ho muze ptat na ruzny veci, treba kdo oddelal nejvic apod. -> hmm, tak to je docela narocny, az nekdy pozdeji
 //muzu jim udelat agenta na web
 
+//SECURITY
+///poresity ty zranitelnosti, je toho teda dost co si ohlidat viz AI

@@ -88,7 +88,7 @@ router.get("/dashboard", async (req, res) => {
     us.first_name,
     us.last_name,  
     GROUP_CONCAT(DISTINCT uv.id) as uvazek_ids,
-    SUM(uv.total_hodiny) as total_hodiny,
+    SUM(uv.uvazek_celkem) as uvazek_celkem,
     COUNT(wl.id) as pocet_work_logu,
     SUM(wl.hours_worked) as celkem_hodin,
     MAX(wl.work_date) as posledni_work_date,  -- nejnovější datum
@@ -97,7 +97,7 @@ router.get("/dashboard", async (req, res) => {
 FROM 
     users us
 LEFT JOIN 
-    uvazky uv ON us.id = uv.user_id
+    uvazky uv ON us.id = uv.users_id
 LEFT JOIN 
     work_logs wl ON us.id = wl.users_id
 LEFT JOIN 

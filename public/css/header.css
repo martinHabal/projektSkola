@@ -1,3 +1,4 @@
+  /* globalni header */
   header {
       display: flex;
       justify-content: space-between;
@@ -12,6 +13,24 @@
       border-radius: 0 0 10px 10px;
       font-size: 10px;
       z-index: 1000;
+      width: 30%;
+  }
+
+  /* sjednoceny header vsech sekci*/
+  .content-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+
+      background-color: #f8f9fa;
+      padding: 15px;
+      margin-bottom: 25px;
+      border-left: 4px solid #3498db;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 20px;
+
   }
 
   header h1 {
@@ -24,26 +43,31 @@
       display: inline-block;
   }
 
-  .header-right{
+  .content-header h3 {
+    color: #2F9C91;
+  }
+
+  .header-right {
       margin-top: 26px;
       cursor: pointer;
       font-size: 24px;
   }
 
   header button {
-        background-color: #a4ccc8;
-        color: white;
-        border: none;
-        /* padding: 10px 20px; */
-        font-size: 18px;
-        border-radius: 5px;
-        cursor: pointer;
-        display: inline-block;
-    }
- header button:hover {
-        background-color: #3367D6;
-    }
-  
+      background-color: #a4ccc8;
+      color: white;
+      border: none;
+      /* padding: 10px 20px; */
+      font-size: 18px;
+      border-radius: 5px;
+      cursor: pointer;
+      display: inline-block;
+  }
+
+  header button:hover {
+      background-color: #3367D6;
+  }
+
 
   .panel-btn:hover {
       transform: translateY(-3px);
@@ -91,5 +115,3 @@
           font-size: 18px;
       }
   }
-
-  

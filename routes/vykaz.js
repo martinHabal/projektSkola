@@ -12,8 +12,8 @@ router.get("/vykaz", async (req, res) => {
     // Dotaz na uživatele
     // console.log(req.session.user)
     const [users] = await pool.query(`SELECT * FROM users LEFT JOIN uvazky ON users.id = uvazky.id WHERE users.id = ?`,[req.session.user.id]);
-    const [rows] = await pool.query("SELECT po, ut, st, ct, pa FROM uvazky WHERE user_id = ?",[req.session.user.id])
-console.log(rows)
+    const [rows] = await pool.query("SELECT po, ut, st, ct, pa FROM uvazky WHERE users_id = ?",[req.session.user.id])
+console.log("rows uvazky" + rows)
     //kontrola, zda je odevzdano, kvuli zobrazeni tlacitka na smazani posledniho vykazu
     const [odevzdano] = await pool.query(`SELECT EXISTS(SELECT 1 FROM odevzdano 
             WHERE users_id = ? 
@@ -23,7 +23,7 @@ console.log(rows)
     );
     // odevzdano[0].maOdevzdano vrátí 1 (true) nebo 0 (false)
     const maOdevzdano = odevzdano[0].maOdevzdano === 1;
-// console.log("ma odevzdano " + maOdevzdano)
+console.log("ma odevzdano " + rows[0])
     res.render("vykaz", {
       title: "Seznam učitelů (prepared statement)",
       users: users[0],
@@ -79,19 +79,19 @@ router.post("/api/process-number", async (req, res) => {
   let result;
 
   // Nejprve zkontrolujeme, zda záznam existuje
-  const [existing] = await pool.query(`SELECT id FROM uvazky WHERE id = ?`, [
+  const [existing] = await pool.query(`SELECT id FROM uvazky WHERE users_id = ?`, [
     userId,
   ]);
 
   if (existing.length === 0) {
     // Záznam neexistuje - vytvoříme ho
-    await pool.query(`INSERT INTO uvazky (id, ${dayOfWeek}) VALUES (?, ?)`, [
+    await pool.query(`INSERT INTO uvazky (users_id, ${dayOfWeek}) VALUES (?, ?)`, [
       userId,
       value,
     ]);
   } else {
     // Záznam existuje - updatujeme ho
-    const query = `UPDATE uvazky SET ${dayOfWeek} = ? WHERE id = ?`;
+    const query = `UPDATE uvazky SET ${dayOfWeek} = ? WHERE users_id = ?`;
     await pool.query(query, [value, userId]);
   }
 

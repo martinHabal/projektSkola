@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="cs">
 
-    <style>
-        /* * {
+<style>
+    /* * {
             box-sizing: border-box;
             font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
         }
@@ -15,476 +15,486 @@
             line-height: 1.6;
         } */
 
-        .container {
+    /* .container {
             max-width: 1200px;
             margin: 0 auto;
             background-color: white;
             border-radius: 10px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             padding: 25px;
-        }
+        } */
 
-        h1 {
+    /* h1 {
             color: #2c3e50;
             text-align: center;
             margin-bottom: 5px;
             padding-bottom: 10px;
             font-size: clamp(1.5rem, 4vw, 2.2rem);
-        }
+        } */
 
-        .subtitle {
-            text-align: center;
-            color: #7f8c8d;
-            margin-bottom: 25px;
-            font-size: clamp(0.9rem, 2vw, 1.1rem);
-        }
+    .subtitle {
+        text-align: center;
+        color: #7f8c8d;
+        margin-bottom: 25px;
+        font-size: clamp(0.9rem, 2vw, 1.1rem);
+    }
 
-        .header-line {
-            border: none;
-            height: 2px;
-            background: linear-gradient(to right, transparent, #3498db, transparent);
-            margin-bottom: 25px;
-        }
+    .header-line {
+        border: none;
+        height: 2px;
+        background: linear-gradient(to right, transparent, #3498db, transparent);
+        margin-bottom: 25px;
+    }
 
-        /* Filtr a vyhledávání */
-        .filter-section {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 25px;
-            padding: 15px 20px;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            align-items: center;
-        }
+    /* Filtr a vyhledávání */
+    .filter-section {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 25px;
+        padding: 15px 20px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        align-items: center;
+    }
 
-        .filter-section label {
-            font-weight: 600;
-            color: #2c3e50;
-            font-size: 0.9rem;
-            white-space: nowrap;
-        }
+    .filter-section label {
+        font-weight: 600;
+        color: #2c3e50;
+        font-size: 0.9rem;
+        white-space: nowrap;
+    }
 
-        .filter-section select,
-        .filter-section input {
-            padding: 8px 12px;
-            border: 1px solid #bdc3c7;
-            border-radius: 5px;
-            font-size: 0.95rem;
-            background-color: white;
-        }
+    .filter-section select,
+    .filter-section input {
+        padding: 8px 12px;
+        border: 1px solid #bdc3c7;
+        border-radius: 5px;
+        font-size: 0.95rem;
+        background-color: white;
+    }
 
-        .filter-section input {
-            flex: 1 1 200px;
-            min-width: 150px;
-        }
+    .filter-section input {
+        flex: 1 1 200px;
+        min-width: 150px;
+    }
 
-        .filter-section select {
-            min-width: 130px;
-        }
+    .filter-section select {
+        min-width: 130px;
+    }
 
-        .filter-clear {
-            background-color: #e74c3c;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: background-color 0.3s;
-        }
+    .filter-clear {
+        background-color: #e74c3c;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: background-color 0.3s;
+    }
 
-        .filter-clear:hover {
-            background-color: #c0392b;
-        }
+    .filter-clear:hover {
+        background-color: #c0392b;
+    }
 
-        /* Legenda */
-        .legenda {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 25px;
-            padding: 15px 20px;
-            background-color: #f8f9fa;
-            border-left: 4px solid #3498db;
-            border-radius: 0 8px 8px 0;
-        }
+    /* Legenda */
+    .legenda {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 25px;
+        padding: 15px 20px;
+        background-color: #f8f9fa;
+        border-left: 4px solid #3498db;
+        border-radius: 0 8px 8px 0;
+    }
 
-        .legenda-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: clamp(0.8rem, 1.8vw, 0.9rem);
-        }
+    .legenda-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: clamp(0.8rem, 1.8vw, 0.9rem);
+    }
 
-        .color-box {
-            width: 20px;
-            height: 20px;
-            border-radius: 3px;
-            border: 1px solid #ddd;
-            flex-shrink: 0;
-        }
+    .color-box {
+        width: 20px;
+        height: 20px;
+        border-radius: 3px;
+        border: 1px solid #ddd;
+        flex-shrink: 0;
+    }
 
-        /* Seznam událostí */
-        .events-list {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-top: 10px;
-        }
+    /* Seznam událostí */
+    .events-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-top: 10px;
+    }
 
+    .event-card {
+        background-color: white;
+        border: 1px solid #e8e8e8;
+        border-radius: 10px;
+        padding: 18px 22px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: box-shadow 0.3s, transform 0.2s;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 15px 25px;
+        align-items: start;
+    }
+
+    .event-card:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .event-card .event-date {
+        font-weight: 700;
+        color: #2c3e50;
+        font-size: clamp(1rem, 2vw, 1.15rem);
+        white-space: nowrap;
+        min-width: 120px;
+        padding-top: 2px;
+    }
+
+    .event-card .event-date .day-name {
+        font-weight: 400;
+        color: #7f8c8d;
+        font-size: 0.8rem;
+        display: block;
+    }
+
+    .event-card .event-body {
+        flex: 1;
+    }
+
+    .event-card .event-title {
+        font-weight: 600;
+        font-size: clamp(1rem, 2vw, 1.2rem);
+        color: #2c3e50;
+        margin-bottom: 4px;
+    }
+
+    .event-card .event-description {
+        color: #555;
+        font-size: clamp(0.85rem, 1.8vw, 0.95rem);
+        line-height: 1.5;
+        word-break: break-word;
+        margin-top: 4px;
+    }
+
+    .event-card .event-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 8px;
+    }
+
+    .event-card .event-type {
+        display: inline-block;
+        padding: 2px 14px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        white-space: nowrap;
+    }
+
+    .event-type-meeting {
+        background-color: #e3f2fd;
+        color: #1565c0;
+    }
+
+    .event-type-training {
+        background-color: #fff3e0;
+        color: #e65100;
+    }
+
+    .event-type-social {
+        background-color: #fce4ec;
+        color: #c62828;
+    }
+
+    .event-type-deadline {
+        background-color: #f3e5f5;
+        color: #6a1b9a;
+    }
+
+    .event-type-other {
+        background-color: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    /* Stav, když nejsou události */
+    .no-events {
+        text-align: center;
+        padding: 50px 20px;
+        color: #7f8c8d;
+        font-style: italic;
+        background-color: #fafafa;
+        border-radius: 10px;
+        border: 2px dashed #ddd;
+    }
+
+    .no-events .icon {
+        font-size: 3rem;
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    /* Počet událostí */
+    .event-count {
+        text-align: right;
+        font-size: 0.9rem;
+        color: #7f8c8d;
+        margin-bottom: 10px;
+    }
+
+    .event-count strong {
+        color: #2c3e50;
+    }
+
+    /* Zpráva o aktualizaci */
+    .update-info {
+        text-align: center;
+        font-size: 0.8rem;
+        color: #95a5a6;
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+    }
+
+    .update-info .badge {
+        display: inline-block;
+        background-color: #27ae60;
+        color: white;
+        padding: 2px 10px;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        margin-left: 8px;
+    }
+
+    /* Responzivní úpravy */
+    @media (max-width: 768px) {
         .event-card {
-            background-color: white;
-            border: 1px solid #e8e8e8;
-            border-radius: 10px;
-            padding: 18px 22px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-            transition: box-shadow 0.3s, transform 0.2s;
-            display: grid;
-            grid-template-columns: auto 1fr;
-            gap: 15px 25px;
-            align-items: start;
-        }
-
-        .event-card:hover {
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-            transform: translateY(-2px);
+            grid-template-columns: 1fr;
+            gap: 8px;
         }
 
         .event-card .event-date {
-            font-weight: 700;
-            color: #2c3e50;
-            font-size: clamp(1rem, 2vw, 1.15rem);
-            white-space: nowrap;
-            min-width: 120px;
-            padding-top: 2px;
+            min-width: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         .event-card .event-date .day-name {
-            font-weight: 400;
-            color: #7f8c8d;
-            font-size: 0.8rem;
-            display: block;
+            display: inline;
         }
 
-        .event-card .event-body {
-            flex: 1;
+        .filter-section {
+            flex-direction: column;
+            align-items: stretch;
         }
 
-        .event-card .event-title {
-            font-weight: 600;
-            font-size: clamp(1rem, 2vw, 1.2rem);
-            color: #2c3e50;
-            margin-bottom: 4px;
+        .filter-section label {
+            white-space: normal;
+        }
+    }
+
+    @media print {
+        .no-print {
+            display: none !important;
         }
 
-        .event-card .event-description {
-            color: #555;
-            font-size: clamp(0.85rem, 1.8vw, 0.95rem);
-            line-height: 1.5;
-            word-break: break-word;
-            margin-top: 4px;
+        .event-card {
+            break-inside: avoid;
+            border: 1px solid #ccc;
+            box-shadow: none !important;
         }
 
-        .event-card .event-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-top: 8px;
+        .container {
+            box-shadow: none !important;
         }
-
-        .event-card .event-type {
-            display: inline-block;
-            padding: 2px 14px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            white-space: nowrap;
-        }
-
-        .event-type-meeting {
-            background-color: #e3f2fd;
-            color: #1565c0;
-        }
-
-        .event-type-training {
-            background-color: #fff3e0;
-            color: #e65100;
-        }
-
-        .event-type-social {
-            background-color: #fce4ec;
-            color: #c62828;
-        }
-
-        .event-type-deadline {
-            background-color: #f3e5f5;
-            color: #6a1b9a;
-        }
-
-        .event-type-other {
-            background-color: #e8f5e9;
-            color: #2e7d32;
-        }
-
-        /* Stav, když nejsou události */
-        .no-events {
-            text-align: center;
-            padding: 50px 20px;
-            color: #7f8c8d;
-            font-style: italic;
-            background-color: #fafafa;
-            border-radius: 10px;
-            border: 2px dashed #ddd;
-        }
-
-        .no-events .icon {
-            font-size: 3rem;
-            display: block;
-            margin-bottom: 10px;
-        }
-
-        /* Počet událostí */
-        .event-count {
-            text-align: right;
-            font-size: 0.9rem;
-            color: #7f8c8d;
-            margin-bottom: 10px;
-        }
-
-        .event-count strong {
-            color: #2c3e50;
-        }
-
-        /* Zpráva o aktualizaci */
-        .update-info {
-            text-align: center;
-            font-size: 0.8rem;
-            color: #95a5a6;
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 1px solid #eee;
-        }
-
-        .update-info .badge {
-            display: inline-block;
-            background-color: #27ae60;
-            color: white;
-            padding: 2px 10px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            margin-left: 8px;
-        }
-
-        /* Responzivní úpravy */
-        @media (max-width: 768px) {
-            .event-card {
-                grid-template-columns: 1fr;
-                gap: 8px;
-            }
-
-            .event-card .event-date {
-                min-width: auto;
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                flex-wrap: wrap;
-            }
-
-            .event-card .event-date .day-name {
-                display: inline;
-            }
-
-            .filter-section {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .filter-section label {
-                white-space: normal;
-            }
-        }
-
-        @media print {
-            .no-print {
-                display: none !important;
-            }
-            .event-card {
-                break-inside: avoid;
-                border: 1px solid #ccc;
-                box-shadow: none !important;
-            }
-            .container {
-                box-shadow: none !important;
-            }
-        }
-    </style>
+    }
+</style>
 
 <%- include('./partials/head') %>
 
     <body>
         <%- include('./partials/header') %><%- include('./partials/nav') %>
-    <div class="container" id="app">
-        <h1>📅 Firemní události</h1>
-        <p class="subtitle">Přehled všech plánovaných událostí</p>
-        <hr class="header-line">
+                <div class="container" id="app">
+                    <div class="content-header">
+                        <h3>Nástěnka - <span class="subtitle">přehled školních událostí</span></h3>
+                    </div>
 
-        <!-- Filtr -->
-        <div class="filter-section no-print">
-            <label for="filterType">🔍 Filtrovat:</label>
-            <select id="filterType">
-                <option value="all">Všechny typy</option>
-                <option value="meeting">Porada / Meeting</option>
-                <option value="training">Školení</option>
-                <option value="social">Společenská akce</option>
-                <option value="deadline">Termín odevzdání</option>
-                <option value="other">Jiné</option>
-            </select>
-            <input type="text" id="filterSearch" placeholder="Hledat v názvu nebo popisu...">
-            <button class="filter-clear" id="clearFilterBtn">✕ Vymazat filtr</button>
-        </div>
+                   
 
-        <!-- Legenda -->
-        <div class="legenda no-print">
-            <div class="legenda-item"><span class="color-box" style="background-color:#e3f2fd;"></span> Porada / Meeting</div>
-            <div class="legenda-item"><span class="color-box" style="background-color:#fff3e0;"></span> Školení</div>
-            <div class="legenda-item"><span class="color-box" style="background-color:#fce4ec;"></span> Společenská akce</div>
-            <div class="legenda-item"><span class="color-box" style="background-color:#f3e5f5;"></span> Termín odevzdání</div>
-            <div class="legenda-item"><span class="color-box" style="background-color:#e8f5e9;"></span> Jiné</div>
-        </div>
 
-        <!-- Počet událostí -->
-        <div class="event-count" id="eventCount">Celkem: <strong>0</strong> událostí</div>
+                    <!-- Filtr -->
+                    <div class="filter-section no-print">
+                        <label for="filterType">🔍 Filtrovat:</label>
+                        <select id="filterType">
+                            <option value="all">Všechny typy</option>
+                            <option value="meeting">Porada / Meeting</option>
+                            <option value="training">Školení</option>
+                            <option value="social">Společenská akce</option>
+                            <option value="deadline">Termín odevzdání</option>
+                            <option value="other">Jiné</option>
+                        </select>
+                        <input type="text" id="filterSearch" placeholder="Hledat v názvu nebo popisu...">
+                        <button class="filter-clear" id="clearFilterBtn">✕ Vymazat filtr</button>
+                    </div>
 
-        <!-- Seznam událostí -->
-        <div class="events-list" id="eventsList">
-            <div class="no-events">
-                <span class="icon">📭</span>
-                Zatím zde nejsou žádné události.
-            </div>
-        </div>
+                    <!-- Legenda -->
+                    <div class="legenda no-print">
+                        <div class="legenda-item"><span class="color-box" style="background-color:#e3f2fd;"></span>
+                            Porada / Meeting</div>
+                        <div class="legenda-item"><span class="color-box" style="background-color:#fff3e0;"></span>
+                            Školení</div>
+                        <div class="legenda-item"><span class="color-box" style="background-color:#fce4ec;"></span>
+                            Společenská akce</div>
+                        <div class="legenda-item"><span class="color-box" style="background-color:#f3e5f5;"></span>
+                            Termín odevzdání</div>
+                        <div class="legenda-item"><span class="color-box" style="background-color:#e8f5e9;"></span> Jiné
+                        </div>
+                    </div>
 
-        <div class="update-info no-print">
-            📊 Zobrazeno <strong id="totalEvents">0</strong> událostí 
-            <span class="badge">Demo data</span>
-        </div>
-    </div>
+                    <!-- Počet událostí -->
+                    <div class="event-count" id="eventCount">Celkem: <strong>0</strong> událostí</div>
 
-    <script>
-        (function() {
-            "use strict";
+                    <!-- Seznam událostí -->
+                    <div class="events-list" id="eventsList">
+                        <div class="no-events">
+                            <span class="icon">📭</span>
+                            Zatím zde nejsou žádné události.
+                        </div>
+                    </div>
 
-            // --- DOM odkazy ---
-            const eventsList = document.getElementById('eventsList');
-            const eventCount = document.getElementById('eventCount');
-            const totalEventsSpan = document.getElementById('totalEvents');
-            const filterType = document.getElementById('filterType');
-            const filterSearch = document.getElementById('filterSearch');
-            const clearFilterBtn = document.getElementById('clearFilterBtn');
-const events = <%- JSON.stringify(meetings) %>
-console.log(events)
-           
+                    <div class="update-info no-print">
+                        <!-- 📊 Zobrazeno <strong id="totalEvents">0</strong> událostí 
+            <span class="badge">Demo data</span> -->
+                    </div>
+                </div>
 
-            // --- Pomocné funkce ---
-            function formatDate(dateStr) {
-                const d = new Date(dateStr + 'T00:00:00');
-                const day = d.getDate();
-                const month = d.getMonth() + 1;
-                const year = d.getFullYear();
-                const days = ['Neděle', 'Pondělí', 'Úterý', 'Středa', 'Čtvrtek', 'Pátek', 'Sobota'];
-                const dayName = days[d.getDay()];
-                return `${day}. ${month}. ${year}`;
-            }
+                <script>
+                    (function () {
+                        "use strict";
 
-            function getDayName(dateStr) {
-                const d = new Date(dateStr + 'T00:00:00');
-                const days = ['Ne', 'Po', 'Út', 'St', 'Čt', 'Pá', 'So'];
-                return days[d.getDay()];
-            }
+                        // --- DOM odkazy ---
+                        const eventsList = document.getElementById('eventsList');
+                        const eventCount = document.getElementById('eventCount');
+                        const totalEventsSpan = document.getElementById('totalEvents');
+                        const filterType = document.getElementById('filterType');
+                        const filterSearch = document.getElementById('filterSearch');
+                        const clearFilterBtn = document.getElementById('clearFilterBtn');
+                        const events = <%- JSON.stringify(meetings) %>
+                            console.log(events)
 
-            function getTypeClass(type) {
-                switch (type) {
-                    case 'meeting': return 'event-type-meeting';
-                    case 'training': return 'event-type-training';
-                    case 'social': return 'event-type-social';
-                    case 'deadline': return 'event-type-deadline';
-                    default: return 'event-type-other';
-                }
-            }
 
-            function getTypeLabel(type) {
-                switch (type) {
-                    case 'meeting': return 'Porada';
-                    case 'training': return 'Školení';
-                    case 'social': return 'Společenská';
-                    case 'deadline': return 'Termín';
-                    default: return 'Jiné';
-                }
-            }
+                        // --- Pomocné funkce ---
+                        function formatDate(dateStr) {
+                            const d = new Date(dateStr + 'T00:00:00');
+                            const day = d.getDate();
+                            const month = d.getMonth() + 1;
+                            const year = d.getFullYear();
+                            const days = ['Neděle', 'Pondělí', 'Úterý', 'Středa', 'Čtvrtek', 'Pátek', 'Sobota'];
+                            const dayName = days[d.getDay()];
+                            return `${day}. ${month}. ${year}`;
+                        }
 
-            function isPastEvent(dateStr) {
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
-                const eventDate = new Date(dateStr + 'T00:00:00');
-                return eventDate < today;
-            }
+                        function getDayName(dateStr) {
+                            const d = new Date(dateStr + 'T00:00:00');
+                            const days = ['Ne', 'Po', 'Út', 'St', 'Čt', 'Pá', 'So'];
+                            return days[d.getDay()];
+                        }
 
-            function escapeHtml(text) {
-                if (!text) return '';
-                const div = document.createElement('div');
-                div.textContent = text;
-                return div.innerHTML;
-            }
+                        function getTypeClass(type) {
+                            switch (type) {
+                                case 'meeting': return 'event-type-meeting';
+                                case 'training': return 'event-type-training';
+                                case 'social': return 'event-type-social';
+                                case 'deadline': return 'event-type-deadline';
+                                default: return 'event-type-other';
+                            }
+                        }
 
-            // --- Filtrování ---
-            function getFilteredEvents() {
-                const typeFilter = filterType.value;
-                const searchTerm = filterSearch.value.toLowerCase().trim();
+                        function getTypeLabel(type) {
+                            switch (type) {
+                                case 'meeting': return 'Porada';
+                                case 'training': return 'Školení';
+                                case 'social': return 'Společenská';
+                                case 'deadline': return 'Termín';
+                                default: return 'Jiné';
+                            }
+                        }
 
-                return events.filter(event => {
-                    if (typeFilter !== 'all' && event.type !== typeFilter) return false;
-                    if (searchTerm) {
-                        const title = (event.title || '').toLowerCase();
-                        const desc = (event.description || '').toLowerCase();
-                        if (!title.includes(searchTerm) && !desc.includes(searchTerm)) return false;
-                    }
-                    return true;
-                });
-            }
+                        function isPastEvent(dateStr) {
+                            const today = new Date();
+                            today.setHours(0, 0, 0, 0);
+                            const eventDate = new Date(dateStr + 'T00:00:00');
+                            return eventDate < today;
+                        }
 
-            // --- Vykreslení událostí ---
-            function renderEvents() {
-                const filtered = getFilteredEvents();
+                        function escapeHtml(text) {
+                            if (!text) return '';
+                            const div = document.createElement('div');
+                            div.textContent = text;
+                            return div.innerHTML;
+                        }
 
-                // Řazení podle data (nejbližší první)
-                filtered.sort((a, b) => a.date.localeCompare(b.date));
+                        // --- Filtrování ---
+                        function getFilteredEvents() {
+                            const typeFilter = filterType.value;
+                            const searchTerm = filterSearch.value.toLowerCase().trim();
 
-                if (filtered.length === 0) {
-                    eventsList.innerHTML = `
+                            return events.filter(event => {
+                                if (typeFilter !== 'all' && event.type !== typeFilter) return false;
+                                if (searchTerm) {
+                                    const title = (event.title || '').toLowerCase();
+                                    const desc = (event.description || '').toLowerCase();
+                                    if (!title.includes(searchTerm) && !desc.includes(searchTerm)) return false;
+                                }
+                                return true;
+                            });
+                        }
+
+                        // --- Vykreslení událostí ---
+                        function renderEvents() {
+                            const filtered = getFilteredEvents();
+
+                            // Řazení podle data (nejbližší první)
+                            filtered.sort((a, b) => a.date.localeCompare(b.date));
+
+                            if (filtered.length === 0) {
+                                eventsList.innerHTML = `
                         <div class="no-events">
                             <span class="icon">📭</span>
                             ${events.length === 0 ? 'Zatím zde nejsou žádné události.' : 'Žádné události neodpovídají zadanému filtru.'}
                         </div>
                     `;
-                    eventCount.innerHTML = `Celkem: <strong>0</strong> událostí`;
-                    totalEventsSpan.textContent = '0';
-                    return;
-                }
+                                eventCount.innerHTML = `Celkem: <strong>0</strong> událostí`;
+                                totalEventsSpan.textContent = '0';
+                                return;
+                            }
 
-                let html = '';
-                filtered.forEach(event => {
-                    const dateStr = formatDate(event.date);
-                    const dayName = getDayName(event.date);
-                    const typeClass = getTypeClass(event.type);
-                    const typeLabel = getTypeLabel(event.type);
-                    const description = event.description || '';
-                    const past = isPastEvent(event.date);
+                            let html = '';
+                            filtered.forEach(event => {
+                                const dateStr = formatDate(event.date);
+                                const dayName = getDayName(event.date);
+                                const typeClass = getTypeClass(event.type);
+                                const typeLabel = getTypeLabel(event.type);
+                                const description = event.description || '';
+                                const past = isPastEvent(event.date);
 
-                    html += `
+                                html += `
                         <div class="event-card" style="${past ? 'opacity: 0.6;' : ''}">
                             <div class="event-date">
                                 ${dateStr}
@@ -499,29 +509,30 @@ console.log(events)
                             </div>
                         </div>
                     `;
-                });
+                            });
 
-                eventsList.innerHTML = html;
-                const countText = filtered.length === events.length 
-                    ? `Celkem: <strong>${filtered.length}</strong> událostí`
-                    : `Celkem: <strong>${filtered.length}</strong> událostí (z ${events.length} celkem)`;
-                eventCount.innerHTML = countText;
-                totalEventsSpan.textContent = filtered.length;
-            }
+                            eventsList.innerHTML = html;
+                            const countText = filtered.length === events.length
+                                ? `Celkem: <strong>${filtered.length}</strong> událostí`
+                                : `Celkem: <strong>${filtered.length}</strong> událostí (z ${events.length} celkem)`;
+                            eventCount.innerHTML = countText;
+                            totalEventsSpan.textContent = filtered.length;
+                        }
 
-            // --- Filtry ---
-            filterType.addEventListener('change', renderEvents);
-            filterSearch.addEventListener('input', renderEvents);
+                        // --- Filtry ---
+                        filterType.addEventListener('change', renderEvents);
+                        filterSearch.addEventListener('input', renderEvents);
 
-            clearFilterBtn.addEventListener('click', function() {
-                filterType.value = 'all';
-                filterSearch.value = '';
-                renderEvents();
-            });
+                        clearFilterBtn.addEventListener('click', function () {
+                            filterType.value = 'all';
+                            filterSearch.value = '';
+                            renderEvents();
+                        });
 
-            // --- Inicializace ---
-            renderEvents();
-        })();
-    </script>
-</body>
+                        // --- Inicializace ---
+                        renderEvents();
+                    })();
+                </script>
+    </body>
+
 </html>

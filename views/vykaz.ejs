@@ -162,10 +162,10 @@
         display: none;
     }
 
-    * {
+    /* * {
         box-sizing: border-box;
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    }
+    } */
 
     body {
         background-color: #f5f7fa;
@@ -175,14 +175,14 @@
         line-height: 1.6;
     }
 
-    .container {
+    /* .container {
         max-width: 1800px;
         margin: 0 auto;
         background-color: white;
         border-radius: 10px;
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         padding: 25px;
-    }
+    } */
 
     h1 {
         color: #2c3e50;
@@ -193,23 +193,22 @@
         font-size: clamp(1.5rem, 4vw, 2.2rem);
     }
 
-    .user-info-section {
+    /* .user-info-section {
         background-color: #f8f9fa;
         padding: 15px;
         margin-bottom: 25px;
-        /* border-radius: 8px; */
         border-left: 4px solid #3498db;
         display: flex;
         flex-wrap: wrap;
         align-items: center;
         gap: 20px;
-    }
+    } */
 
-    .user-info-section h3 {
+    /* .user-info-section h3 {
         margin: 0;
         color: #2c3e50;
         margin-bottom: 0;
-    }
+    } */
 
     .user-info-input {
         padding: 8px 15px;
@@ -954,7 +953,7 @@
         <%- include('./partials/header') %><%- include('./partials/nav') %>
         
             <div class="container">
-                <div class="user-info-section">
+                <div class="content-header">
                     <h3>Učitel: <%- users.first_name %> <%- users.last_name %></h3>
                     <input style="display: none" disabled type="text" id="user-name" class="user-info-input"
                         placeholder="<%- users.first_name %> <%- users.last_name %>" />
@@ -981,7 +980,7 @@
                 <div class="schedule-management">
                     <p id="total-hodiny">
                         Váš standardní týdenní rozvrh je
-                        <span id="total-value"><%- users.total_hodiny %></span> hodin
+                        <span id="total-value"><%- users.uvazek_celkem %></span> hodin
                     </p>
 
                     <div class="schedule-controls" style="display: flex">
@@ -1145,47 +1144,43 @@
 
 
                 <script type="module">
-                    import { NumberInputHandler } from "./class/UvazkyInputHandler.js";
+    import { NumberInputHandler } from "./class/UvazkyInputHandler.js";
 
-                    // Odesilani hodin vykazu
-                    // samozrejme to musim zkulturnit, ale prozatim tohle funguje
-                    // musim ale poresit nacitani, protoze to minule bylo pres sablonu
+    document.addEventListener("DOMContentLoaded", function () {
+        let config = {  // ← odstraněna mezera navíc
+            minValue: 0,
+            maxValue: 100,
+            debounceDelay: 300,
+            endpoint: "/api/process-number",
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-Requested-With": "XMLHttpRequest",
+            },
+            onSuccess: function (data, value) {
+                console.log(`Úspěch! Hodnota ${value} zpracována:`, data);
+            },
+            onError: function (error) {
+                console.error("Chyba v callbacku:", error);
+            },
+        };
 
-                    document.addEventListener("DOMContentLoaded", function () {
-                        const config = {
-                            minValue: 0,
-                            maxValue: 100,
-                            debounceDelay: 300,
-                            endpoint: "/api/process-number",
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                                "X-Requested-With": "XMLHttpRequest",
-                            },
-                            onSuccess: function (data, value) {
-                                console.log(`Úspěch! Hodnota ${value} zpracována:`, data);
-                            },
-                            onError: function (error) {
-                                console.error("Chyba v callbacku:", error);
-                            },
-                        };
+        let days = [  // ← odstraněna mezera navíc
+            "#schedule-mon",
+            "#schedule-tue",
+            "#schedule-wed",
+            "#schedule-thu",
+            "#schedule-fri",
+        ];
 
-                        const days = [
-                            "#schedule-mon",
-                            "#schedule-tue",
-                            "#schedule-wed",
-                            "#schedule-thu",
-                            "#schedule-fri",
-                        ];
-
-                        days.forEach((selector) => {
-                            new NumberInputHandler(selector, {
-                                ...config,
-                                inputDay: selector,
-                            });
-                        });
-                    });
-                </script>
+        days.forEach((selector) => {
+            new NumberInputHandler(selector, {
+                ...config,
+                inputDay: selector,
+            });
+        });
+    });
+</script>
                 <script src="/js/duvody.js"></script>
                 <script src="/js/prazdniny.js"></script>
                 <script>
@@ -1245,7 +1240,7 @@
                         // Aktuální rozvrh, vytvoří kopii původního objektu
                         currentSchedule = { ...defaultSchedule };
 //svatky z API
-                        fixedHolidays = await dataPromise;
+                         fixedHolidays = await dataPromise;
 
                         initMonthSelector();
                         generateCalendar(currentMonth, currentYear);

@@ -7,7 +7,16 @@
      color: #333; */
      /* font-family: "Comic Sans MS", "Chalkboard SE", "cursive"; */
        /* font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif; */
+       background: #f4f7fc;
  }
+ .container {
+        max-width: 1800px;
+        margin: 0 auto;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        padding: 25px;
+    }
 
  /* Dotyková zařízení (mobily, tablety) */
 @media (pointer: coarse) {
@@ -65,10 +74,10 @@
      width: 100%;
  } */
 
- h1 {
+ /* h1 {
     text-align: center;
  }
- 
+  */
 a, a:visited {
     /* color: black; */
     color: #5575b3;

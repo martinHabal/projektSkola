@@ -104,13 +104,13 @@ router.post("/register-school", async (req, res) => {
     so INT DEFAULT 0,
     ne INT DEFAULT 0,
     prespoctne INT DEFAULT 0,
-    total_hodiny INT GENERATED ALWAYS AS (
+    uvazek_celkem INT GENERATED ALWAYS AS (
         COALESCE(po, 0) + COALESCE(ut, 0) + COALESCE(st, 0) + 
         COALESCE(ct, 0) + COALESCE(pa, 0)
     ) STORED,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY (users_id) REFERENCES users(id) ON DELETE CASCADE
 );`,
             `CREATE TABLE IF NOT EXISTS odevzdano (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -141,8 +141,8 @@ router.post("/register-school", async (req, res) => {
         // Vytvoření indexů
         console.log("Vytvářím indexy...");
         const indexes = [
-            `CREATE INDEX IF NOT EXISTS idx_work_logs_user_date ON work_logs(user_id, work_date)`,
-            `CREATE INDEX IF NOT EXISTS idx_uvazky_user ON uvazky(user_id)`,
+            `CREATE INDEX IF NOT EXISTS idx_work_logs_user_date ON work_logs(users_id, work_date)`,
+            `CREATE INDEX IF NOT EXISTS idx_uvazky_user ON uvazky(users_id)`,
             `CREATE INDEX IF NOT EXISTS idx_odevzdano_worklog ON odevzdano(work_log_id)`,
         ];
 

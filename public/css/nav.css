@@ -5,8 +5,7 @@
     align-items:flex-start;
     flex-wrap:wrap;
     flex-direction: row-reverse;
-    /* position: relative;
-    top: 50px; */
+    margin-top:10px;
 }
 
 .tool{
@@ -15,11 +14,14 @@
     color:#222;
     text-align:center;
     font-family:Roboto,sans-serif;
+    
 }
 
+
+
 .tool .material-symbols-rounded{
-    width:58px;
-    height:58px;
+    width:48px;
+    height:48px;
     border-radius:14px;
     display:flex;
     align-items:center;

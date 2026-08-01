@@ -405,7 +405,7 @@ router.get("/vykaz-tisk-modal", async (req, res) => {
       username: records[0].username || "Neznámý",
       first_name: records[0].first_name || "Neznámý",
       last_name: records[0].last_name || "Neznámý",
-      total_hodiny: records[0].total_hodiny || 0,
+      uvazek_celkem: records[0].uvazek_celkem || 0,
       total_subbed: records[0].total_subbed || 0,
       total_missed: records[0].total_missed || 0,
       // employee: employee ? employee.name : 'Neznámý',
