@@ -20,6 +20,9 @@
 //sjednotit semantiku, proste kde ma byt h1 a kde h3
 // je zajimavy ze se mi obcas rozhodi <%- na <% -
 //do headeru chci jmenoi a prijemni, ne login, ale problem je ze do ruznych sablon se posilaji jina data, musim do vsech poslat toho uzivatele
+//sice mam vyresenou navigaci pro jiny role, ale zbytek je pristupnej pres routu pro vsechny
+//WORKFLOW školních akcí, měl by se poslat mail, pridat do kalendáře a zobrazit v systemu.
+
 
 //MARKETING
 //1. necham jim to na rok zdarma, pak je nechat vybrat si jaky sluzby chteji
