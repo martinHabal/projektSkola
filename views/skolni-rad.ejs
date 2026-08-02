@@ -1,490 +1,591 @@
+<style>
+   
+    #app {
+        display: flex;
+        flex-direction: row;
+        min-height: 100vh;
+        max-width: 1600px;
+        margin: 0 auto;
+        background: #fff;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    }
 
-    <style>
-        /* * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        } */
-        /* body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f7fa;
-            color: #1e2a3a;
-            line-height: 1.6;
-        } */
+    #left {
+        flex: 1;
+        padding: 2rem 2.5rem;
+        overflow-y: auto;
+        min-width: 0;
+    }
 
-        #app {
-            display: flex;
-            flex-direction: row;
-            min-height: 100vh;
-            max-width: 1600px;
-            margin: 0 auto;
-            background: #fff;
-            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    #right {
+        width: 380px;
+        background: #f8faff;
+        border-left: 1px solid #dce1e8;
+        padding: 1.5rem 1.2rem;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    #right h2 {
+        font-size: 1.2rem;
+        color: #0b2b4a;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        border-bottom: 2px solid #b0c4d9;
+        padding-bottom: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .server-status {
+        font-size: 0.75rem;
+        padding: 0.2rem 0.8rem;
+        border-radius: 20px;
+        margin-bottom: 0.5rem;
+        display: inline-block;
+    }
+
+    .server-status.online {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .server-status.offline {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .server-status.checking {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .ai-status {
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .ai-status .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+        background: #22c55e;
+        transition: background 0.3s;
+    }
+
+    .ai-status .dot.loading {
+        background: #f59e0b;
+        animation: pulse 1s infinite;
+    }
+
+    .ai-status .dot.error {
+        background: #ef4444;
+    }
+
+    .ai-status .dot.offline {
+        background: #94a3b8;
+    }
+
+    @keyframes pulse {
+
+        0%,
+        100% {
+            opacity: 1;
         }
 
-        #left {
-            flex: 1;
-            padding: 2rem 2.5rem;
-            overflow-y: auto;
-            min-width: 0;
+        50% {
+            opacity: 0.3;
+        }
+    }
+
+    .ai-chat {
+        flex: 1;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+        padding: 0.2rem 0;
+        min-height: 300px;
+        max-height: 450px;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 0.8rem;
+        background: white;
+    }
+
+    .ai-message {
+        max-width: 92%;
+        padding: 0.6rem 1rem;
+        border-radius: 14px;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        word-break: break-word;
+        animation: fadeUp 0.2s ease;
+    }
+
+    .ai-message.user {
+        background: #dce6f5;
+        align-self: flex-end;
+        border-bottom-right-radius: 4px;
+    }
+
+    .ai-message.assistant {
+        background: #f1f5f9;
+        align-self: flex-start;
+        border-bottom-left-radius: 4px;
+    }
+
+    .ai-message .msg-icon {
+        margin-right: 4px;
+    }
+
+    .ai-message.error {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .typing-indicator {
+        display: inline-flex;
+        gap: 4px;
+    }
+
+    .typing-indicator span {
+        width: 6px;
+        height: 6px;
+        background: #94a3b8;
+        border-radius: 50%;
+        animation: typing 1.2s infinite;
+    }
+
+    .typing-indicator span:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+
+    .typing-indicator span:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+
+    @keyframes typing {
+
+        0%,
+        60%,
+        100% {
+            transform: translateY(0);
+        }
+
+        30% {
+            transform: translateY(-6px);
+        }
+    }
+
+    @keyframes fadeUp {
+        0% {
+            opacity: 0;
+            transform: translateY(6px);
+        }
+
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .ai-input-area {
+        display: flex;
+        gap: 0.4rem;
+        padding: 0.8rem 0 0.2rem 0;
+        flex-wrap: wrap;
+        align-items: center;
+        border-top: 1px solid #dce1e8;
+        margin-top: 0.6rem;
+        padding-top: 0.8rem;
+    }
+
+    .ai-input-area input {
+        flex: 1;
+        padding: 0.5rem 1rem;
+        border-radius: 40px;
+        border: 1px solid #cbd5e1;
+        font-size: 0.9rem;
+        min-width: 100px;
+        background: white;
+    }
+
+    .ai-input-area input:focus {
+        outline: 2px solid #3b82f6;
+        border-color: transparent;
+    }
+
+    .ai-input-area .btn {
+        padding: 0.4rem 1rem;
+        border-radius: 40px;
+        border: none;
+        background: #1e3a5f;
+        color: white;
+        font-weight: 500;
+        cursor: pointer;
+        font-size: 0.85rem;
+        transition: 0.15s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .ai-input-area .btn:hover {
+        background: #0b2b4a;
+    }
+
+    .ai-input-area .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .ai-input-area .btn-voice {
+        background: #eef2f6;
+        color: #1e2a3a;
+        border: 1px solid #cbd5e1;
+    }
+
+    .ai-input-area .btn-voice:hover {
+        background: #e2e8f0;
+    }
+
+    .ai-input-area .btn-voice.recording {
+        background: #fce8e8;
+        color: #b33;
+    }
+
+    .voice-indicator {
+        font-size: 0.75rem;
+        color: #475569;
+        display: none;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .voice-indicator.active {
+        display: inline-flex;
+    }
+
+    .clear-chat-btn {
+        background: none;
+        border: none;
+        color: #94a3b8;
+        cursor: pointer;
+        font-size: 0.8rem;
+        padding: 0.2rem 0.5rem;
+    }
+
+    .clear-chat-btn:hover {
+        color: #ef4444;
+    }
+
+    .ai-header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    /* SEARCH */
+    #search-box {
+        margin-bottom: 1rem;
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    #search-box input {
+        flex: 1;
+        padding: 0.7rem 1rem;
+        border: 2px solid #cbd5e1;
+        border-radius: 30px;
+        font-size: 1rem;
+        outline: none;
+        min-width: 200px;
+    }
+
+    #search-box input:focus {
+        border-color: #2a6b9c;
+    }
+
+    #search-box button {
+        padding: 0.7rem 1.5rem;
+        background: #8b9aaa;
+        color: #fff;
+        border: none;
+        border-radius: 30px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.2s;
+        white-space: nowrap;
+    }
+
+    #search-box button:hover {
+        background: #6a7b8e;
+    }
+
+    #search-info {
+        font-size: 0.9rem;
+        color: #4a5b6e;
+        margin-bottom: 0.5rem;
+        min-height: 1.5rem;
+    }
+
+    #search-results {
+        margin-bottom: 1.5rem;
+        padding: 0.8rem 1rem;
+        background: #f8faff;
+        border-radius: 8px;
+        border: 1px solid #dce1e8;
+        display: none;
+    }
+
+    #search-results.visible {
+        display: block;
+    }
+
+    #search-results ul {
+        list-style: none;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 1.2rem;
+    }
+
+    #search-results ul li a {
+        color: #1e3a5f;
+        text-decoration: none;
+        border-bottom: 1px dashed #b0c4d9;
+        font-size: 0.9rem;
+        cursor: pointer;
+    }
+
+    /* CONTENT */
+    .chapter {
+        margin-bottom: 2.5rem;
+        border-bottom: 1px solid #e2e8f0;
+        padding-bottom: 1.5rem;
+    }
+
+    .chapter:last-child {
+        border-bottom: none;
+    }
+
+    .chapter h2 {
+        font-size: 1.8rem;
+        color: #0b2b4a;
+        margin-bottom: 1rem;
+        padding-bottom: 0.3rem;
+        border-bottom: 3px solid #cbd5e1;
+    }
+
+    .subsection {
+        margin-top: 1.2rem;
+        padding-left: 0.2rem;
+    }
+
+    .subsection h3 {
+        font-size: 1.2rem;
+        color: #1e3a5f;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+
+    .subsection p,
+    .subsection li {
+        margin-bottom: 0.6rem;
+    }
+
+    .subsection ul,
+    .subsection ol {
+        padding-left: 1.8rem;
+        margin-bottom: 0.6rem;
+    }
+
+    .subsection table {
+        border-collapse: collapse;
+        margin: 1rem 0;
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .subsection table td,
+    .subsection table th {
+        border: 1px solid #b0c4d9;
+        padding: 0.4rem 0.8rem;
+        text-align: center;
+    }
+
+    .subsection table th {
+        background: #e8edf4;
+        font-weight: 600;
+    }
+
+    .highlight {
+        background-color: #f9e66b;
+        padding: 0.1rem 0.2rem;
+        border-radius: 2px;
+        font-weight: 600;
+    }
+
+    .hidden-chapter {
+        display: none;
+    }
+
+    .hidden-subsection {
+        display: none;
+    }
+
+    .footnote {
+        font-size: 0.9rem;
+        color: #4a5b6e;
+        margin-top: 1rem;
+        border-top: 1px dashed #dce1e8;
+        padding-top: 0.8rem;
+    }
+
+    @media (max-width: 1024px) {
+        #right {
+            width: 320px;
+            padding: 1rem;
+        }
+    }
+
+    @media (max-width: 820px) {
+        #app {
+            flex-direction: column;
         }
 
         #right {
-            width: 380px;
-            background: #f8faff;
-            border-left: 1px solid #dce1e8;
-            padding: 1.5rem 1.2rem;
-            position: sticky;
-            top: 0;
-            height: 100vh;
+            width: 100%;
+            height: auto;
+            position: relative;
+            border-left: none;
+            border-top: 1px solid #dce1e8;
+            padding: 1rem;
+            max-height: 450px;
             overflow-y: auto;
-            flex-shrink: 0;
-            display: flex;
-            flex-direction: column;
         }
 
-        #right h2 {
-            font-size: 1.2rem;
-            color: #0b2b4a;
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            border-bottom: 2px solid #b0c4d9;
-            padding-bottom: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .server-status {
-            font-size: 0.75rem;
-            padding: 0.2rem 0.8rem;
-            border-radius: 20px;
-            margin-bottom: 0.5rem;
-            display: inline-block;
-        }
-        .server-status.online {
-            background: #dcfce7;
-            color: #166534;
-        }
-        .server-status.offline {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-        .server-status.checking {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .ai-status {
-            font-size: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            margin-bottom: 0.8rem;
-        }
-        .ai-status .dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            display: inline-block;
-            background: #22c55e;
-            transition: background 0.3s;
-        }
-        .ai-status .dot.loading {
-            background: #f59e0b;
-            animation: pulse 1s infinite;
-        }
-        .ai-status .dot.error {
-            background: #ef4444;
-        }
-        .ai-status .dot.offline {
-            background: #94a3b8;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
+        #left {
+            padding: 1rem;
         }
 
         .ai-chat {
-            flex: 1;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 0.6rem;
-            padding: 0.2rem 0;
-            min-height: 300px;
-            max-height: 450px;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 0.8rem;
-            background: white;
+            max-height: 200px;
+            min-height: 150px;
         }
-        .ai-message {
-            max-width: 92%;
-            padding: 0.6rem 1rem;
-            border-radius: 14px;
-            font-size: 0.9rem;
-            line-height: 1.5;
-            word-break: break-word;
-            animation: fadeUp 0.2s ease;
-        }
-        .ai-message.user {
-            background: #dce6f5;
-            align-self: flex-end;
-            border-bottom-right-radius: 4px;
-        }
-        .ai-message.assistant {
-            background: #f1f5f9;
-            align-self: flex-start;
-            border-bottom-left-radius: 4px;
-        }
-        .ai-message .msg-icon { margin-right: 4px; }
-        .ai-message.error {
-            background: #fee2e2;
-            color: #991b1b;
-        }
+    }
+</style>
 
-        .typing-indicator {
-            display: inline-flex;
-            gap: 4px;
-        }
-        .typing-indicator span {
-            width: 6px;
-            height: 6px;
-            background: #94a3b8;
-            border-radius: 50%;
-            animation: typing 1.2s infinite;
-        }
-        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-
-        @keyframes typing {
-            0%, 60%, 100% { transform: translateY(0); }
-            30% { transform: translateY(-6px); }
-        }
-
-        @keyframes fadeUp {
-            0% { opacity: 0; transform: translateY(6px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        .ai-input-area {
-            display: flex;
-            gap: 0.4rem;
-            padding: 0.8rem 0 0.2rem 0;
-            flex-wrap: wrap;
-            align-items: center;
-            border-top: 1px solid #dce1e8;
-            margin-top: 0.6rem;
-            padding-top: 0.8rem;
-        }
-        .ai-input-area input {
-            flex: 1;
-            padding: 0.5rem 1rem;
-            border-radius: 40px;
-            border: 1px solid #cbd5e1;
-            font-size: 0.9rem;
-            min-width: 100px;
-            background: white;
-        }
-        .ai-input-area input:focus {
-            outline: 2px solid #3b82f6;
-            border-color: transparent;
-        }
-        .ai-input-area .btn {
-            padding: 0.4rem 1rem;
-            border-radius: 40px;
-            border: none;
-            background: #1e3a5f;
-            color: white;
-            font-weight: 500;
-            cursor: pointer;
-            font-size: 0.85rem;
-            transition: 0.15s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-        .ai-input-area .btn:hover { background: #0b2b4a; }
-        .ai-input-area .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        .ai-input-area .btn-voice {
-            background: #eef2f6;
-            color: #1e2a3a;
-            border: 1px solid #cbd5e1;
-        }
-        .ai-input-area .btn-voice:hover { background: #e2e8f0; }
-        .ai-input-area .btn-voice.recording {
-            background: #fce8e8;
-            color: #b33;
-        }
-        .voice-indicator {
-            font-size: 0.75rem;
-            color: #475569;
-            display: none;
-            align-items: center;
-            gap: 0.3rem;
-        }
-        .voice-indicator.active { display: inline-flex; }
-
-        .clear-chat-btn {
-            background: none;
-            border: none;
-            color: #94a3b8;
-            cursor: pointer;
-            font-size: 0.8rem;
-            padding: 0.2rem 0.5rem;
-        }
-        .clear-chat-btn:hover {
-            color: #ef4444;
-        }
-        .ai-header-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        /* SEARCH */
-        #search-box {
-            margin-bottom: 1rem;
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        #search-box input {
-            flex: 1;
-            padding: 0.7rem 1rem;
-            border: 2px solid #cbd5e1;
-            border-radius: 30px;
-            font-size: 1rem;
-            outline: none;
-            min-width: 200px;
-        }
-        #search-box input:focus {
-            border-color: #2a6b9c;
-        }
-        #search-box button {
-            padding: 0.7rem 1.5rem;
-            background: #8b9aaa;
-            color: #fff;
-            border: none;
-            border-radius: 30px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background 0.2s;
-            white-space: nowrap;
-        }
-        #search-box button:hover {
-            background: #6a7b8e;
-        }
-
-        #search-info {
-            font-size: 0.9rem;
-            color: #4a5b6e;
-            margin-bottom: 0.5rem;
-            min-height: 1.5rem;
-        }
-
-        #search-results {
-            margin-bottom: 1.5rem;
-            padding: 0.8rem 1rem;
-            background: #f8faff;
-            border-radius: 8px;
-            border: 1px solid #dce1e8;
-            display: none;
-        }
-        #search-results.visible {
-            display: block;
-        }
-        #search-results ul {
-            list-style: none;
-            padding: 0;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem 1.2rem;
-        }
-        #search-results ul li a {
-            color: #1e3a5f;
-            text-decoration: none;
-            border-bottom: 1px dashed #b0c4d9;
-            font-size: 0.9rem;
-            cursor: pointer;
-        }
-
-        /* CONTENT */
-        .chapter {
-            margin-bottom: 2.5rem;
-            border-bottom: 1px solid #e2e8f0;
-            padding-bottom: 1.5rem;
-        }
-        .chapter:last-child { border-bottom: none; }
-        .chapter h2 {
-            font-size: 1.8rem;
-            color: #0b2b4a;
-            margin-bottom: 1rem;
-            padding-bottom: 0.3rem;
-            border-bottom: 3px solid #cbd5e1;
-        }
-        .subsection {
-            margin-top: 1.2rem;
-            padding-left: 0.2rem;
-        }
-        .subsection h3 {
-            font-size: 1.2rem;
-            color: #1e3a5f;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-        }
-        .subsection p, .subsection li { margin-bottom: 0.6rem; }
-        .subsection ul, .subsection ol { padding-left: 1.8rem; margin-bottom: 0.6rem; }
-        .subsection table {
-            border-collapse: collapse;
-            margin: 1rem 0;
-            width: 100%;
-            max-width: 400px;
-        }
-        .subsection table td, .subsection table th {
-            border: 1px solid #b0c4d9;
-            padding: 0.4rem 0.8rem;
-            text-align: center;
-        }
-        .subsection table th { background: #e8edf4; font-weight: 600; }
-        .highlight {
-            background-color: #f9e66b;
-            padding: 0.1rem 0.2rem;
-            border-radius: 2px;
-            font-weight: 600;
-        }
-        .hidden-chapter { display: none; }
-        .hidden-subsection { display: none; }
-
-        .footnote {
-            font-size: 0.9rem;
-            color: #4a5b6e;
-            margin-top: 1rem;
-            border-top: 1px dashed #dce1e8;
-            padding-top: 0.8rem;
-        }
-
-        @media (max-width: 1024px) {
-            #right { width: 320px; padding: 1rem; }
-        }
-
-        @media (max-width: 820px) {
-            #app { flex-direction: column; }
-            #right {
-                width: 100%;
-                height: auto;
-                position: relative;
-                border-left: none;
-                border-top: 1px solid #dce1e8;
-                padding: 1rem;
-                max-height: 450px;
-                overflow-y: auto;
-            }
-            #left { padding: 1rem; }
-            .ai-chat { max-height: 200px; min-height: 150px; }
-        }
-    </style>
-    
 
 <%- include('./partials/head') %>
-<body>
-   
-      <%- include('./partials/header') %><%- include('./partials/nav') %>
-      
-<div id="app">
 
-    <!-- ===== LEVÁ ČÁST ===== -->
-    <div id="left">
-            <div class="content-header">
-                    <h3>Školní řád</h3>
-                    
-                    <div class="badge-date"></div>
-                </div>
-        <div id="search-box">
-            <input type="text" id="search-input" placeholder="🔍 Hledat ve školním řádu" />
-            <button id="clear-search">✕ Zrušit</button>
-        </div>
-        <div id="search-info"></div>
-        <div id="search-results">
-            <h4>⬇️ Nalezené sekce</h4>
-            <ul id="results-list"></ul>
-        </div>
-        <div id="content"></div>
-        <div class="footnote">Školní řád nabývá účinnosti dnem 1. září 2025.</div>
-    </div>
+    <body>
 
-    <!-- ===== PRAVÝ SLOUPEC – AI AGENT ===== -->
-    <aside id="right">
-        <div class="ai-header-row">
-            <h2><span class="fa fa-robot"></span> AI asistent</h2>
-            <button class="clear-chat-btn" id="clearChatBtn">✕ Smazat</button>
-        </div>
+        <%- include('./partials/header') %><%- include('./partials/nav') %>
 
-        <div>
+                <div id="app">
+
+                    <!-- ===== LEVÁ ČÁST ===== -->
+                    <div id="left">
+                        <div class="content-header">
+                            <h3>Školní řád</h3>
+
+                            <div class="badge-date"></div>
+                        </div>
+                        <div id="search-box">
+                            <input type="text" id="search-input" placeholder="🔍 Hledat ve školním řádu" />
+                            <button id="clear-search">✕ Zrušit</button>
+                        </div>
+                        <div id="search-info"></div>
+                        <div id="search-results">
+                            <h4>⬇️ Nalezené sekce</h4>
+                            <ul id="results-list"></ul>
+                        </div>
+                        <div id="content"></div>
+                        <div class="footnote">Školní řád nabývá účinnosti dnem 1. září 2025.</div>
+                    </div>
+
+                    <!-- ===== PRAVÝ SLOUPEC – AI AGENT ===== -->
+                    <aside id="right">
+                        <div class="ai-header-row">
+                            <h2><span class="fa fa-robot"></span> Viki asistent</h2>
+                            <button class="clear-chat-btn" id="clearChatBtn">✕ Smazat</button>
+                        </div>
+
+                        <div>
             <span class="server-status checking" id="serverStatus">⏳ Kontrola připojení...</span>
         </div>
 
-        <div class="ai-status">
-            <span class="dot" id="aiStatusDot"></span>
-            <span id="aiStatusText">Připraven</span>
-        </div>
+                        <div class="ai-status">
+                            <span class="dot" id="aiStatusDot"></span>
+                            <span id="aiStatusText">Připraven</span>
+                        </div>
 
-        <div class="ai-chat" id="aiChat">
-            <div class="ai-message assistant">
-                <span class="msg-icon">🤖</span> Dobrý den, jsem AI asistent. Zeptejte se mě na cokoli ohledně školního řádu.
-            </div>
-        </div>
+                        <div class="ai-chat" id="aiChat">
+                            <div class="ai-message assistant">
+                                <span class="msg-icon">🤖</span> Ahoj, jsem Viki. Zeptej se mě na cokoli
+                                ohledně školního řádu.
+                            </div>
+                        </div>
 
-        <div class="ai-input-area">
-            <input type="text" id="aiInput" placeholder="Napište dotaz..." />
-            <button class="btn" id="aiSendBtn"><span class="fa fa-paper-plane"></span></button>
-            <button class="btn btn-voice" id="aiVoiceInputBtn">
-                <span class="fa fa-microphone"></span>
-            </button>
-            <button class="btn btn-voice" id="aiVoiceOutputBtn">
-                <span class="fa fa-volume-up"></span>
-            </button>
-            <span class="voice-indicator" id="aiVoiceIndicator">
-                <span class="fa fa-circle" style="color: #d94a4a; font-size: 0.5rem;"></span> poslouchám...
-            </span>
-        </div>
-    </aside>
-</div>
+                        <div class="ai-input-area">
+                            <input type="text" id="aiInput" placeholder="Napište dotaz..." />
+                            <button class="btn" id="aiSendBtn"><span class="fa fa-paper-plane"></span></button>
+                            <button class="btn btn-voice" id="aiVoiceInputBtn">
+                                <span class="fa fa-microphone"></span>
+                            </button>
+                            <button class="btn btn-voice" id="aiVoiceOutputBtn">
+                                <span class="fa fa-volume-up"></span>
+                            </button>
+                            <span class="voice-indicator" id="aiVoiceIndicator">
+                                <span class="fa fa-circle" style="color: #d94a4a; font-size: 0.5rem;"></span>
+                                poslouchám...
+                            </span>
+                        </div>
+                    </aside>
+                </div>
 
-<script>
-    // ================================================================
-    // 1. DATA – ŠKOLNÍ ŘÁD
-    // ================================================================
-   const schoolData = [
-        // ---- ÚVOD ----
-        {
-            chapter: "Úvod",
-            subsections: [
-                {
-                    title: "",
-                    content: `
+                <script>
+                    // ================================================================
+                    // 1. DATA – ŠKOLNÍ ŘÁD
+                    // ================================================================
+                    const schoolData = [
+                        // ---- ÚVOD ----
+                        {
+                            chapter: "Úvod",
+                            subsections: [
+                                {
+                                    title: "",
+                                    content: `
                         <p><span class="school-name">Hotelová škola Mariánské Lázně, příspěvková organizace</span></p>
                         <h1 style="font-size:2.2rem; color:#0b2b4a; margin:0.2rem 0 0.5rem 0;">ŠKOLNÍ ŘÁD</h1>
                         <p><strong>Školní řád</strong> upravuje v souladu s § 30 zákona č. 561/2004 Sb., o předškolním, základním, středním, vyšším odborném a jiném vzdělávání (školský zákon) podmínky soužití na Hotelové škole Mariánské Lázně.</p>
                         <p>Školní řád je závazný pro všechny žáky školy, jejich zákonné zástupce a všechny zaměstnance školy.</p>
                         <p style="margin-top:0.3rem;"><span class="badge">Platnost od 1. září 2025</span> <span class="badge" style="background:#dce6f0; color:#1a3a5a;">Nedílnou součástí je klasifikační řád</span></p>
                     `
-                }
-            ]
-        },
+                                }
+                            ]
+                        },
 
-        // ---- I. PROVOZ ŠKOLY ----
-        {
-            chapter: "I. Provoz školy",
-            subsections: [
-                {
-                    title: "Budovy a vstupní režim",
-                    content: `
+                        // ---- I. PROVOZ ŠKOLY ----
+                        {
+                            chapter: "I. Provoz školy",
+                            subsections: [
+                                {
+                                    title: "Budovy a vstupní režim",
+                                    content: `
                         <p><strong>Škola disponuje dvěma budovami:</strong> budova A (Komenského 449/2) a budova B (Poštovní 7).</p>
                         <p><strong>a)</strong> V době teoretického vyučování vstup do budovy A od 7:30 hod. hlavním vchodem z parku (do 7:45 pod dohledem školníka/uklízečky, poté do 8:00 pod dohledem pedagoga dle rozpisu).</p>
                         <p><strong>b)</strong> Pro odborný výcvik/praxi je vstup do budovy A umožněn od 6:00 hod. s vědomím učitele odborného výcviku.</p>
@@ -505,10 +606,10 @@
                         <p><strong>f)</strong> Návštěvy pouze rodiče/úřední osoby, zápis do knihy, vyvolání v přestávce.</p>
                         <p><strong>g)</strong> Po skončení výuky se žáci nezdržují v prostorách školy.</p>
                     `
-                },
-                {
-                    title: "Organizace vyučovacího dne",
-                    content: `
+                                },
+                                {
+                                    title: "Organizace vyučovacího dne",
+                                    content: `
                         <p>Začátky vyučovacích hodin (platí pro obě budovy):</p>
                         <div class="schedule-table">
                             <table>
@@ -525,17 +626,17 @@
                         </div>
                         <p style="margin-top: 0.6rem;"><span class="footnote">⏱ Vyučovací hodina trvá 45 minut (odborný výcvik/praxe 60 minut).</span></p>
                     `
-                }
-            ]
-        },
+                                }
+                            ]
+                        },
 
-        // ---- ŠATNY (původně kapitola II a III, sloučeno) ----
-        {
-            chapter: "II. Školní šatny a provozní šatny",
-            subsections: [
-                {
-                    title: "Školní šatny (budova A i B)",
-                    content: `
+                        // ---- ŠATNY (původně kapitola II a III, sloučeno) ----
+                        {
+                            chapter: "II. Školní šatny a provozní šatny",
+                            subsections: [
+                                {
+                                    title: "Školní šatny (budova A i B)",
+                                    content: `
                         <p><strong>a)</strong> Šatny jsou v suterénu obou budov; každý žák má přidělenou skříňku.</p>
                         <p><strong>b)</strong> Budova A – klíč od skříňky obdrží žák na začátku studia proti podpisu. Budova B – žák si obstará vlastní visací zámek.</p>
                         <p><strong>c)</strong> Po příchodu se žák přezuje, svrchní oděv ukládá do skříňky.</p>
@@ -547,24 +648,24 @@
                         <p><strong>i)</strong> Vedení školy si vyhrazuje právo kontroly skříněk (písemný záznam, za přítomnosti svědka).</p>
                         <p><strong>j)</strong> Žáci z budovy B přesouvající se do budovy A ukládají svršky do určené místnosti pod dohledem vyučujícího.</p>
                     `
-                },
-                {
-                    title: "Provozní šatna budovy A a šatny na pracovištích",
-                    content: `
+                                },
+                                {
+                                    title: "Provozní šatna budovy A a šatny na pracovištích",
+                                    content: `
                         <p><strong>Provozní šatna budovy A:</strong> slouží k převlékání na TOS, TPP a praxe. Žáci ukládají oděvy a tašky dle pokynů vyučujícího. Cennosti se neukládají – škola neručí.</p>
                         <p><strong>Šatny na pracovištích:</strong> žáci se řídí pravidly daného pracoviště a pokyny vedoucího, učitele nebo instruktora odborného výcviku.</p>
                     `
-                }
-            ]
-        },
+                                }
+                            ]
+                        },
 
-        // ---- PRÁVA ŽÁKŮ + ŠKOLNÍ PARLAMENT + ŠKOLSKÁ RADA (sloučeno) ----
-        {
-            chapter: "III. Práva žáků, školní parlament a školská rada",
-            subsections: [
-                {
-                    title: "Práva žáků",
-                    content: `
+                        // ---- PRÁVA ŽÁKŮ + ŠKOLNÍ PARLAMENT + ŠKOLSKÁ RADA (sloučeno) ----
+                        {
+                            chapter: "III. Práva žáků, školní parlament a školská rada",
+                            subsections: [
+                                {
+                                    title: "Práva žáků",
+                                    content: `
                         <p>Žák má právo:</p>
                         <ul>
                             <li>na poskytování kvalitního vzdělání s metodami odpovídajícími současné pedagogice,</li>
@@ -573,10 +674,10 @@
                             <li>zakládat samosprávné orgány žáků, volit a být do nich volen, obracet se na ředitelku školy.</li>
                         </ul>
                     `
-                },
-                {
-                    title: "Školní parlament",
-                    content: `
+                                },
+                                {
+                                    title: "Školní parlament",
+                                    content: `
                         <p><strong>Školní parlament (ŠP)</strong> je samosprávný orgán žáků a poradní orgán ředitelky.</p>
                         <ul>
                             <li>Všichni žáci mají aktivní i pasivní volební právo.</li>
@@ -587,10 +688,10 @@
                             <li>Školní parlament je nerozpustitelný.</li>
                         </ul>
                     `
-                },
-                {
-                    title: "Školská rada",
-                    content: `
+                                },
+                                {
+                                    title: "Školská rada",
+                                    content: `
                         <p>Při škole se zřizuje <strong>školská rada</strong> (6 členů).</p>
                         <ul>
                             <li>1/3 volí zákonní zástupci nezletilých žáků a zletilí žáci; 1/3 volí pedagogičtí pracovníci.</li>
@@ -599,17 +700,17 @@
                             <li>Ředitelka není členem, ale účastní se na vyzvání.</li>
                         </ul>
                     `
-                }
-            ]
-        },
+                                }
+                            ]
+                        },
 
-        // ---- PRÁVA ZÁKONNÝCH ZÁSTUPCŮ ----
-        {
-            chapter: "IV. Práva zákonných zástupců a rodičů",
-            subsections: [
-                {
-                    title: "Práva zákonných zástupců nezletilých žáků (a rodičů zletilých)",
-                    content: `
+                        // ---- PRÁVA ZÁKONNÝCH ZÁSTUPCŮ ----
+                        {
+                            chapter: "IV. Práva zákonných zástupců a rodičů",
+                            subsections: [
+                                {
+                                    title: "Práva zákonných zástupců nezletilých žáků (a rodičů zletilých)",
+                                    content: `
                         <p>Zákonný zástupce má právo:</p>
                         <ul>
                             <li>na informace o průběhu a výsledcích vzdělávání (Edookit, třídní schůzky, konzultace) – stejné právo mají i rodiče zletilých žáků,</li>
@@ -617,17 +718,17 @@
                             <li>volit a být volen do školské rady.</li>
                         </ul>
                     `
-                }
-            ]
-        },
+                                }
+                            ]
+                        },
 
-        // ---- POVINNOSTI ŽÁKŮ ----
-        {
-            chapter: "V. Povinnosti žáků",
-            subsections: [
-                {
-                    title: "Základní povinnosti",
-                    content: `
+                        // ---- POVINNOSTI ŽÁKŮ ----
+                        {
+                            chapter: "V. Povinnosti žáků",
+                            subsections: [
+                                {
+                                    title: "Základní povinnosti",
+                                    content: `
                         <p>Žák je povinen:</p>
                         <ul>
                             <li>řádně docházet do školy a vzdělávat se,</li>
@@ -645,17 +746,17 @@
                         </ul>
                         <p><em>Na zletilého žáka se vztahují i povinnosti zákonných zástupců vyplývající z řádu.</em></p>
                     `
-                }
-            ]
-        },
+                                }
+                            ]
+                        },
 
-        // ---- POVINNOSTI ZÁKONNÝCH ZÁSTUPCŮ ----
-        {
-            chapter: "VI. Povinnosti zákonných zástupců",
-            subsections: [
-                {
-                    title: "Povinnosti zákonných zástupců nezletilých žáků",
-                    content: `
+                        // ---- POVINNOSTI ZÁKONNÝCH ZÁSTUPCŮ ----
+                        {
+                            chapter: "VI. Povinnosti zákonných zástupců",
+                            subsections: [
+                                {
+                                    title: "Povinnosti zákonných zástupců nezletilých žáků",
+                                    content: `
                         <p>Zákonný zástupce je povinen:</p>
                         <ul>
                             <li>zajistit řádnou docházku žáka,</li>
@@ -666,17 +767,17 @@
                             <li>řídit se školním řádem a vnitřními předpisy.</li>
                         </ul>
                     `
-                }
-            ]
-        },
+                                }
+                            ]
+                        },
 
-        // ---- ZÁSAVY A OMEZENÍ (Zákazy) ----
-        {
-            chapter: "VII. Zásady chování – zákazy a omezení",
-            subsections: [
-                {
-                    title: "Co je žákům zakázáno",
-                    content: `
+                        // ---- ZÁSAVY A OMEZENÍ (Zákazy) ----
+                        {
+                            chapter: "VII. Zásady chování – zákazy a omezení",
+                            subsections: [
+                                {
+                                    title: "Co je žákům zakázáno",
+                                    content: `
                         <ul>
                             <li><strong>a)</strong> vstup pod vlivem alkoholu či jiných návykových látek,</li>
                             <li><strong>b)</strong> požívat alkohol, energetické nápoje, přinášet, distribuovat či užívat omamné a psychotropní látky (včetně kratomu) – <span style="color:#a33;">hrubé porušení → možnost vyloučení</span>,</li>
@@ -697,17 +798,17 @@
                             <li><strong>q)</strong> parkovat na vyhrazeném parkovišti budovy A bez povolení.</li>
                         </ul>
                     `
-                }
-            ]
-        },
+                                }
+                            ]
+                        },
 
-        // ---- PRAVIDLA PRO OMLOUVÁNÍ ABSENCE ----
-        {
-            chapter: "VIII. Pravidla pro omlouvání absence",
-            subsections: [
-                {
-                    title: "Předpokládaná absence (plánovaná)",
-                    content: `
+                        // ---- PRAVIDLA PRO OMLOUVÁNÍ ABSENCE ----
+                        {
+                            chapter: "VIII. Pravidla pro omlouvání absence",
+                            subsections: [
+                                {
+                                    title: "Předpokládaná absence (plánovaná)",
+                                    content: `
                         <p><strong>Žádost o uvolnění musí být předložena předem:</strong></p>
                         <ul>
                             <li>elektronicky v Edookitu (z účtu zákonného zástupce u nezletilých),</li>
@@ -718,10 +819,10 @@
                             <li>Plánované návštěvy lékaře pokud možno mimo vyučování.</li>
                         </ul>
                     `
-                },
-                {
-                    title: "Nepředpokládaná absence (náhlá)",
-                    content: `
+                                },
+                                {
+                                    title: "Nepředpokládaná absence (náhlá)",
+                                    content: `
                         <p><strong>Oznámení první den, nejpozději do 3 dnů:</strong></p>
                         <ul>
                             <li>elektronicky v Edookitu nebo telefonicky na sekretariát (+420 354 622 605),</li>
@@ -731,17 +832,17 @@
                             <li>Nezletilého žáka omlouvá zákonný zástupce; zletilý dokládá důvod sám.</li>
                         </ul>
                     `
-                }
-            ]
-        },
+                                }
+                            ]
+                        },
 
-        // ---- VYUČOVÁNÍ ----
-        {
-            chapter: "IX. Vyučování",
-            subsections: [
-                {
-                    title: "Organizace a pravidla výuky",
-                    content: `
+                        // ---- VYUČOVÁNÍ ----
+                        {
+                            chapter: "IX. Vyučování",
+                            subsections: [
+                                {
+                                    title: "Organizace a pravidla výuky",
+                                    content: `
                         <ul>
                             <li>Vyučovací hodina = 45 minut; začíná zvoněním, žáci zaujmou místa.</li>
                             <li>Hodina odborného výcviku/praxe = 60 minut.</li>
@@ -758,17 +859,17 @@
                             <li>Při volné hodině se žák nemusí zdržovat v budově – škola neodpovídá za bezpečnost.</li>
                         </ul>
                     `
-                }
-            ]
-        },
+                                }
+                            ]
+                        },
 
-        // ---- POVINNOSTI TŘÍDNÍ SLUŽBY ----
-        {
-            chapter: "X. Povinnosti třídní služby",
-            subsections: [
-                {
-                    title: "Služba ve třídě",
-                    content: `
+                        // ---- POVINNOSTI TŘÍDNÍ SLUŽBY ----
+                        {
+                            chapter: "X. Povinnosti třídní služby",
+                            subsections: [
+                                {
+                                    title: "Služba ve třídě",
+                                    content: `
                         <p>Třídní služba (určuje třídní učitel, jména v Edookitu):</p>
                         <ul>
                             <li>dbá na pořádek a čistotu, zajišťuje čistotu tabule,</li>
@@ -780,17 +881,17 @@
                             <li>po skončení výuky kontroluje uzavření oken, pořádek, zvednutí židlí.</li>
                         </ul>
                     `
-                }
-            ]
-        },
+                                }
+                            ]
+                        },
 
-        // ---- PŘESTÁVKY ----
-        {
-            chapter: "XI. Přestávky",
-            subsections: [
-                {
-                    title: "Pravidla chování o přestávkách",
-                    content: `
+                        // ---- PŘESTÁVKY ----
+                        {
+                            chapter: "XI. Přestávky",
+                            subsections: [
+                                {
+                                    title: "Pravidla chování o přestávkách",
+                                    content: `
                         <ul>
                             <li>Přestávky jsou určeny pro hygienu, relaxaci a přípravu na další hodinu.</li>
                             <li>Větrání bez vyučujícího zakázáno.</li>
@@ -798,17 +899,17 @@
                             <li>Polední přestávka – oběd a pobyt venku, ale bez obtěžování okolí, dodržovat pravidla silničního provozu.</li>
                         </ul>
                     `
-                }
-            ]
-        },
+                                }
+                            ]
+                        },
 
-        // ---- ODBORNÝ VÝCVIK A PRAXE ----
-        {
-            chapter: "XII. Odborný výcvik a praxe",
-            subsections: [
-                {
-                    title: "Odborný výcvik (učební obory)",
-                    content: `
+                        // ---- ODBORNÝ VÝCVIK A PRAXE ----
+                        {
+                            chapter: "XII. Odborný výcvik a praxe",
+                            subsections: [
+                                {
+                                    title: "Odborný výcvik (učební obory)",
+                                    content: `
                         <ul>
                             <li>Vztahuje se na obory kuchař/číšník.</li>
                             <li>Žáci se dostaví dle pokynů zástupce ředitelky pro praktickou výuku.</li>
@@ -824,10 +925,10 @@
                             <li>Stravovací povinnost (výjimka dietní režim).</li>
                         </ul>
                     `
-                },
-                {
-                    title: "Praxe (maturitní obory)",
-                    content: `
+                                },
+                                {
+                                    title: "Praxe (maturitní obory)",
+                                    content: `
                         <ul>
                             <li>Vztahuje se na maturitní obory.</li>
                             <li>Dostavení dle pokynů zástupce ředitelky pro praktickou výuku.</li>
@@ -841,17 +942,17 @@
                             <li>Bez omluvy nesplněná praxe = neklasifikován (TOS/praxe).</li>
                         </ul>
                     `
-                }
-            ]
-        },
+                                }
+                            ]
+                        },
 
-        // ---- OSOBNÍ PROBLÉMY ----
-        {
-            chapter: "XIII. Osobní problémy žáků",
-            subsections: [
-                {
-                    title: "Kam se obrátit",
-                    content: `
+                        // ---- OSOBNÍ PROBLÉMY ----
+                        {
+                            chapter: "XIII. Osobní problémy žáků",
+                            subsections: [
+                                {
+                                    title: "Kam se obrátit",
+                                    content: `
                         <p>V případě osobních problémů se žák může obrátit na:</p>
                         <ul>
                             <li>třídního učitele,</li>
@@ -860,17 +961,17 @@
                         </ul>
                         <p>Jména poradce a metodika sdělí třídní učitel na začátku roku. Doporučuje se řešit problémy včas.</p>
                     `
-                }
-            ]
-        },
+                                }
+                            ]
+                        },
 
-        // ---- VÝCHOVNÁ OPATŘENÍ ----
-        {
-            chapter: "XIV. Výchovná opatření",
-            subsections: [
-                {
-                    title: "Pochvaly a kázeňská opatření",
-                    content: `
+                        // ---- VÝCHOVNÁ OPATŘENÍ ----
+                        {
+                            chapter: "XIV. Výchovná opatření",
+                            subsections: [
+                                {
+                                    title: "Pochvaly a kázeňská opatření",
+                                    content: `
                         <p><strong>Pochvaly:</strong> pochvala třídního učitele, pochvala ředitelky školy.</p>
                         <p><strong>Kázeňská opatření (dle závažnosti):</strong></p>
                         <ul>
@@ -882,17 +983,17 @@
                         </ul>
                         <p>Lze uplatnit i alternativní opatření. Podrobnosti v klasifikačním řádu.</p>
                     `
-                }
-            ]
-        },
+                                }
+                            ]
+                        },
 
-        // ---- BOZP ----
-        {
-            chapter: "XV. Bezpečnost a ochrana zdraví (BOZP)",
-            subsections: [
-                {
-                    title: "Pravidla BOZP",
-                    content: `
+                        // ---- BOZP ----
+                        {
+                            chapter: "XV. Bezpečnost a ochrana zdraví (BOZP)",
+                            subsections: [
+                                {
+                                    title: "Pravidla BOZP",
+                                    content: `
                         <ul>
                             <li>Všechny osoby účastné na vyučování dodržují pravidla bezpečnosti a ochrany zdraví, protipožární předpisy a evakuační plán.</li>
                             <li>Povinnost účastnit se školení BOZP; školení se zapisují a stvrzují podpisem.</li>
@@ -905,17 +1006,17 @@
                             <li>Vyučující TV zajišťuje bezpečnost při pohybu na městská sportoviště.</li>
                         </ul>
                     `
-                }
-            ]
-        },
+                                }
+                            ]
+                        },
 
-        // ---- VZHLED ŽÁKŮ ----
-        {
-            chapter: "XVI. Vzhled a úprava žáků",
-            subsections: [
-                {
-                    title: "Pokyny pro dívky",
-                    content: `
+                        // ---- VZHLED ŽÁKŮ ----
+                        {
+                            chapter: "XVI. Vzhled a úprava žáků",
+                            subsections: [
+                                {
+                                    title: "Pokyny pro dívky",
+                                    content: `
                         <ul>
                             <li>Vlasy čisté, upravené, přírodní odstíny; dlouhé vlasy stažené.</li>
                             <li>Líčení decentní, výrazné čočky se nedoporučují.</li>
@@ -926,10 +1027,10 @@
                             <li>Piercing i tetování zakrýt.</li>
                         </ul>
                     `
-                },
-                {
-                    title: "Pokyny pro chlapce",
-                    content: `
+                                },
+                                {
+                                    title: "Pokyny pro chlapce",
+                                    content: `
                         <ul>
                             <li>Vlasy čisté, upravené, krátký střih; výrazné barvy a extravagantní účesy nevhodné.</li>
                             <li>Důkladně oholen nebo vousy upravené.</li>
@@ -940,391 +1041,392 @@
                             <li>Piercing a tetování zakrýt.</li>
                         </ul>
                     `
-                },
-                {
-                    title: "Pracovní oděv (závazné) – hotelnictví a učební obory",
-                    content: `
+                                },
+                                {
+                                    title: "Pracovní oděv (závazné) – hotelnictví a učební obory",
+                                    content: `
                         <p><strong>Žákyně (TOS, praxe, servírka):</strong> bílá halenka, schválená vesta/vestozáster, dlouhé černé společenské kalhoty, černé bavlněné ponožky, černá obuv s protiskluzem, bílý plášť, doplňky (propiska, číšnický otvírák, zapalovač, kapesník).</p>
                         <p><strong>Žák (TOS, praxe, číšník):</strong> bílá košile s dlouhým rukávem, schválená vesta/vestozáster, motýlek, dlouhé černé kalhoty, černé bavlněné ponožky, černé společenské boty s protiskluzem, bílý plášť, doplňky.</p>
                         <p><strong>Kuchař/kuchařka (TPP, praxe):</strong> bílá pokrývka hlavy (šátek, pirátka, lodička), rondon (bílý), dlouhé kuchařské kalhoty, bílá zástěra, bílá protiskluzová obuv s atestem BOZP, bílé ponožky, čistá utěrka (2 ks), kapesník.</p>
                         <p>Vše čisté, vyžehlené. V případě sporu rozhoduje ředitelka se zástupci.</p>
                     `
-                }
-            ]
-        },
+                                }
+                            ]
+                        },
 
-        // ---- ZÁVĚREČNÁ USTANOVENÍ ----
-        {
-            chapter: "XVII. Závěrečná ustanovení",
-            subsections: [
-                {
-                    title: "",
-                    content: `
+                        // ---- ZÁVĚREČNÁ USTANOVENÍ ----
+                        {
+                            chapter: "XVII. Závěrečná ustanovení",
+                            subsections: [
+                                {
+                                    title: "",
+                                    content: `
                         <p><strong>1.</strong> Nedílnou součástí tohoto školního řádu je klasifikační řád (Příloha č. 1).</p>
                         <p><strong>2.</strong> Školní řád nabývá účinnosti dnem <strong>1. září 2025</strong>.</p>
                         <p><strong>3.</strong> Školní řád schválila školská rada dne <strong>28. srpna 2025</strong>.</p>
                         <p style="margin-top: 0.8rem; display: flex; justify-content: flex-end; font-weight: 500; color: #0b2b4a;">Ing. Lucie Fričlová, ředitelka školy</p>
                     `
-                }
-            ]
-        }
-    ];
+                                }
+                            ]
+                        }
+                    ];
 
-    // ================================================================
-    // 2. RENDER OBSAHU
-    // ================================================================
-    const contentContainer = document.getElementById('content');
+                    // ================================================================
+                    // 2. RENDER OBSAHU
+                    // ================================================================
+                    const contentContainer = document.getElementById('content');
 
-    function renderContent() {
-        let html = '';
-        schoolData.forEach((chapter, idx) => {
-            const chapterId = `chap-${idx}`;
-            html += `<div class="chapter" id="${chapterId}">`;
-            html += `<h2>${chapter.chapter}</h2>`;
+                    function renderContent() {
+                        let html = '';
+                        schoolData.forEach((chapter, idx) => {
+                            const chapterId = `chap-${idx}`;
+                            html += `<div class="chapter" id="${chapterId}">`;
+                            html += `<h2>${chapter.chapter}</h2>`;
 
-            chapter.subsections.forEach((sub, subIdx) => {
-                const subId = `${chapterId}-sub-${subIdx}`;
-                const hasTitle = sub.title && sub.title.length > 0;
-                html += `<div class="subsection" id="${subId}">`;
-                if (hasTitle) html += `<h3>${sub.title}</h3>`;
-                html += `<div class="sub-content">${sub.content}</div>`;
-                html += `</div>`;
-            });
-            html += `</div>`;
-        });
-        contentContainer.innerHTML = html;
+                            chapter.subsections.forEach((sub, subIdx) => {
+                                const subId = `${chapterId}-sub-${subIdx}`;
+                                const hasTitle = sub.title && sub.title.length > 0;
+                                html += `<div class="subsection" id="${subId}">`;
+                                if (hasTitle) html += `<h3>${sub.title}</h3>`;
+                                html += `<div class="sub-content">${sub.content}</div>`;
+                                html += `</div>`;
+                            });
+                            html += `</div>`;
+                        });
+                        contentContainer.innerHTML = html;
 
-        document.querySelectorAll('.subsection').forEach(el => {
-            const contentDiv = el.querySelector('.sub-content');
-            if (contentDiv && !el.dataset.originalHtml) {
-                el.dataset.originalHtml = contentDiv.innerHTML;
-            }
-        });
-    }
-    renderContent();
+                        document.querySelectorAll('.subsection').forEach(el => {
+                            const contentDiv = el.querySelector('.sub-content');
+                            if (contentDiv && !el.dataset.originalHtml) {
+                                el.dataset.originalHtml = contentDiv.innerHTML;
+                            }
+                        });
+                    }
+                    renderContent();
 
-    // ================================================================
-    // 3. VYHLEDÁVÁNÍ
-    // ================================================================
-    const searchInput = document.getElementById('search-input');
-    const clearBtn = document.getElementById('clear-search');
-    const searchInfo = document.getElementById('search-info');
-    const searchResults = document.getElementById('search-results');
-    const resultsList = document.getElementById('results-list');
+                    // ================================================================
+                    // 3. VYHLEDÁVÁNÍ
+                    // ================================================================
+                    const searchInput = document.getElementById('search-input');
+                    const clearBtn = document.getElementById('clear-search');
+                    const searchInfo = document.getElementById('search-info');
+                    const searchResults = document.getElementById('search-results');
+                    const resultsList = document.getElementById('results-list');
 
-    function performSearch(query) {
-        const trimmed = query.trim();
-        if (!trimmed) {
-            document.querySelectorAll('.subsection').forEach(el => {
-                const cd = el.querySelector('.sub-content');
-                if (cd && el.dataset.originalHtml) cd.innerHTML = el.dataset.originalHtml;
-                el.classList.remove('hidden-subsection');
-            });
-            document.querySelectorAll('.chapter').forEach(ch => ch.classList.remove('hidden-chapter'));
-            searchInput.value = '';
-            searchInfo.textContent = '';
-            searchResults.classList.remove('visible');
-            resultsList.innerHTML = '';
-            return;
-        }
+                    function performSearch(query) {
+                        const trimmed = query.trim();
+                        if (!trimmed) {
+                            document.querySelectorAll('.subsection').forEach(el => {
+                                const cd = el.querySelector('.sub-content');
+                                if (cd && el.dataset.originalHtml) cd.innerHTML = el.dataset.originalHtml;
+                                el.classList.remove('hidden-subsection');
+                            });
+                            document.querySelectorAll('.chapter').forEach(ch => ch.classList.remove('hidden-chapter'));
+                            searchInput.value = '';
+                            searchInfo.textContent = '';
+                            searchResults.classList.remove('visible');
+                            resultsList.innerHTML = '';
+                            return;
+                        }
 
-        const lower = trimmed.toLowerCase();
-        let matches = [];
+                        const lower = trimmed.toLowerCase();
+                        let matches = [];
 
-        document.querySelectorAll('.subsection').forEach(el => {
-            const cd = el.querySelector('.sub-content');
-            if (!cd) return;
-            if (el.dataset.originalHtml) cd.innerHTML = el.dataset.originalHtml;
-            const text = cd.innerText || '';
-            if (text.toLowerCase().includes(lower)) {
-                el.classList.remove('hidden-subsection');
-                const chapterEl = el.closest('.chapter');
-                const chapterTitle = chapterEl?.querySelector('h2')?.textContent || '';
-                const subTitle = el.querySelector('h3')?.textContent || '';
-                const title = subTitle ? `${chapterTitle} – ${subTitle}` : chapterTitle;
-                matches.push({ id: el.id, title: title });
-                const regex = new RegExp(`(${trimmed.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-                cd.innerHTML = cd.innerHTML.replace(regex, '<mark class="highlight">$1</mark>');
-            } else {
-                el.classList.add('hidden-subsection');
-            }
-        });
+                        document.querySelectorAll('.subsection').forEach(el => {
+                            const cd = el.querySelector('.sub-content');
+                            if (!cd) return;
+                            if (el.dataset.originalHtml) cd.innerHTML = el.dataset.originalHtml;
+                            const text = cd.innerText || '';
+                            if (text.toLowerCase().includes(lower)) {
+                                el.classList.remove('hidden-subsection');
+                                const chapterEl = el.closest('.chapter');
+                                const chapterTitle = chapterEl?.querySelector('h2')?.textContent || '';
+                                const subTitle = el.querySelector('h3')?.textContent || '';
+                                const title = subTitle ? `${chapterTitle} – ${subTitle}` : chapterTitle;
+                                matches.push({ id: el.id, title: title });
+                                const regex = new RegExp(`(${trimmed.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+                                cd.innerHTML = cd.innerHTML.replace(regex, '<mark class="highlight">$1</mark>');
+                            } else {
+                                el.classList.add('hidden-subsection');
+                            }
+                        });
 
-        document.querySelectorAll('.chapter').forEach(ch => {
-            const visible = ch.querySelectorAll('.subsection:not(.hidden-subsection)');
-            ch.classList.toggle('hidden-chapter', visible.length === 0);
-        });
+                        document.querySelectorAll('.chapter').forEach(ch => {
+                            const visible = ch.querySelectorAll('.subsection:not(.hidden-subsection)');
+                            ch.classList.toggle('hidden-chapter', visible.length === 0);
+                        });
 
-        if (matches.length === 0) {
-            searchInfo.textContent = `Žádná sekce neobsahuje "${trimmed}".`;
-            searchResults.classList.remove('visible');
-        } else {
-            searchInfo.textContent = `Nalezeno ${matches.length} sekcí.`;
-            resultsList.innerHTML = matches.map(m =>
-                `<li><a href="#${m.id}" onclick="document.getElementById('${m.id}').scrollIntoView({behavior:'smooth'})">${m.title}</a></li>`
-            ).join('');
-            searchResults.classList.add('visible');
-        }
-    }
+                        if (matches.length === 0) {
+                            searchInfo.textContent = `Žádná sekce neobsahuje "${trimmed}".`;
+                            searchResults.classList.remove('visible');
+                        } else {
+                            searchInfo.textContent = `Nalezeno ${matches.length} sekcí.`;
+                            resultsList.innerHTML = matches.map(m =>
+                                `<li><a href="#${m.id}" onclick="document.getElementById('${m.id}').scrollIntoView({behavior:'smooth'})">${m.title}</a></li>`
+                            ).join('');
+                            searchResults.classList.add('visible');
+                        }
+                    }
 
-    searchInput.addEventListener('input', () => performSearch(searchInput.value));
-    clearBtn.addEventListener('click', () => performSearch(''));
+                    searchInput.addEventListener('input', () => performSearch(searchInput.value));
+                    clearBtn.addEventListener('click', () => performSearch(''));
 
-    // ================================================================
-    // 4. AI AGENT – KOMUNIKACE S BACKENDEM
-    // ================================================================
-    const aiChat = document.getElementById('aiChat');
-    const aiInput = document.getElementById('aiInput');
-    const aiSendBtn = document.getElementById('aiSendBtn');
-    const aiStatusDot = document.getElementById('aiStatusDot');
-    const aiStatusText = document.getElementById('aiStatusText');
-    const clearChatBtn = document.getElementById('clearChatBtn');
-    const serverStatus = document.getElementById('serverStatus');
+                    // ================================================================
+                    // 4. AI AGENT – KOMUNIKACE S BACKENDEM
+                    // ================================================================
+                    const aiChat = document.getElementById('aiChat');
+                    const aiInput = document.getElementById('aiInput');
+                    const aiSendBtn = document.getElementById('aiSendBtn');
+                    const aiStatusDot = document.getElementById('aiStatusDot');
+                    const aiStatusText = document.getElementById('aiStatusText');
+                    const clearChatBtn = document.getElementById('clearChatBtn');
+                    const serverStatus = document.getElementById('serverStatus');
 
-    // --- Ověření, že backend běží ---
-    async function checkBackend() {
-        try {
-            console.log('🔍 Kontrola backendu na /api/test...');
-            const response = await fetch('/api/test');
-            if (response.ok) {
-                const data = await response.json();
-                console.log('✅ Backend online:', data);
-                serverStatus.className = 'server-status online';
-                serverStatus.textContent = '✅ Backend online';
-                return true;
-            } else {
-                throw new Error('Backend neodpovídá');
-            }
-        } catch (e) {
-            console.error('❌ Backend nedostupný:', e.message);
-            serverStatus.className = 'server-status offline';
-            serverStatus.textContent = '❌ Backend nedostupný (spusťte node server.js)';
-            return false;
-        }
-    }
+                    // --- Ověření, že backend běží ---
+                    async function checkBackend() {
+                        try {
+                            console.log('🔍 Kontrola backendu na /api/test...');
+                            const response = await fetch('/api/test');
+                            if (response.ok) {
+                                const data = await response.json();
+                                console.log('✅ Backend online:', data);
+                                serverStatus.className = 'server-status online';
+                                serverStatus.textContent = '✅ Backend online';
+                                return true;
+                            } else {
+                                throw new Error('Backend neodpovídá');
+                            }
+                        } catch (e) {
+                            console.error('❌ Backend nedostupný:', e.message);
+                            serverStatus.className = 'server-status offline';
+                            serverStatus.textContent = '❌ Backend nedostupný (spusťte node server.js)';
+                            return false;
+                        }
+                    }
 
-    // Sestavení kontextu pro AI
-    function buildSystemPrompt() {
-        let fullText = '';
-        schoolData.forEach(chapter => {
-            fullText += `\n--- ${chapter.chapter} ---\n`;
-            chapter.subsections.forEach(sub => {
-                if (sub.title) fullText += `\n${sub.title}:\n`;
-                fullText += sub.content.replace(/<[^>]*>/g, ' ') + '\n';
-            });
-        });
-        return `Jsi užitečný asistent pro Hotelovou školu Mariánské Lázně. Odpovídej výhradně na základě tohoto školního řádu. Pokud odpověď v řádu nenajdeš, řekni to. Školní řád:\n${fullText}`;
-    }
+                    // Sestavení kontextu pro AI
+                    function buildSystemPrompt() {
+                        let fullText = '';
+                        schoolData.forEach(chapter => {
+                            fullText += `\n--- ${chapter.chapter} ---\n`;
+                            chapter.subsections.forEach(sub => {
+                                if (sub.title) fullText += `\n${sub.title}:\n`;
+                                fullText += sub.content.replace(/<[^>]*>/g, ' ') + '\n';
+                            });
+                        });
+                        return `Jsi užitečný asistent pro Hotelovou školu Mariánské Lázně a jmenuješ se Viki. Odpovídej výhradně na základě tohoto školního řádu. Pokud odpověď v řádu nenajdeš, řekni to. Školní řád:\n${fullText}`;
+                    }
 
-    const systemPrompt = buildSystemPrompt();
-    let conversationHistory = [
-        { role: 'system', content: systemPrompt }
-    ];
+                    const systemPrompt = buildSystemPrompt();
+                    let conversationHistory = [
+                        { role: 'system', content: systemPrompt }
+                    ];
 
-    // --- Odeslání dotazu na backend ---
-    async function sendToAI(query) {
-        try {
-            console.log('📤 Odesílám dotaz na /api/chat:', query.substring(0, 50) + '...');
-            const response = await fetch('/api/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    messages: conversationHistory.concat([
-                        { role: 'user', content: query }
-                    ])
-                })
-            });
+                    // --- Odeslání dotazu na backend ---
+                    async function sendToAI(query) {
+                        try {
+                            console.log('📤 Odesílám dotaz na /api/chat:', query.substring(0, 50) + '...');
+                            const response = await fetch('/api/chat', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    messages: conversationHistory.concat([
+                                        { role: 'user', content: query }
+                                    ])
+                                })
+                            });
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                console.error('❌ Backend vrátil chybu:', errorData);
-                throw new Error(errorData.error || 'Neznámá chyba');
-            }
+                            if (!response.ok) {
+                                const errorData = await response.json();
+                                console.error('❌ Backend vrátil chybu:', errorData);
+                                throw new Error(errorData.error || 'Neznámá chyba');
+                            }
 
-            const data = await response.json();
-            console.log('✅ Odpověď přijata z backendu');
-            return data.reply;
-        } catch (error) {
-            console.error('❌ Chyba v sendToAI:', error.message);
-            throw error;
-        }
-    }
+                            const data = await response.json();
+                            console.log('✅ Odpověď přijata z backendu');
+                            return data.reply;
+                        } catch (error) {
+                            console.error('❌ Chyba v sendToAI:', error.message);
+                            throw error;
+                        }
+                    }
 
-    // --- UI funkce ---
-    function addAiMessage(text, type, isError = false) {
-        const msgDiv = document.createElement('div');
-        msgDiv.className = `ai-message ${type}${isError ? ' error' : ''}`;
-        const icon = type === 'user' ? '🧑' : '🤖';
-        msgDiv.innerHTML = `<span class="msg-icon">${icon}</span> ${text}`;
-        aiChat.appendChild(msgDiv);
-        aiChat.scrollTop = aiChat.scrollHeight;
-    }
+                    // --- UI funkce ---
+                    function addAiMessage(text, type, isError = false) {
+                        const msgDiv = document.createElement('div');
+                        msgDiv.className = `ai-message ${type}${isError ? ' error' : ''}`;
+                        const icon = type === 'user' ? '🧑' : '🤖';
+                        msgDiv.innerHTML = `<span class="msg-icon">${icon}</span> ${text}`;
+                        aiChat.appendChild(msgDiv);
+                        aiChat.scrollTop = aiChat.scrollHeight;
+                    }
 
-    function addTypingIndicator() {
-        const el = document.createElement('div');
-        el.className = 'ai-message assistant';
-        el.id = 'typingIndicator';
-        el.innerHTML = `
+                    function addTypingIndicator() {
+                        const el = document.createElement('div');
+                        el.className = 'ai-message assistant';
+                        el.id = 'typingIndicator';
+                        el.innerHTML = `
             <span class="msg-icon">🤖</span>
             <span class="typing-indicator"><span></span><span></span><span></span></span>
         `;
-        aiChat.appendChild(el);
-        aiChat.scrollTop = aiChat.scrollHeight;
-    }
+                        aiChat.appendChild(el);
+                        aiChat.scrollTop = aiChat.scrollHeight;
+                    }
 
-    function removeTypingIndicator() {
-        document.getElementById('typingIndicator')?.remove();
-    }
+                    function removeTypingIndicator() {
+                        document.getElementById('typingIndicator')?.remove();
+                    }
 
-    async function processAiQuery(query) {
-        if (!query.trim()) return;
+                    async function processAiQuery(query) {
+                        if (!query.trim()) return;
 
-        // Kontrola backendu
-        const isOnline = await checkBackend();
-        if (!isOnline) {
-            addAiMessage('❌ Backend není dostupný. Spusťte server příkazem: node server.js', 'assistant', true);
-            return;
-        }
+                        // Kontrola backendu
+                        const isOnline = await checkBackend();
+                        if (!isOnline) {
+                            addAiMessage('❌ Backend není dostupný. Spusťte server příkazem: node server.js', 'assistant', true);
+                            return;
+                        }
 
-        addAiMessage(query, 'user');
-        aiInput.value = '';
-        aiSendBtn.disabled = true;
-        aiStatusDot.className = 'dot loading';
-        aiStatusText.textContent = 'Přemýšlím...';
+                        addAiMessage(query, 'user');
+                        aiInput.value = '';
+                        aiSendBtn.disabled = true;
+                        aiStatusDot.className = 'dot loading';
+                        aiStatusText.textContent = 'Přemýšlím...';
 
-        addTypingIndicator();
+                        addTypingIndicator();
 
-        try {
-            const response = await sendToAI(query);
-            removeTypingIndicator();
+                        try {
+                            const response = await sendToAI(query);
+                            removeTypingIndicator();
 
-            conversationHistory.push({ role: 'user', content: query });
-            conversationHistory.push({ role: 'assistant', content: response });
+                            conversationHistory.push({ role: 'user', content: query });
+                            conversationHistory.push({ role: 'assistant', content: response });
 
-            addAiMessage(response, 'assistant');
-            lastAssistantReply = response;
-            aiStatusDot.className = 'dot';
-            aiStatusText.textContent = 'Odpovězeno';
-            setTimeout(() => {
-                aiStatusText.textContent = 'Připraven';
-            }, 2000);
-        } catch (error) {
-            removeTypingIndicator();
-            const errorMsg = error.message || 'Neznámá chyba';
-            addAiMessage(`❌ Chyba: ${errorMsg}`, 'assistant', true);
-            aiStatusDot.className = 'dot error';
-            aiStatusText.textContent = 'Chyba';
-        } finally {
-            aiSendBtn.disabled = false;
-        }
-    }
+                            addAiMessage(response, 'assistant');
+                            lastAssistantReply = response;
+                            aiStatusDot.className = 'dot';
+                            aiStatusText.textContent = 'Odpovězeno';
+                            setTimeout(() => {
+                                aiStatusText.textContent = 'Připraven';
+                            }, 2000);
+                        } catch (error) {
+                            removeTypingIndicator();
+                            const errorMsg = error.message || 'Neznámá chyba';
+                            addAiMessage(`❌ Chyba: ${errorMsg}`, 'assistant', true);
+                            aiStatusDot.className = 'dot error';
+                            aiStatusText.textContent = 'Chyba';
+                        } finally {
+                            aiSendBtn.disabled = false;
+                        }
+                    }
 
-    let lastAssistantReply = 'Dobrý den, jsem AI asistent.';
+                    let lastAssistantReply = 'Dobrý den, jsem Viki.';
 
-    aiSendBtn.addEventListener('click', () => processAiQuery(aiInput.value));
-    aiInput.addEventListener('keyup', (e) => {
-        if (e.key === 'Enter') processAiQuery(aiInput.value);
-    });
+                    aiSendBtn.addEventListener('click', () => processAiQuery(aiInput.value));
+                    aiInput.addEventListener('keyup', (e) => {
+                        if (e.key === 'Enter') processAiQuery(aiInput.value);
+                    });
 
-    clearChatBtn.addEventListener('click', function() {
-        if (confirm('Smazat konverzaci?')) {
-            conversationHistory = [{ role: 'system', content: systemPrompt }];
-            aiChat.innerHTML = `
+                    clearChatBtn.addEventListener('click', function () {
+                        if (confirm('Smazat konverzaci?')) {
+                            conversationHistory = [{ role: 'system', content: systemPrompt }];
+                            aiChat.innerHTML = `
                 <div class="ai-message assistant">
                     <span class="msg-icon">🤖</span> Konverzace byla vymazána.
                 </div>
             `;
-            lastAssistantReply = 'Konverzace byla vymazána.';
-            aiStatusDot.className = 'dot';
-            aiStatusText.textContent = 'Připraven';
-        }
-    });
+                            lastAssistantReply = 'Konverzace byla vymazána.';
+                            aiStatusDot.className = 'dot';
+                            aiStatusText.textContent = 'Připraven';
+                        }
+                    });
 
-    // ================================================================
-    // 5. HLASOVÝ VSTUP
-    // ================================================================
-    const aiVoiceInputBtn = document.getElementById('aiVoiceInputBtn');
-    const aiVoiceIndicator = document.getElementById('aiVoiceIndicator');
+                    // ================================================================
+                    // 5. HLASOVÝ VSTUP
+                    // ================================================================
+                    const aiVoiceInputBtn = document.getElementById('aiVoiceInputBtn');
+                    const aiVoiceIndicator = document.getElementById('aiVoiceIndicator');
 
-    let recognition = null;
-    let isRecording = false;
+                    let recognition = null;
+                    let isRecording = false;
 
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        recognition = new SpeechRecognition();
-        recognition.lang = 'cs-CZ';
-        recognition.continuous = false;
-        recognition.interimResults = false;
+                    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                        recognition = new SpeechRecognition();
+                        recognition.lang = 'cs-CZ';
+                        recognition.continuous = false;
+                        recognition.interimResults = false;
 
-        recognition.onstart = function() {
-            isRecording = true;
-            aiVoiceInputBtn.classList.add('recording');
-            aiVoiceIndicator.classList.add('active');
-            aiStatusText.textContent = 'Poslouchám...';
-            aiStatusDot.className = 'dot loading';
-        };
+                        recognition.onstart = function () {
+                            isRecording = true;
+                            aiVoiceInputBtn.classList.add('recording');
+                            aiVoiceIndicator.classList.add('active');
+                            aiStatusText.textContent = 'Poslouchám...';
+                            aiStatusDot.className = 'dot loading';
+                        };
 
-        recognition.onresult = function(event) {
-            const transcript = event.results[0][0].transcript;
-            aiVoiceInputBtn.classList.remove('recording');
-            aiVoiceIndicator.classList.remove('active');
-            aiInput.value = transcript;
-            processAiQuery(transcript);
-        };
+                        recognition.onresult = function (event) {
+                            const transcript = event.results[0][0].transcript;
+                            aiVoiceInputBtn.classList.remove('recording');
+                            aiVoiceIndicator.classList.remove('active');
+                            aiInput.value = transcript;
+                            processAiQuery(transcript);
+                        };
 
-        recognition.onerror = function(event) {
-            aiVoiceInputBtn.classList.remove('recording');
-            aiVoiceIndicator.classList.remove('active');
-            if (event.error !== 'not-allowed') {
-                aiStatusDot.className = 'dot error';
-                aiStatusText.textContent = 'Chyba mikrofonu';
-            }
-            setTimeout(() => {
-                aiStatusText.textContent = 'Připraven';
-                aiStatusDot.className = 'dot';
-            }, 2000);
-        };
+                        recognition.onerror = function (event) {
+                            aiVoiceInputBtn.classList.remove('recording');
+                            aiVoiceIndicator.classList.remove('active');
+                            if (event.error !== 'not-allowed') {
+                                aiStatusDot.className = 'dot error';
+                                aiStatusText.textContent = 'Chyba mikrofonu';
+                            }
+                            setTimeout(() => {
+                                aiStatusText.textContent = 'Připraven';
+                                aiStatusDot.className = 'dot';
+                            }, 2000);
+                        };
 
-        recognition.onend = function() {
-            isRecording = false;
-            aiVoiceInputBtn.classList.remove('recording');
-            aiVoiceIndicator.classList.remove('active');
-        };
-    }
+                        recognition.onend = function () {
+                            isRecording = false;
+                            aiVoiceInputBtn.classList.remove('recording');
+                            aiVoiceIndicator.classList.remove('active');
+                        };
+                    }
 
-    aiVoiceInputBtn.addEventListener('click', function() {
-        if (!recognition) {
-            alert('Web Speech API není podporována.');
-            return;
-        }
-        if (isRecording) { recognition.stop(); return; }
-        try { recognition.start(); } catch (e) {}
-    });
+                    aiVoiceInputBtn.addEventListener('click', function () {
+                        if (!recognition) {
+                            alert('Web Speech API není podporována.');
+                            return;
+                        }
+                        if (isRecording) { recognition.stop(); return; }
+                        try { recognition.start(); } catch (e) { }
+                    });
 
-    // ================================================================
-    // 6. HLASOVÝ VÝSTUP
-    // ================================================================
-    const aiVoiceOutputBtn = document.getElementById('aiVoiceOutputBtn');
+                    // ================================================================
+                    // 6. HLASOVÝ VÝSTUP
+                    // ================================================================
+                    const aiVoiceOutputBtn = document.getElementById('aiVoiceOutputBtn');
 
-    aiVoiceOutputBtn.addEventListener('click', function() {
-        if (!lastAssistantReply || lastAssistantReply === 'Dobrý den, jsem AI asistent.') {
-            alert('Žádná odpověď k přehrání.');
-            return;
-        }
-        if ('speechSynthesis' in window) {
-            const utterance = new SpeechSynthesisUtterance(lastAssistantReply);
-            utterance.lang = 'cs-CZ';
-            utterance.rate = 1.0;
-            speechSynthesis.speak(utterance);
-        }
-    });
+                    aiVoiceOutputBtn.addEventListener('click', function () {
+                        if (!lastAssistantReply || lastAssistantReply === 'Dobrý den, jsem AI asistent.') {
+                            alert('Žádná odpověď k přehrání.');
+                            return;
+                        }
+                        if ('speechSynthesis' in window) {
+                            const utterance = new SpeechSynthesisUtterance(lastAssistantReply);
+                            utterance.lang = 'cs-CZ';
+                            utterance.rate = 1.0;
+                            speechSynthesis.speak(utterance);
+                        }
+                    });
 
-    // ================================================================
-    // 7. INICIALIZACE
-    // ================================================================
-    checkBackend();
-    console.log('✅ Aplikace načtena. Backend musí běžet na http://localhost:3000');
-    console.log('📋 Systémový prompt:', systemPrompt.substring(0, 100) + '...');
-</script>
-</body>
-</html>
+                    // ================================================================
+                    // 7. INICIALIZACE
+                    // ================================================================
+                    checkBackend();
+                    console.log('✅ Aplikace načtena. Backend musí běžet na http://localhost:3000');
+                    console.log('📋 Systémový prompt:', systemPrompt.substring(0, 100) + '...');
+                </script>
+    </body>
+
+    </html>

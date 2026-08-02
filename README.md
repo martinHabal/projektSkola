@@ -28,3 +28,8 @@ Krátký popis projektu – co dělá a k čemu slouží.
  b) Uvazky - migrace (uvazek se default vytvori pri zalozeni usera)
  c) Odevzdano - migrace
  d) worl_logs - migrace
+
+ ## CSS
+ 1. inputy
+ a) border-radius 4px
+ 

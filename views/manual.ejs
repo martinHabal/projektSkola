@@ -1,967 +1,1367 @@
-<style>
-    /* * {
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Školní řád s AI asistentem</title>
+    <!-- Font Awesome pro ikony (vloženo z CDN) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* ===== GLOBÁLNÍ RESET A ZÁKLAD ===== */
+        * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-        } */
-    /* body {
-            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
-            background: #f4f7fc;
-            min-height: 100vh;
-            padding: 20px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+            background: #f5f8fc;
+            color: #0b1e30;
+            line-height: 1.5;
+        }
+
+        /* ===== HLAVNÍ LAYOUT ===== */
+        #app {
             display: flex;
-            justify-content: center;
+            flex-direction: row;
+            min-height: 100vh;
+            max-width: 1600px;
+            margin: 0 auto;
+            background: #fff;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+        }
+
+        #left {
+            flex: 1;
+            padding: 2rem 2.5rem;
+            overflow-y: auto;
+            min-width: 0;
+        }
+
+        #right {
+            width: 380px;
+            background: #f8faff;
+            border-left: 1px solid #dce1e8;
+            padding: 1.5rem 1.2rem;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ===== PRAVÝ SLOUPEC (AI) ===== */
+        #right h2 {
+            font-size: 1.2rem;
+            color: #0b2b4a;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            border-bottom: 2px solid #b0c4d9;
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .server-status {
+            font-size: 0.75rem;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            margin-bottom: 0.5rem;
+            display: inline-block;
+        }
+
+        .server-status.online {
+            background: #dcfce7;
+            color: #166534;
+        }
+        .server-status.offline {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .server-status.checking {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .ai-status {
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .ai-status .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            background: #22c55e;
+            transition: background 0.3s;
+        }
+        .ai-status .dot.loading {
+            background: #f59e0b;
+            animation: pulse 1s infinite;
+        }
+        .ai-status .dot.error {
+            background: #ef4444;
+        }
+        .ai-status .dot.offline {
+            background: #94a3b8;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .ai-chat {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            padding: 0.2rem 0;
+            min-height: 300px;
+            max-height: 450px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 0.8rem;
+            background: white;
+        }
+
+        .ai-message {
+            max-width: 92%;
+            padding: 0.6rem 1rem;
+            border-radius: 14px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            word-break: break-word;
+            animation: fadeUp 0.2s ease;
+        }
+        .ai-message.user {
+            background: #dce6f5;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+        .ai-message.assistant {
+            background: #f1f5f9;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        .ai-message .msg-icon {
+            margin-right: 4px;
+        }
+        .ai-message.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .typing-indicator {
+            display: inline-flex;
+            gap: 4px;
+        }
+        .typing-indicator span {
+            width: 6px;
+            height: 6px;
+            background: #94a3b8;
+            border-radius: 50%;
+            animation: typing 1.2s infinite;
+        }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-6px); }
+        }
+
+        @keyframes fadeUp {
+            0% { opacity: 0; transform: translateY(6px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .ai-input-area {
+            display: flex;
+            gap: 0.4rem;
+            padding: 0.8rem 0 0.2rem 0;
+            flex-wrap: wrap;
+            align-items: center;
+            border-top: 1px solid #dce1e8;
+            margin-top: 0.6rem;
+            padding-top: 0.8rem;
+        }
+
+        .ai-input-area input {
+            flex: 1;
+            padding: 0.5rem 1rem;
+            border-radius: 40px;
+            border: 1px solid #cbd5e1;
+            font-size: 0.9rem;
+            min-width: 100px;
+            background: white;
+        }
+        .ai-input-area input:focus {
+            outline: 2px solid #3b82f6;
+            border-color: transparent;
+        }
+
+        .ai-input-area .btn {
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            border: none;
+            background: #1e3a5f;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .ai-input-area .btn:hover {
+            background: #0b2b4a;
+        }
+        .ai-input-area .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .ai-input-area .btn-voice {
+            background: #eef2f6;
+            color: #1e2a3a;
+            border: 1px solid #cbd5e1;
+        }
+        .ai-input-area .btn-voice:hover {
+            background: #e2e8f0;
+        }
+        .ai-input-area .btn-voice.recording {
+            background: #fce8e8;
+            color: #b33;
+        }
+
+        .voice-indicator {
+            font-size: 0.75rem;
+            color: #475569;
+            display: none;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .voice-indicator.active {
+            display: inline-flex;
+        }
+
+        .clear-chat-btn {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 0.8rem;
+            padding: 0.2rem 0.5rem;
+        }
+        .clear-chat-btn:hover {
+            color: #ef4444;
+        }
+
+        .ai-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* ===== LEVÁ ČÁST – VYHLEDÁVÁNÍ A OBSAH ===== */
+        .content-header {
+            margin-bottom: 0.5rem;
+        }
+        /* .content-header h3 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #0b2b4a;
         } */
-    .app {
-        max-width: 1200px;
-        width: 100%;
-        background: white;
-        border-radius: 28px;
-        box-shadow: 0 20px 40px rgba(0, 20, 40, 0.12);
-        padding: 28px 30px 40px;
-        transition: all 0.2s;
-    }
-
-    /* h1 {
-        font-size: 2rem;
-        font-weight: 600;
-        color: #0a2540;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 8px;
-    } */
-
-    .sub {
-        color: #4a5b6e;
-        margin-bottom: 28px;
-        border-left: 4px solid #2a7de1;
-        padding-left: 16px;
-        font-size: 1rem;
-        background: #f0f5fe;
-        border-radius: 0 12px 12px 0;
-        line-height: 1.5;
-    }
-
-    .search-toolbar {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 14px 20px;
-        align-items: center;
-        margin-bottom: 30px;
-        background: #f8faff;
-        padding: 14px 20px;
-        /* border-radius: 60px; */
-        border: 1px solid #e6edf5;
-    }
-
-    .search-box {
-        flex: 2;
-        min-width: 220px;
-        display: flex;
-        align-items: center;
-        background: white;
-        border-radius: 5px;
-        padding: 4px 4px 4px 18px;
-        border: 1px solid #d0dbe8;
-        transition: 0.2s;
-    }
-
-    .search-box:focus-within {
-        border-color: #2a7de1;
-        box-shadow: 0 0 0 3px rgba(42, 125, 225, 0.2);
-    }
-
-    .search-box i {
-        color: #6c7e94;
-        font-size: 1rem;
-    }
-
-    .search-box input {
-        border: none;
-        padding: 12px 10px;
-        font-size: 1rem;
-        width: 100%;
-        background: transparent;
-        outline: none;
-    }
-
-    .search-box button {
-        background: #2a7de1;
-        border: none;
-        color: white;
-        padding: 8px 20px;
-        border-radius: 6px;
-        font-weight: 600;
-        font-size: 0.9rem;
-        cursor: pointer;
-        transition: 0.15s;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .search-box button:hover {
-        background: #1b62b5;
-    }
-
-    .ai-controls {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 12px;
-        margin-left: auto;
-    }
-
-    .voice-btn {
-        background: #eef3fa;
-        border: none;
-        border-radius: 40px;
-        padding: 10px 18px;
-        font-weight: 500;
-        color: #1f3a57;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        cursor: pointer;
-        transition: 0.15s;
-        border: 1px solid transparent;
-    }
-
-    .voice-btn i {
-        font-size: 1.2rem;
-        color: #2a7de1;
-    }
-
-    .voice-btn:hover {
-        background: #e2eaf5;
-        border-color: #b6cbe0;
-    }
-
-    .voice-btn.recording {
-        background: #fce8e8;
-        border-color: #d94a4a;
-        color: #b33;
-    }
-
-    .voice-btn.recording i {
-        color: #c42;
-    }
-
-    .agent-status {
-        font-size: 0.9rem;
-        background: #eaf1fb;
-        padding: 6px 18px;
-        border-radius: 30px;
-        color: #1f4973;
-        white-space: nowrap;
-    }
-
-    .agent-status .dot {
-        display: inline-block;
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        margin-right: 4px;
-    }
-
-    .agent-status .dot.online {
-        background: #22c55e;
-    }
-
-    .agent-status .dot.loading {
-        background: #f59e0b;
-        animation: pulse 1s infinite;
-    }
-
-    .agent-status .dot.error {
-        background: #ef4444;
-    }
-
-    .agent-status .dot.offline {
-        background: #94a3b8;
-    }
-
-    @keyframes pulse {
-
-        0%,
-        100% {
-            opacity: 1;
+        .badge-date {
+            font-size: 0.8rem;
+            color: #4a5b6e;
         }
 
-        50% {
-            opacity: 0.3;
+        #search-box {
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            align-items: center;
         }
-    }
-
-    .main-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 28px;
-        margin-top: 6px;
-    }
-
-    @media (max-width: 800px) {
-        .main-grid {
-            grid-template-columns: 1fr;
+        #search-box input {
+            flex: 1;
+            padding: 0.7rem 1rem;
+            border: 2px solid #cbd5e1;
+            border-radius: 30px;
+            font-size: 1rem;
+            outline: none;
+            min-width: 200px;
         }
-    }
-
-    .manual-section {
-        background: #fafcff;
-        border-radius: 20px;
-        padding: 16px 20px 20px;
-        border: 1px solid #e2ebf5;
-        max-height: 580px;
-        overflow-y: auto;
-    }
-
-    .manual-section h2 {
-        font-size: 1.3rem;
-        font-weight: 600;
-        color: #0a2a44;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        border-bottom: 2px solid #dce6f2;
-        padding-bottom: 12px;
-        margin-bottom: 18px;
-    }
-
-    .manual-content {
-        font-size: 0.95rem;
-        line-height: 1.6;
-        color: #1d2f44;
-    }
-
-    .manual-content p {
-        margin: 0 0 14px 0;
-    }
-
-    .manual-content ul,
-    .manual-content ol {
-        padding-left: 24px;
-        margin: 8px 0 16px 0;
-    }
-
-    .manual-content li {
-        margin-bottom: 5px;
-    }
-
-    /* .highlight {
-        background: #fff7d6;
-        padding: 0 4px;
-        border-radius: 4px;
-        font-weight: 500;
-    } */
-
-    .chat-panel {
-        background: #f8faff;
-        border-radius: 20px;
-        border: 1px solid #e2ebf5;
-        display: flex;
-        flex-direction: column;
-        max-height: 580px;
-        min-height: 400px;
-    }
-
-    .chat-header {
-        padding: 14px 20px;
-        border-bottom: 1px solid #e2ebf5;
-        font-weight: 600;
-        color: #0a2a44;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        background: #f2f8ff;
-        border-radius: 20px 20px 0 0;
-    }
-
-    .chat-messages {
-        flex: 1;
-        padding: 16px 18px;
-        overflow-y: auto;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        min-height: 240px;
-    }
-
-    .message {
-        max-width: 90%;
-        padding: 12px 16px;
-        border-radius: 18px;
-        line-height: 1.5;
-        font-size: 0.95rem;
-        word-break: break-word;
-        animation: fadeUp 0.2s ease;
-    }
-
-    .message.user {
-        background: #dce6f5;
-        align-self: flex-end;
-        border-bottom-right-radius: 6px;
-        color: #0b1e33;
-    }
-
-    .message.assistant {
-        background: white;
-        align-self: flex-start;
-        border-bottom-left-radius: 6px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
-        border: 1px solid #e6edf6;
-        color: #152b40;
-    }
-
-    .message.assistant.error {
-        background: #fee2e2;
-        border-color: #fca5a5;
-        color: #991b1b;
-    }
-
-    .message .msg-icon {
-        margin-right: 8px;
-    }
-
-    .typing-indicator {
-        display: inline-flex;
-        gap: 4px;
-    }
-
-    .typing-indicator span {
-        width: 6px;
-        height: 6px;
-        background: #94a3b8;
-        border-radius: 50%;
-        animation: typing 1.2s infinite;
-    }
-
-    .typing-indicator span:nth-child(2) {
-        animation-delay: 0.2s;
-    }
-
-    .typing-indicator span:nth-child(3) {
-        animation-delay: 0.4s;
-    }
-
-    @keyframes typing {
-
-        0%,
-        60%,
-        100% {
-            transform: translateY(0);
+        #search-box input:focus {
+            border-color: #2a6b9c;
+        }
+        #search-box button {
+            padding: 0.7rem 1.5rem;
+            background: #8b9aaa;
+            color: #fff;
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+        #search-box button:hover {
+            background: #6a7b8e;
         }
 
-        30% {
-            transform: translateY(-6px);
-        }
-    }
-
-    .chat-input-area {
-        display: flex;
-        gap: 8px;
-        padding: 12px 16px 16px;
-        border-top: 1px solid #e2ebf5;
-        background: #fafdff;
-        border-radius: 0 0 20px 20px;
-        align-items: center;
-    }
-
-    .chat-input-area input {
-        flex: 1;
-        padding: 12px 16px;
-        border-radius: 40px;
-        border: 1px solid #d0dbe8;
-        font-size: 0.95rem;
-        outline: none;
-        transition: 0.2s;
-        background: white;
-    }
-
-    .chat-input-area input:focus {
-        border-color: #2a7de1;
-        box-shadow: 0 0 0 3px rgba(42, 125, 225, 0.15);
-    }
-
-    .chat-input-area button {
-        background: #2a7de1;
-        border: none;
-        color: white;
-        width: 46px;
-        height: 46px;
-        border-radius: 40px;
-        font-size: 1.2rem;
-        cursor: pointer;
-        transition: 0.15s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .chat-input-area button:hover {
-        background: #1b62b5;
-    }
-
-    .chat-input-area button:disabled {
-        opacity: 0.5;
-        pointer-events: none;
-    }
-
-    .voice-indicator {
-        font-size: 0.8rem;
-        background: #e1ebf6;
-        padding: 6px 14px;
-        border-radius: 30px;
-        display: none;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .voice-indicator.active {
-        display: flex;
-    }
-
-    @keyframes fadeUp {
-        0% {
-            opacity: 0;
-            transform: translateY(8px);
+        #search-info {
+            font-size: 0.9rem;
+            color: #4a5b6e;
+            margin-bottom: 0.5rem;
+            min-height: 1.5rem;
         }
 
-        100% {
-            opacity: 1;
-            transform: translateY(0);
+        #search-results {
+            margin-bottom: 1.5rem;
+            padding: 0.8rem 1rem;
+            background: #f8faff;
+            border-radius: 8px;
+            border: 1px solid #dce1e8;
+            display: none;
         }
-    }
+        #search-results.visible {
+            display: block;
+        }
+        #search-results ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 1.2rem;
+        }
+        #search-results ul li a {
+            color: #1e3a5f;
+            text-decoration: none;
+            border-bottom: 1px dashed #b0c4d9;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
 
-    .footer-note {
-        margin-top: 18px;
-        font-size: 0.8rem;
-        color: #6b7e96;
-        text-align: right;
-        border-top: 1px solid #e6edf6;
-        padding-top: 16px;
-    }
+        /* ===== OBSAH (kapitoly) ===== */
+        .chapter {
+            margin-bottom: 2.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 1.5rem;
+        }
+        .chapter:last-child {
+            border-bottom: none;
+        }
+        .chapter h2 {
+            font-size: 1.8rem;
+            color: #0b2b4a;
+            margin-bottom: 1rem;
+            padding-bottom: 0.3rem;
+            border-bottom: 3px solid #cbd5e1;
+        }
 
-    .badge {
-        background: #eef3fa;
-        border-radius: 30px;
-        padding: 2px 12px;
-        font-size: 0.7rem;
-        font-weight: 600;
-        color: #1e3b5c;
-    }
+        .subsection {
+            margin-top: 1.2rem;
+            padding-left: 0.2rem;
+        }
+        .subsection h3 {
+            font-size: 1.2rem;
+            color: #1e3a5f;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .subsection p,
+        .subsection li {
+            margin-bottom: 0.6rem;
+        }
+        .subsection ul,
+        .subsection ol {
+            padding-left: 1.8rem;
+            margin-bottom: 0.6rem;
+        }
+        .subsection table {
+            border-collapse: collapse;
+            margin: 1rem 0;
+            width: 100%;
+            max-width: 400px;
+        }
+        .subsection table td,
+        .subsection table th {
+            border: 1px solid #b0c4d9;
+            padding: 0.4rem 0.8rem;
+            text-align: center;
+        }
+        .subsection table th {
+            background: #e8edf4;
+            font-weight: 600;
+        }
 
-    /* scroll */
-    .manual-section::-webkit-scrollbar,
-    .chat-messages::-webkit-scrollbar {
-        width: 6px;
-    }
+        .highlight {
+            background-color: #f9e66b;
+            padding: 0.1rem 0.2rem;
+            border-radius: 2px;
+            font-weight: 600;
+        }
 
-    .manual-section::-webkit-scrollbar-thumb,
-    .chat-messages::-webkit-scrollbar-thumb {
-        background: #cbd8e8;
-        border-radius: 10px;
-    }
+        .hidden-chapter {
+            display: none;
+        }
+        .hidden-subsection {
+            display: none;
+        }
 
-    .server-status {
-        font-size: 0.75rem;
-        padding: 2px 12px;
-        border-radius: 20px;
-        margin-left: 8px;
-    }
+        .footnote {
+            font-size: 0.9rem;
+            color: #4a5b6e;
+            margin-top: 1rem;
+            border-top: 1px dashed #dce1e8;
+            padding-top: 0.8rem;
+        }
 
-    .server-status.online {
-        background: #dcfce7;
-        color: #166534;
-    }
+        .schedule-table {
+            overflow-x: auto;
+        }
 
-    .server-status.offline {
-        background: #fee2e2;
-        color: #991b1b;
-    }
+        /* ===== RESPONSIVITA ===== */
+        @media (max-width: 1024px) {
+            #right {
+                width: 320px;
+                padding: 1rem;
+            }
+        }
 
-    .server-status.checking {
-        background: #fef3c7;
-        color: #92400e;
-    }
+        @media (max-width: 820px) {
+            #app {
+                flex-direction: column;
+            }
+            #right {
+                width: 100%;
+                height: auto;
+                position: relative;
+                border-left: none;
+                border-top: 1px solid #dce1e8;
+                padding: 1rem;
+                max-height: 450px;
+                overflow-y: auto;
+            }
+            #left {
+                padding: 1rem;
+            }
+            .ai-chat {
+                max-height: 200px;
+                min-height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
 
-    .chat-header-right {
-        margin-left: auto;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .clear-chat-btn {
-        background: none;
-        border: none;
-        color: #94a3b8;
-        cursor: pointer;
-        font-size: 0.8rem;
-        padding: 4px 10px;
-        border-radius: 20px;
-    }
-
-    .clear-chat-btn:hover {
-        background: #fee2e2;
-        color: #ef4444;
-    }
-</style>
-
-<%- include('./partials/head') %>
-
+    <!-- ===== HLAVIČKA A NAV (předpokládá se, že existují partials) ===== -->
+    <%- include('./partials/head') %>
     <body>
+        <%- include('./partials/header') %>
+        <%- include('./partials/nav') %>
 
-        <%- include('./partials/header') %><%- include('./partials/nav') %>
-            <div style="  display: flex; justify-content: center;">
-                <div class="app" id="app">
-                       <div class="content-header">
-                    <h3>Manuál k intranetu</h3>
-                    
+        <div id="app">
+
+            <!-- ===== LEVÁ ČÁST – ŠKOLNÍ ŘÁD ===== -->
+            <div id="left">
+                <div class="content-header">
+                    <h3>Školní řád</h3>
                     <div class="badge-date"></div>
                 </div>
-                    <div class="sub">
-                        <i style="margin-right: 8px;"></i>
-                        Informace ke školnímu intranetu
-                    </div>
 
-                    <!-- Toolbar -->
-                    <div class="search-toolbar">
-                        <div class="search-box">
-                            <i class="fas fa-search"></i>
-                            <input type="text" id="searchInput" placeholder="Fulltextové hledání v manuálu..." />
-                            <button id="searchBtn"><i class="fas fa-arrow-right" style="color: white;"></i> Hledat</button>
-                        </div>
-                        <div class="ai-controls">
-                            <button class="voice-btn" id="voiceInputBtn">
-                                <i class="fas fa-microphone"></i> <span id="voiceLabel">Hlasová otázka</span>
-                            </button>
-                            <button class="voice-btn" id="voiceOutputBtn">
-                                <i class="fas fa-volume-up"></i> <span>Odpověď hlasem</span>
-                            </button>
-                            <!-- <span class="agent-status" id="agentStatus">
-                                <span class="dot online" id="statusDot"></span>
-                                <span id="statusText">Agent připraven</span>
-                            </span> -->
-                        </div>
-                    </div>
-
-                    <!-- Main grid: manual + chat -->
-                    <div class="main-grid">
-                        <!-- Manual -->
-                        <div class="manual-section" id="manualSection">
-                            <h2><i class="fas fa-book-open" style="color: #1f6bc0;"></i> Obsah manuálu</h2>
-                            <div class="manual-content" id="manualContent">
-                                <p><strong>1. Úvod</strong><br>
-                                    Výkaz práce slouží k zaznamenávání odpracovaných hodin. Je dostupný online a hlavní jeho předností 
-                                    je snadné vykazování.</p>
-                                    <p>Tabulka zobrazuje všechny dny v měsíci s automatickým označením víkendů, státních svátků a školních prázdnin.
-                                         Odpracované hodiny se načítají ze standardního rozvrhu (nastaveno výše). 
-                                         Zadejte suplované hodiny (pouze pracovní dny), neodučené hodiny a vyberte důvod pro neodučené hodiny. 
-                                         Pro zobrazení nápovědy k jednotlivým důvodům najděte kurzor myši nad ikonou otazníku vedle důvodu. 
-                                         Výkaz lze odevzdat jen jednou. Pokud ho bude nutné změnit, je možnost aktuální výkaz smazat a vytvořit znovu. </p>
-                                <p><strong>2. Upravujete pouze tyto položky</strong><br>
-                                <ul>
-                                    <li><span class="highlight">Suplované hodiny</span></li>
-                                    <li><span class="highlight">Neodučené hodiny</span></li>
-                                    <li><span class="highlight">Důvod pro neodučené hodiny</span></li>
-                                    <!-- <li><span class="highlight">Doba trvání</span> – v hodinách (0,5 – 24h).</li> -->
-                                </ul>
-                                </p>
-                                <p><strong>3. Schvalovací proces</strong><br>
-                                    Výkaz odesíláte vedoucímu projektu. Po kontrole může být schválen, vrácen k
-                                    přepracování nebo zamítnut.</p>
-                                <p><strong>4. Časté chyby</strong><br>
-                                <ul>
-                                    <li>Chybějící název projektu – <span class="highlight">povinné</span>.</li>
-                                    <li>Neplatný formát času – používejte desetinná čísla (např. 1,5 hodiny).</li>
-                                    <li>Duplicitní záznamy pro stejný den/projekt – systém varuje.</li>
-                                </ul>
-                                </p>
-                                <p><strong>5. Odevzdání a uzávěrka</strong><br>
-                                    Výkazy se odevzdávají do <span class="highlight">pátku 12:00</span> za uplynulý
-                                    týden. Po uzávěrce je nutná výjimka.</p>
-                                <p><strong>6. Přílohy a komentáře</strong><br>
-                                    K výkazu lze připojit soubory (max 5 MB) a interní poznámky pro schvalovatele.</p>
-                                <p><strong>7. Náhrady a přesčasy</strong><br>
-                                    Přesčasové hodiny se vykazují samostatně a musí být schváleny předem.</p>
-                            </div>
-                        </div>
-
-                        <!-- Chat / AI agent -->
-                        <div class="chat-panel">
-                            <div class="chat-header">
-                                <i class="fas fa-comment-dots" style="color: #1f6bc0;"></i>
-                                Konzultace s AI agentem
-                                <div class="chat-header-right">
-                                    <span class="server-status checking" id="serverStatus">⏳ kontrola...</span>
-                                    <button class="clear-chat-btn" id="clearChatBtn">✕ Smazat</button>
-                                </div>
-                            </div>
-                            <div class="chat-messages" id="chatMessages">
-                                <div class="message assistant">
-                                    <span class="msg-icon">🤖</span> Dobrý den, jsem AI agent pro manuál k výkazu práce.
-                                    Zeptejte se mě na cokoliv – odpovídám na základě manuálu.
-                                </div>
-                            </div>
-                            <div class="chat-input-area">
-                                <input type="text" id="chatInput" placeholder="Napište dotaz..." />
-                                <button id="sendChatBtn"><i class="fas fa-paper-plane"></i></button>
-                                <span id="voiceIndicator" class="voice-indicator"><i class="fas fa-circle"
-                                        style="color: #d94a4a; font-size: 0.5rem;"></i> poslouchám...</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="footer-note">
-                        <i class="fas fa-microphone-alt"></i> Hlasový vstup: klikněte na tlačítko "Hlasová otázka" a
-                        mluvte. Hlasový výstup: přehraje poslední odpověď agenta.
-                    </div>
+                <div id="search-box">
+                    <input type="text" id="search-input" placeholder="🔍 Hledat ve školním řádu" />
+                    <button id="clear-search">✕ Zrušit</button>
                 </div>
+                <div id="search-info"></div>
+                <div id="search-results">
+                    <h4>⬇️ Nalezené sekce</h4>
+                    <ul id="results-list"></ul>
+                </div>
+
+                <div id="content"></div>
+                <div class="footnote">Školní řád nabývá účinnosti dnem 1. září 2025.</div>
             </div>
-                <script>
-                    (function () {
-                        "use strict";
 
-                        // ============================================================
-                        // 1. DATA
-                        // ============================================================
-                        const manualFullText = `
-            Výkaz práce slouží k zaznamenávání odpracovaných hodin, projektů a úkolů. Vyplňuje se denně nebo týdně.
-            Povinné položky: Datum – den, ke kterému se výkaz vztahuje. Projekt / zakázka – kód nebo název projektu. Činnost – popis vykonané práce (např. vývoj, analýza, schůzka). Doba trvání – v hodinách (0,5 – 24h).
-            Schvalovací proces: Výkaz odesíláte vedoucímu projektu. Po kontrole může být schválen, vrácen k přepracování nebo zamítnut.
-            Časté chyby: Chybějící název projektu – povinné. Neplatný formát času – používejte desetinná čísla (např. 1,5 hodiny). Duplicitní záznamy pro stejný den/projekt – systém varuje.
-            Odevzdání a uzávěrka: Výkazy se odevzdávají do pátku 12:00 za uplynulý týden. Po uzávěrce je nutná výjimka.
-            Přílohy a komentáře: K výkazu lze připojit soubory (max 5 MB) a interní poznámky pro schvalovatele.
-            Náhrady a přesčasy: Přesčasové hodiny se vykazují samostatně a musí být schváleny předem.
-        `;
-
-                        // ============================================================
-                        // 2. DOM ELEMENTY
-                        // ============================================================
-                        const searchInput = document.getElementById('searchInput');
-                        const searchBtn = document.getElementById('searchBtn');
-                        const manualContent = document.getElementById('manualContent');
-                        const chatMessages = document.getElementById('chatMessages');
-                        const chatInput = document.getElementById('chatInput');
-                        const sendBtn = document.getElementById('sendChatBtn');
-                        const voiceInputBtn = document.getElementById('voiceInputBtn');
-                        const voiceOutputBtn = document.getElementById('voiceOutputBtn');
-                        const voiceLabel = document.getElementById('voiceLabel');
-                        const voiceIndicator = document.getElementById('voiceIndicator');
-                        const statusText = document.getElementById('statusText');
-                        const statusDot = document.getElementById('statusDot');
-                        const serverStatus = document.getElementById('serverStatus');
-                        const clearChatBtn = document.getElementById('clearChatBtn');
-
-                        // ============================================================
-                        // 3. KONTROLA BACKENDU
-                        // ============================================================
-                        async function checkBackend() {
-                            try {
-                                const response = await fetch('/api/test');
-                                if (response.ok) {
-                                    serverStatus.className = 'server-status online';
-                                    serverStatus.textContent = '✅ Online';
-                                    return true;
-                                } else {
-                                    throw new Error('Backend neodpovídá');
-                                }
-                            } catch (e) {
-                                console.error('❌ Backend nedostupný:', e.message);
-                                serverStatus.className = 'server-status offline';
-                                serverStatus.textContent = '❌ Backend offline (spusťte node server.js)';
-                                return false;
-                            }
-                        }
-
-                        // ============================================================
-                        // 4. FULLTEXT SEARCH
-                        // ============================================================
-                        function highlightText(text, query) {
-                            if (!query.trim()) return text;
-                            const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-                            return text.replace(regex, '<span class="highlight">$1</span>');
-                        }
-
-                        function performSearch() {
-                            const query = searchInput.value.trim();
-                            if (!query) {
-                                // Reset
-                                manualContent.innerHTML = `
-                    <p><strong>1. Úvod</strong><br>
-                    Výkaz práce slouží k zaznamenávání odpracovaných hodin, projektů a úkolů. Vyplňuje se denně nebo týdně.</p>
-                    <p><strong>2. Povinné položky</strong><br>
-                    <ul>
-                        <li><span class="highlight">Datum</span> – den, ke kterému se výkaz vztahuje.</li>
-                        <li><span class="highlight">Projekt / zakázka</span> – kód nebo název projektu.</li>
-                        <li><span class="highlight">Činnost</span> – popis vykonané práce (např. vývoj, analýza, schůzka).</li>
-                        <li><span class="highlight">Doba trvání</span> – v hodinách (0,5 – 24h).</li>
-                    </ul>
-                    </p>
-                    <p><strong>3. Schvalovací proces</strong><br>
-                    Výkaz odesíláte vedoucímu projektu. Po kontrole může být schválen, vrácen k přepracování nebo zamítnut.</p>
-                    <p><strong>4. Časté chyby</strong><br>
-                    <ul>
-                        <li>Chybějící název projektu – <span class="highlight">povinné</span>.</li>
-                        <li>Neplatný formát času – používejte desetinná čísla (např. 1,5 hodiny).</li>
-                        <li>Duplicitní záznamy pro stejný den/projekt – systém varuje.</li>
-                    </ul>
-                    </p>
-                    <p><strong>5. Odevzdání a uzávěrka</strong><br>
-                    Výkazy se odevzdávají do <span class="highlight">pátku 12:00</span> za uplynulý týden. Po uzávěrce je nutná výjimka.</p>
-                    <p><strong>6. Přílohy a komentáře</strong><br>
-                    K výkazu lze připojit soubory (max 5 MB) a interní poznámky pro schvalovatele.</p>
-                    <p><strong>7. Náhrady a přesčasy</strong><br>
-                    Přesčasové hodiny se vykazují samostatně a musí být schváleny předem.</p>
-                `;
-                                return;
-                            }
-
-                            const plain = manualContent.innerText;
-                            const parts = plain.split(/\n/).filter(p => p.trim().length > 0);
-                            let highlightedHtml = '';
-                            for (let line of parts) {
-                                if (line.toLowerCase().includes(query.toLowerCase())) {
-                                    highlightedHtml += `<p>${highlightText(line, query)}</p>`;
-                                } else {
-                                    highlightedHtml += `<p>${line}</p>`;
-                                }
-                            }
-                            if (!highlightedHtml) {
-                                highlightedHtml = `<p><i class="fas fa-exclamation-circle"></i> Nic nenalezeno pro "<strong>${query}</strong>"</p>`;
-                            }
-                            manualContent.innerHTML = highlightedHtml;
-                        }
-
-                        searchBtn.addEventListener('click', performSearch);
-                        searchInput.addEventListener('keyup', (e) => { if (e.key === 'Enter') performSearch(); });
-
-                        // ============================================================
-                        // 5. AI AGENT – KOMUNIKACE S BACKENDEM
-                        // ============================================================
-                        // Historie konverzace (bez system promptu, ten se přidává na backendu)
-                        let conversationHistory = [];
-                        let lastAssistantReply = 'Dobrý den, jsem AI agent pro manuál k výkazu práce.';
-
-                        function addMessage(text, type, isError = false) {
-                            const msgDiv = document.createElement('div');
-                            msgDiv.className = `message ${type}${isError ? ' error' : ''}`;
-                            const icon = type === 'user' ? '🧑' : '🤖';
-                            msgDiv.innerHTML = `<span class="msg-icon">${icon}</span> ${text}`;
-                            chatMessages.appendChild(msgDiv);
-                            chatMessages.scrollTop = chatMessages.scrollHeight;
-                        }
-
-                        function addTypingIndicator() {
-                            const msgDiv = document.createElement('div');
-                            msgDiv.className = 'message assistant';
-                            msgDiv.id = 'typingIndicator';
-                            msgDiv.innerHTML = `
-                <span class="msg-icon">🤖</span>
-                <span class="typing-indicator"><span></span><span></span><span></span></span>
-            `;
-                            chatMessages.appendChild(msgDiv);
-                            chatMessages.scrollTop = chatMessages.scrollHeight;
-                        }
-
-                        function removeTypingIndicator() {
-                            const el = document.getElementById('typingIndicator');
-                            if (el) el.remove();
-                        }
-
-                        function updateStatus(text, type) {
-                            statusText.textContent = text;
-                            statusDot.className = 'dot ' + type;
-                        }
-
-                        async function processUserQuery(query) {
-                            if (!query.trim()) return;
-
-                            // Kontrola backendu
-                            const isOnline = await checkBackend();
-                            if (!isOnline) {
-                                addMessage('❌ Backend není dostupný. Spusťte server příkazem: node server.js', 'assistant', true);
-                                return;
-                            }
-
-                            addMessage(query, 'user');
-                            chatInput.value = '';
-                            sendBtn.disabled = true;
-                            updateStatus('Přemýšlím...', 'loading');
-
-                            addTypingIndicator();
-
-                            try {
-                                // Přidáme dotaz do historie
-                                conversationHistory.push({ role: 'user', content: query });
-
-                                const response = await fetch('/api/chat/manual', {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ messages: conversationHistory })
-                                });
-
-                                if (!response.ok) {
-                                    const errorData = await response.json();
-                                    throw new Error(errorData.error || 'Neznámá chyba');
-                                }
-
-                                const data = await response.json();
-                                removeTypingIndicator();
-
-                                // Přidáme odpověď do historie
-                                conversationHistory.push({ role: 'assistant', content: data.reply });
-
-                                addMessage(data.reply, 'assistant');
-                                lastAssistantReply = data.reply;
-                                updateStatus('Odpovězeno', 'online');
-                                setTimeout(() => updateStatus('Agent připraven', 'online'), 2000);
-
-                            } catch (error) {
-                                removeTypingIndicator();
-                                console.error('Chyba:', error);
-                                addMessage(`❌ Chyba: ${error.message}`, 'assistant', true);
-                                updateStatus('Chyba', 'error');
-                                setTimeout(() => updateStatus('Agent připraven', 'online'), 3000);
-                            } finally {
-                                sendBtn.disabled = false;
-                            }
-                        }
-
-                        // ============================================================
-                        // 6. CHAT EVENTY
-                        // ============================================================
-                        function sendChat() {
-                            const q = chatInput.value.trim();
-                            if (!q) return;
-                            processUserQuery(q);
-                        }
-
-                        sendBtn.addEventListener('click', sendChat);
-                        chatInput.addEventListener('keyup', (e) => {
-                            if (e.key === 'Enter') sendChat();
-                        });
-
-                        // ============================================================
-                        // 7. SMAZÁNÍ KONVERZACE
-                        // ============================================================
-                        clearChatBtn.addEventListener('click', function () {
-                            if (!confirm('Opravdu chcete smazat celou konverzaci?')) return;
-                            conversationHistory = [];
-                            chatMessages.innerHTML = `
-                <div class="message assistant">
-                    <span class="msg-icon">🤖</span> Konverzace byla vymazána. Zeptejte se mě na cokoli ohledně manuálu k výkazu práce.
+            <!-- ===== PRAVÝ SLOUPEC – AI ASISTENT ===== -->
+            <aside id="right">
+                <div class="ai-header-row">
+                    <h2><i class="fas fa-robot"></i> Viki asistent</h2>
+                    <button class="clear-chat-btn" id="clearChatBtn">✕ Smazat</button>
                 </div>
-            `;
-                            lastAssistantReply = 'Konverzace byla vymazána.';
-                            updateStatus('Agent připraven', 'online');
-                        });
 
-                        // ============================================================
-                        // 8. HLASOVÝ VSTUP
-                        // ============================================================
-                        let recognition = null;
-                        let isRecording = false;
+                <div>
+                    <span class="server-status checking" id="serverStatus">⏳ Kontrola připojení...</span>
+                </div>
 
-                        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-                            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                            recognition = new SpeechRecognition();
-                            recognition.lang = 'cs-CZ';
-                            recognition.continuous = false;
-                            recognition.interimResults = false;
+                <div class="ai-status">
+                    <span class="dot" id="aiStatusDot"></span>
+                    <span id="aiStatusText">Připraven</span>
+                </div>
 
-                            recognition.onstart = function () {
-                                isRecording = true;
-                                voiceInputBtn.classList.add('recording');
-                                voiceLabel.textContent = 'Poslouchám...';
-                                voiceIndicator.classList.add('active');
-                                updateStatus('Poslouchám hlas...', 'loading');
-                            };
+                <div class="ai-chat" id="aiChat">
+                    <div class="ai-message assistant">
+                        <span class="msg-icon">🤖</span> Ahoj, jsem Viki. Zeptej se mě na cokoli ohledně školního řádu.
+                    </div>
+                </div>
 
-                            recognition.onresult = function (event) {
-                                const transcript = event.results[0][0].transcript;
-                                voiceLabel.textContent = 'Hlasová otázka';
-                                voiceInputBtn.classList.remove('recording');
-                                voiceIndicator.classList.remove('active');
-                                chatInput.value = transcript;
-                                processUserQuery(transcript);
-                            };
+                <div class="ai-input-area">
+                    <input type="text" id="aiInput" placeholder="Napište dotaz..." />
+                    <button class="btn" id="aiSendBtn"><i class="fas fa-paper-plane"></i></button>
+                    <button class="btn btn-voice" id="aiVoiceInputBtn">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <button class="btn btn-voice" id="aiVoiceOutputBtn">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                    <span class="voice-indicator" id="aiVoiceIndicator">
+                        <i class="fas fa-circle" style="color: #d94a4a; font-size: 0.5rem;"></i>
+                        poslouchám...
+                    </span>
+                </div>
+            </aside>
 
-                            recognition.onerror = function (event) {
-                                console.warn('Speech error:', event.error);
-                                voiceLabel.textContent = 'Hlasová otázka';
-                                voiceInputBtn.classList.remove('recording');
-                                voiceIndicator.classList.remove('active');
-                                if (event.error === 'not-allowed') {
-                                    addMessage('⚠️ Povolte prosím přístup k mikrofonu.', 'assistant', true);
-                                }
-                                updateStatus('Chyba mikrofonu', 'error');
-                                setTimeout(() => updateStatus('Agent připraven', 'online'), 2000);
-                            };
+        </div>
 
-                            recognition.onend = function () {
-                                isRecording = false;
-                                voiceInputBtn.classList.remove('recording');
-                                voiceLabel.textContent = 'Hlasová otázka';
-                                voiceIndicator.classList.remove('active');
-                                if (statusText.textContent.includes('Poslouchám')) {
-                                    updateStatus('Agent připraven', 'online');
-                                }
-                            };
-                        } else {
-                            voiceInputBtn.style.opacity = '0.6';
-                            voiceInputBtn.title = 'Web Speech API není podporována';
+        <script>
+          
+            const schoolData = [
+        
+                {
+                    chapter: "Úvod",
+                    subsections: [
+                        {
+                            title: "",
+                            content: `
+                       Školní intranet je navržen pro zjednodušení práce pedagogických pracovníků.
+            `
                         }
+                    ]
+                },
+               
+                {
+                    chapter: "I. Výkaz práce",
+                    subsections: [
+                        {
+                            title: "Obecné",
+                            content: `
+                        Výkaz práce slouží k zaznamenávání odpracovaných hodin, projektů a úkolů. Vyplňuje se dle uvážení, nicméně je navržen tak, aby vykazování bylo 
+                        co nejméně pracné a zabralo minimum času.
 
-                        voiceInputBtn.addEventListener('click', function () {
-                            if (!recognition) {
-                                alert('Váš prohlížeč nepodporuje rozpoznávání řeči (Web Speech API).');
-                                return;
-                            }
-                            if (isRecording) {
-                                recognition.stop();
-                                return;
-                            }
-                            try {
-                                recognition.start();
-                            } catch (e) {
-                                // už běží
-                            }
-                        });
+                      
+                    `
+                        },
+                        {
+                            title: "Nový výkaz",
+                            content: `
+                        Jako první krok je potřeba upravit týdenní časovou dotaci pro jednotlivé dny. Tímto bude každý pracovní den automaticky předvyplněn. Tabulka výkazu 
+                        se zobrazí pro aktuální měsíc a obsahuje zvýrazněné víkendy, svátky, prázdniny. Úkolem pedagogického pracovníka je doplnit pouze suplované, neodučené hodiny 
+                        a důvod pro jaký výuka neproběhla. Pokud žádné změny v rozvrhu nenastaly, stačí pouze potvrdit správnost údajů a uložit.
 
-                        // ============================================================
-                        // 9. HLASOVÝ VÝSTUP
-                        // ============================================================
-                        voiceOutputBtn.addEventListener('click', function () {
-                            const textToSpeak = lastAssistantReply;
-                            if (!textToSpeak || textToSpeak === 'Dobrý den, jsem AI agent pro manuál k výkazu práce.') {
-                                alert('Žádná odpověď k přehrání. Zeptejte se nejprve agenta.');
-                                return;
-                            }
-                            if ('speechSynthesis' in window) {
-                                const utterance = new SpeechSynthesisUtterance(textToSpeak);
-                                utterance.lang = 'cs-CZ';
-                                utterance.rate = 1.0;
-                                utterance.pitch = 1.0;
-                                speechSynthesis.speak(utterance);
-                                updateStatus('Přehrávám odpověď...', 'loading');
-                                utterance.onend = function () {
-                                    updateStatus('Agent připraven', 'online');
-                                };
-                            } else {
-                                alert('Váš prohlížeč nepodporuje syntézu řeči.');
-                            }
-                        });
+                         Na pravé straně se nachází náhled neodučených hodin a celkový souhrn.
+                    `
+                        }
+                    ]
+                },
+                
+                {
+                    chapter: "II. Přehled",
+                    subsections: [
+                        {
+                            title: "Školní šatny (budova A i B)",
+                            content: `
+                        <p><strong>a)</strong> Šatny jsou v suterénu obou budov; každý žák má přidělenou skříňku.</p>
+                        <p><strong>b)</strong> Budova A – klíč od skříňky obdrží žák na začátku studia proti podpisu. Budova B – žák si obstará vlastní visací zámek.</p>
+                        <p><strong>c)</strong> Po příchodu se žák přezuje, svrchní oděv ukládá do skříňky.</p>
+                        <p><strong>d)</strong> Skříňka není určena k úschově cenností, šperků, dokladů, peněz, mobilů ani potravin.</p>
+                        <p><strong>e)</strong> Žák je povinen skříňku zamykat; za věci z neuzamčené skříňky škola neodpovídá.</p>
+                        <p><strong>f)</strong> Ztrátu z uzamčené poškozené skříňky hlásí žák třídnímu učiteli.</p>
+                        <p><strong>g)</strong> Závady na skříňce hlásí žák třídnímu učiteli.</p>
+                        <p><strong>h)</strong> Žák udržuje šatnu a skříňku v čistotě.</p>
+                        <p><strong>i)</strong> Vedení školy si vyhrazuje právo kontroly skříněk (písemný záznam, za přítomnosti svědka).</p>
+                        <p><strong>j)</strong> Žáci z budovy B přesouvající se do budovy A ukládají svršky do určené místnosti pod dohledem vyučujícího.</p>
+                    `
+                        },
+                        {
+                            title: "Provozní šatna budovy A a šatny na pracovištích",
+                            content: `
+                        <p><strong>Provozní šatna budovy A:</strong> slouží k převlékání na TOS, TPP a praxe. Žáci ukládají oděvy a tašky dle pokynů vyučujícího. Cennosti se neukládají – škola neručí.</p>
+                        <p><strong>Šatny na pracovištích:</strong> žáci se řídí pravidly daného pracoviště a pokyny vedoucího, učitele nebo instruktora odborného výcviku.</p>
+                    `
+                        }
+                    ]
+                },
+                // ---- PRÁVA ŽÁKŮ + ŠKOLNÍ PARLAMENT + ŠKOLSKÁ RADA ----
+                {
+                    chapter: "III. Nástěnka",
+                    subsections: [
+                        {
+                            title: "Práva žáků",
+                            content: `
+                        <p>Žák má právo:</p>
+                        <ul>
+                            <li>na poskytování kvalitního vzdělání s metodami odpovídajícími současné pedagogice,</li>
+                            <li>na informace o průběhu a výsledcích svého vzdělávání,</li>
+                            <li>volit a být volen do školské rady (je-li zletilý),</li>
+                            <li>zakládat samosprávné orgány žáků, volit a být do nich volen, obracet se na ředitelku školy.</li>
+                        </ul>
+                    `
+                        },
+                        {
+                            title: "Školní parlament",
+                            content: `
+                        <p><strong>Školní parlament (ŠP)</strong> je samosprávný orgán žáků a poradní orgán ředitelky.</p>
+                        <ul>
+                            <li>Všichni žáci mají aktivní i pasivní volební právo.</li>
+                            <li>Pravidla činnosti upravují <em>Stanovy Školního parlamentu</em>; v čele je předseda (volební období 1 školní rok).</li>
+                            <li>ŠP má právo žádat ředitelku o vysvětlení rozhodnutí; ředitelka je povinna odpovědět.</li>
+                            <li>ŠP se vyjadřuje ke všem problémům školy v mezích právních předpisů.</li>
+                            <li>Členové ŠP nesmí být postihováni za vyjadřování názorů.</li>
+                            <li>Školní parlament je nerozpustitelný.</li>
+                        </ul>
+                    `
+                        },
+                        {
+                            title: "Školská rada",
+                            content: `
+                        <p>Při škole se zřizuje <strong>školská rada</strong> (6 členů).</p>
+                        <ul>
+                            <li>1/3 volí zákonní zástupci nezletilých žáků a zletilí žáci; 1/3 volí pedagogičtí pracovníci.</li>
+                            <li>Funkční období: 3 roky.</li>
+                            <li>Zasedá nejméně 2× ročně; svolává předseda.</li>
+                            <li>Ředitelka není členem, ale účastní se na vyzvání.</li>
+                        </ul>
+                    `
+                        }
+                    ]
+                },
+                // ---- PRÁVA ZÁKONNÝCH ZÁSTUPCŮ ----
+                {
+                    chapter: "IV. Generátor dokumentů",
+                    subsections: [
+                        {
+                            title: "Práva zákonných zástupců nezletilých žáků (a rodičů zletilých)",
+                            content: `
+                        <p>Zákonný zástupce má právo:</p>
+                        <ul>
+                            <li>na informace o průběhu a výsledcích vzdělávání (Edookit, třídní schůzky, konzultace) – stejné právo mají i rodiče zletilých žáků,</li>
+                            <li>vyjadřovat se ke všem rozhodnutím týkajícím se podstatných záležitostí vzdělávání žáka,</li>
+                            <li>volit a být volen do školské rady.</li>
+                        </ul>
+                    `
+                        }
+                    ]
+                },
+                // ---- POVINNOSTI ŽÁKŮ ----
+                {
+                    chapter: "V. Dokumenty",
+                    subsections: [
+                        {
+                            title: "Základní povinnosti",
+                            content: `
+                        <p>Žák je povinen:</p>
+                        <ul>
+                            <li>řádně docházet do školy a vzdělávat se,</li>
+                            <li>dodržovat školní řád, předpisy k ochraně zdraví a bezpečnosti,</li>
+                            <li>respektovat pokyny pedagogických i jiných pracovníků,</li>
+                            <li>dodržovat vyučovací dobu, docházet včas podle rozvrhu, účastnit se povinných, volitelných i nepovinných předmětů, odborného výcviku a praxe,</li>
+                            <li>sledovat informace v Edookitu,</li>
+                            <li>mít omluvný list a řádně o něj pečovat,</li>
+                            <li>oznámit třídnímu učiteli do 3 dnů změny matričních údajů a kontaktů,</li>
+                            <li>být ve škole vhodně a čistě upraven (viz kap. o vzhledu),</li>
+                            <li>chránit zdraví své i ostatních, dbát na pořádek,</li>
+                            <li>šetřit školní zařízení; škodu nahlásit a do 30 dnů uhradit (splátkový kalendář možný),</li>
+                            <li>chovat se slušně ve školní restauraci/bufetu a dodržovat hygienická pravidla,</li>
+                            <li>slušně zdravit každou dospělou osobu v budově.</li>
+                        </ul>
+                        <p><em>Na zletilého žáka se vztahují i povinnosti zákonných zástupců vyplývající z řádu.</em></p>
+                    `
+                        }
+                    ]
+                },
+                // ---- POVINNOSTI ZÁKONNÝCH ZÁSTUPCŮ ----
+                {
+                    chapter: "VI. Školní řád",
+                    subsections: [
+                        {
+                            title: "Povinnosti zákonných zástupců nezletilých žáků",
+                            content: `
+                        <p>Zákonný zástupce je povinen:</p>
+                        <ul>
+                            <li>zajistit řádnou docházku žáka,</li>
+                            <li>spolupracovat s třídním učitelem, na vyzvání se dostavit k projednání závažných otázek,</li>
+                            <li>informovat školu o změně zdravotní způsobilosti či jiných závažných skutečnostech,</li>
+                            <li>dokládat důvody nepřítomnosti žáka,</li>
+                            <li>oznamovat údaje podstatné pro vzdělávání a bezpečnost,</li>
+                            <li>řídit se školním řádem a vnitřními předpisy.</li>
+                        </ul>
+                    `
+                        }
+                    ]
+                },
+                // ---- ZÁSAVY A OMEZENÍ ----
+                {
+                    chapter: "VII. Nápověda",
+                    subsections: [
+                        {
+                            title: "Co je žákům zakázáno",
+                            content: `
+                        <ul>
+                            <li><strong>a)</strong> vstup pod vlivem alkoholu či jiných návykových látek,</li>
+                            <li><strong>b)</strong> požívat alkohol, energetické nápoje, přinášet, distribuovat či užívat omamné a psychotropní látky (včetně kratomu) – <span style="color:#a33;">hrubé porušení → možnost vyloučení</span>,</li>
+                            <li><strong>c)</strong> kouřit (včetně alternativ) v prostorách školy i při akcích školy – <span style="color:#a33;">hrubé porušení</span>,</li>
+                            <li><strong>d)</strong> přinášet nebezpečné předměty (zbraně, výbušniny, jedy apod.) – <span style="color:#a33;">hrubé porušení → možnost vyloučení</span>,</li>
+                            <li><strong>e)</strong> manipulovat s otevřeným ohněm,</li>
+                            <li><strong>f)</strong> manipulovat s elektroinstalací, používat neevidované spotřebiče, nabíjet zařízení bez povolení,</li>
+                            <li><strong>g)</strong> narušovat výuku (vyrušování, napovídání, opisování, nepovolené pomůcky),</li>
+                            <li><strong>h)</strong> používat osobní elektroniku bez souhlasu vyučujícího (mobil v tašce, tichý režim),</li>
+                            <li><strong>i)</strong> pořizovat obrazové/zvukové záznamy bez souhlasu – porušení může mít právní důsledky,</li>
+                            <li><strong>j)</strong> provozovat hazardní hry,</li>
+                            <li><strong>k)</strong> nosit větší obnos peněz nebo cenné věci,</li>
+                            <li><strong>l)</strong> vylézat z oken, vyhazovat předměty,</li>
+                            <li><strong>m)</strong> svévolně opouštět budovu o přestávkách,</li>
+                            <li><strong>n)</strong> vpouštět cizí osoby,</li>
+                            <li><strong>o)</strong> projevy nesnášenlivosti, šikanování, kyberšikana, vulgarity – <span style="color:#a33;">zvláště hrubé porušení</span>,</li>
+                            <li><strong>p)</strong> propagace stran a hnutí směřujících k potlačování lidských práv,</li>
+                            <li><strong>q)</strong> parkovat na vyhrazeném parkovišti budovy A bez povolení.</li>
+                        </ul>
+                    `
+                        }
+                    ]
+                },
+                // ---- PRAVIDLA PRO OMLOUVÁNÍ ABSENCE ----
+                {
+                    chapter: "VIII. Pravidla pro omlouvání absence",
+                    subsections: [
+                        {
+                            title: "Předpokládaná absence (plánovaná)",
+                            content: `
+                        <p><strong>Žádost o uvolnění musí být předložena předem:</strong></p>
+                        <ul>
+                            <li>elektronicky v Edookitu (z účtu zákonného zástupce u nezletilých),</li>
+                            <li>písemně v omluvném listu třídnímu učiteli.</li>
+                            <li>U zletilých žáků může třídní učitel vyžadovat podpis rodičů.</li>
+                            <li>Na akci zájmové organizace je nutné potvrzení.</li>
+                            <li>Absenci do 2 dnů povoluje třídní učitel; 3 a více dnů povoluje ředitelka (na základě žádosti a souhlasu TU, vedoucího UOV apod.).</li>
+                            <li>Plánované návštěvy lékaře pokud možno mimo vyučování.</li>
+                        </ul>
+                    `
+                        },
+                        {
+                            title: "Nepředpokládaná absence (náhlá)",
+                            content: `
+                        <p><strong>Oznámení první den, nejpozději do 3 dnů:</strong></p>
+                        <ul>
+                            <li>elektronicky v Edookitu nebo telefonicky na sekretariát (+420 354 622 605),</li>
+                            <li>u praktického vyučování informovat odpovědnou osobu na pracovišti + učitele odborného výcviku + sekretariát (hotelnictví).</li>
+                            <li>Při neomluvené absenci delší než 5 dnů vyzve ředitelka k doložení; po 10 dnech bez nástupu se žák posuzuje, jako by vzdělávání zanechal.</li>
+                            <li>Zpětná omluvenka v Edookitu nebo omluvném listu nejpozději 3. den po nástupu, jinak může být absence vyhodnocena jako neomluvená.</li>
+                            <li>Nezletilého žáka omlouvá zákonný zástupce; zletilý dokládá důvod sám.</li>
+                        </ul>
+                    `
+                        }
+                    ]
+                },
+                // ---- VYUČOVÁNÍ ----
+                {
+                    chapter: "IX. Vyučování",
+                    subsections: [
+                        {
+                            title: "Organizace a pravidla výuky",
+                            content: `
+                        <ul>
+                            <li>Vyučovací hodina = 45 minut; začíná zvoněním, žáci zaujmou místa.</li>
+                            <li>Hodina odborného výcviku/praxe = 60 minut.</li>
+                            <li>Při přechodu do odborných učeben žáci vyčkávají před učebnou.</li>
+                            <li>Za 3 pozdní příchody = 1 neomluvená hodina. Nepřítomnost > 25 minut = zameškaná hodina.</li>
+                            <li>Při vstupu/odchodu vyučujícího žáci povstanou.</li>
+                            <li>V hodinách je zakázáno jíst; povoleny nealko nápoje (kromě zakázaných).</li>
+                            <li>Opustit místo lze jen se souhlasem vyučujícího.</li>
+                            <li>Ve věcech organizace se žáci obracejí na třídního učitele.</li>
+                            <li>Na TPP – předepsaný oděv; na TOS – společenské oblečení (u chlapců dlouhé kalhoty).</li>
+                            <li>Na TV – sportovní obuv a úbor; bez úboru může být hodina vykázána jako neomluvená.</li>
+                            <li>Ředitelka může uvolnit ze zdravotních důvodů (písemné doporučení lékaře), ale ne z předmětu rozhodujícího pro odborné zaměření.</li>
+                            <li>Změny rozvrhu sledujte v Edookitu a na webu.</li>
+                            <li>Při volné hodině se žák nemusí zdržovat v budově – škola neodpovídá za bezpečnost.</li>
+                        </ul>
+                    `
+                        }
+                    ]
+                },
+                // ---- POVINNOSTI TŘÍDNÍ SLUŽBY ----
+                {
+                    chapter: "X. Povinnosti třídní služby",
+                    subsections: [
+                        {
+                            title: "Služba ve třídě",
+                            content: `
+                        <p>Třídní služba (určuje třídní učitel, jména v Edookitu):</p>
+                        <ul>
+                            <li>dbá na pořádek a čistotu, zajišťuje čistotu tabule,</li>
+                            <li>ohlásí nepřítomnost vyučujícího, pokud se nedostaví do 5 minut,</li>
+                            <li>hlásí nepřítomné žáky,</li>
+                            <li>zajišťuje uzavření oken o přestávkách,</li>
+                            <li>šetří elektrickou energií,</li>
+                            <li>kontroluje stav učebny při návratu, závady hlásí,</li>
+                            <li>po skončení výuky kontroluje uzavření oken, pořádek, zvednutí židlí.</li>
+                        </ul>
+                    `
+                        }
+                    ]
+                },
+                // ---- PŘESTÁVKY ----
+                {
+                    chapter: "XI. Přestávky",
+                    subsections: [
+                        {
+                            title: "Pravidla chování o přestávkách",
+                            content: `
+                        <ul>
+                            <li>Přestávky jsou určeny pro hygienu, relaxaci a přípravu na další hodinu.</li>
+                            <li>Větrání bez vyučujícího zakázáno.</li>
+                            <li>Možnost nákupu v bufetu, ale včas na vyučování.</li>
+                            <li>Polední přestávka – oběd a pobyt venku, ale bez obtěžování okolí, dodržovat pravidla silničního provozu.</li>
+                        </ul>
+                    `
+                        }
+                    ]
+                },
+                // ---- ODBORNÝ VÝCVIK A PRAXE ----
+                {
+                    chapter: "XII. Odborný výcvik a praxe",
+                    subsections: [
+                        {
+                            title: "Odborný výcvik (učební obory)",
+                            content: `
+                        <ul>
+                            <li>Vztahuje se na obory kuchař/číšník.</li>
+                            <li>Žáci se dostaví dle pokynů zástupce ředitelky pro praktickou výuku.</li>
+                            <li>Rozpis směn znám předem; výměna možná dle pravidel.</li>
+                            <li>Při dělených směnách nutný podepsaný souhlas zákonného zástupce.</li>
+                            <li>Chování shodné s řádem, vnitřními předpisy provozoven a BOZP.</li>
+                            <li>Absence se omlouvají dle kap. X; všechny omluvenky v Edookitu.</li>
+                            <li>Absence nesmí přesáhnout 20 % fondu; jinak se postupuje dle bodu 1-a).</li>
+                            <li>Vyučovací jednotkou je den; 1. ročník max. 6 hodin.</li>
+                            <li>Začátek nejdříve 7:00, konec nejpozději 20:00 (výjimky 6:00 / 22:00).</li>
+                            <li>Přestávka po 2 hodinách 15–25 min.</li>
+                            <li>Evidence v deníku odborného výcviku.</li>
+                            <li>Stravovací povinnost (výjimka dietní režim).</li>
+                        </ul>
+                    `
+                        },
+                        {
+                            title: "Praxe (maturitní obory)",
+                            content: `
+                        <ul>
+                            <li>Vztahuje se na maturitní obory.</li>
+                            <li>Dostavení dle pokynů zástupce ředitelky pro praktickou výuku.</li>
+                            <li>Rozpis směn předem; výměna možná dle pravidel.</li>
+                            <li>Pravidla chování shodná s odborným výcvikem.</li>
+                            <li>Omlouvání dle kap. X, vše v Edookitu.</li>
+                            <li>Praxe musí být odpracována v plném rozsahu; náhrada po dohodě.</li>
+                            <li>Vyučovací den = 6 hodin po 60 minutách.</li>
+                            <li>Začátek 7:00, konec 20:00 (výjimky 6:00 / 22:00).</li>
+                            <li>Evidence v evidenčním listu praxe; předložit do 3 dnů po ukončení, jinak se praxe neuznává.</li>
+                            <li>Bez omluvy nesplněná praxe = neklasifikován (TOS/praxe).</li>
+                        </ul>
+                    `
+                        }
+                    ]
+                },
+                // ---- OSOBNÍ PROBLÉMY ----
+                {
+                    chapter: "XIII. Osobní problémy žáků",
+                    subsections: [
+                        {
+                            title: "Kam se obrátit",
+                            content: `
+                        <p>V případě osobních problémů se žák může obrátit na:</p>
+                        <ul>
+                            <li>třídního učitele,</li>
+                            <li>výchovného poradce,</li>
+                            <li>školního metodika prevence.</li>
+                        </ul>
+                        <p>Jména poradce a metodika sdělí třídní učitel na začátku roku. Doporučuje se řešit problémy včas.</p>
+                    `
+                        }
+                    ]
+                },
+                // ---- VÝCHOVNÁ OPATŘENÍ ----
+                {
+                    chapter: "XIV. Výchovná opatření",
+                    subsections: [
+                        {
+                            title: "Pochvaly a kázeňská opatření",
+                            content: `
+                        <p><strong>Pochvaly:</strong> pochvala třídního učitele, pochvala ředitelky školy.</p>
+                        <p><strong>Kázeňská opatření (dle závažnosti):</strong></p>
+                        <ul>
+                            <li>napomenutí třídního učitele,</li>
+                            <li>důtka třídního učitele,</li>
+                            <li>důtka ředitelky školy,</li>
+                            <li>podmíněné vyloučení ze studia,</li>
+                            <li>vyloučení ze studia.</li>
+                        </ul>
+                        <p>Lze uplatnit i alternativní opatření. Podrobnosti v klasifikačním řádu.</p>
+                    `
+                        }
+                    ]
+                },
+                // ---- BOZP ----
+                {
+                    chapter: "XV. Bezpečnost a ochrana zdraví (BOZP)",
+                    subsections: [
+                        {
+                            title: "Pravidla BOZP",
+                            content: `
+                        <ul>
+                            <li>Všechny osoby účastné na vyučování dodržují pravidla bezpečnosti a ochrany zdraví, protipožární předpisy a evakuační plán.</li>
+                            <li>Povinnost účastnit se školení BOZP; školení se zapisují a stvrzují podpisem.</li>
+                            <li>Žáci neprodleně hlásí úraz, zranění, napadení nebo jiný útisk.</li>
+                            <li>Každý úraz či nevolnost hlásit dozírajícímu nebo vedení.</li>
+                            <li>Při přesunech mimo budovu dodržovat pravidla silničního provozu.</li>
+                            <li>Podrobnosti v metodickém pokynu k BOZP.</li>
+                            <li>Třídní učitelé na začátku roku prokazatelně seznámí žáky s řádem a proškolí BOZP.</li>
+                            <li>Pedagogové vykonávají dohled dle rozpisu.</li>
+                            <li>Vyučující TV zajišťuje bezpečnost při pohybu na městská sportoviště.</li>
+                        </ul>
+                    `
+                        }
+                    ]
+                },
+                // ---- VZHLED ŽÁKŮ ----
+                {
+                    chapter: "XVI. Vzhled a úprava žáků",
+                    subsections: [
+                        {
+                            title: "Pokyny pro dívky",
+                            content: `
+                        <ul>
+                            <li>Vlasy čisté, upravené, přírodní odstíny; dlouhé vlasy stažené.</li>
+                            <li>Líčení decentní, výrazné čočky se nedoporučují.</li>
+                            <li>Oděv čistý a upravený; tepláky a výrazně roztrhané kalhoty nepřípustné. Nevhodný nízký sed + krátká trička.</li>
+                            <li>Na odbornou přípravu zákaz extrémně krátkých sukní a legín.</li>
+                            <li>Při výcviku/praxi řetízky schované; zakázány prstýnky, náramky, dlouhé náušnice.</li>
+                            <li>Ruce čisté, nehty krátké a bez ozdob (umělé nehty nepřípustné).</li>
+                            <li>Piercing i tetování zakrýt.</li>
+                        </ul>
+                    `
+                        },
+                        {
+                            title: "Pokyny pro chlapce",
+                            content: `
+                        <ul>
+                            <li>Vlasy čisté, upravené, krátký střih; výrazné barvy a extravagantní účesy nevhodné.</li>
+                            <li>Důkladně oholen nebo vousy upravené.</li>
+                            <li>Oděv čistý, upravený; tepláky a roztrhané kalhoty nepřípustné, nízký sed nevhodný.</li>
+                            <li>Na odbornou přípravu zákaz krátkých kalhot.</li>
+                            <li>Při výcviku/praxi řetízky schované; zakázány prstýnky, náramky, náušnice.</li>
+                            <li>Ruce čisté, nehty krátké, neobarvené.</li>
+                            <li>Piercing a tetování zakrýt.</li>
+                        </ul>
+                    `
+                        },
+                        {
+                            title: "Pracovní oděv (závazné) – hotelnictví a učební obory",
+                            content: `
+                        <p><strong>Žákyně (TOS, praxe, servírka):</strong> bílá halenka, schválená vesta/vestozáster, dlouhé černé společenské kalhoty, černé bavlněné ponožky, černá obuv s protiskluzem, bílý plášť, doplňky (propiska, číšnický otvírák, zapalovač, kapesník).</p>
+                        <p><strong>Žák (TOS, praxe, číšník):</strong> bílá košile s dlouhým rukávem, schválená vesta/vestozáster, motýlek, dlouhé černé kalhoty, černé bavlněné ponožky, černé společenské boty s protiskluzem, bílý plášť, doplňky.</p>
+                        <p><strong>Kuchař/kuchařka (TPP, praxe):</strong> bílá pokrývka hlavy (šátek, pirátka, lodička), rondon (bílý), dlouhé kuchařské kalhoty, bílá zástěra, bílá protiskluzová obuv s atestem BOZP, bílé ponožky, čistá utěrka (2 ks), kapesník.</p>
+                        <p>Vše čisté, vyžehlené. V případě sporu rozhoduje ředitelka se zástupci.</p>
+                    `
+                        }
+                    ]
+                },
+                // ---- ZÁVĚREČNÁ USTANOVENÍ ----
+                {
+                    chapter: "XVII. Závěrečná ustanovení",
+                    subsections: [
+                        {
+                            title: "",
+                            content: `
+                        <p><strong>1.</strong> Nedílnou součástí tohoto školního řádu je klasifikační řád (Příloha č. 1).</p>
+                        <p><strong>2.</strong> Školní řád nabývá účinnosti dnem <strong>1. září 2025</strong>.</p>
+                        <p><strong>3.</strong> Školní řád schválila školská rada dne <strong>28. srpna 2025</strong>.</p>
+                        <p style="margin-top: 0.8rem; display: flex; justify-content: flex-end; font-weight: 500; color: #0b2b4a;">Ing. Lucie Fričlová, ředitelka školy</p>
+                    `
+                        }
+                    ]
+                }
+            ];
 
-                        // ============================================================
-                        // 10. INICIALIZACE
-                        // ============================================================
-                        checkBackend();
-                        updateStatus('Agent připraven', 'online');
-                        console.log('✅ Aplikace načtena. Backend musí běžet na http://localhost:3000');
+            // ================================================================
+            // 2. RENDER OBSAHU
+            // ================================================================
+            const contentContainer = document.getElementById('content');
 
-                    })();
-                </script>
+            function renderContent() {
+                let html = '';
+                schoolData.forEach((chapter, idx) => {
+                    const chapterId = `chap-${idx}`;
+                    html += `<div class="chapter" id="${chapterId}">`;
+                    html += `<h2>${chapter.chapter}</h2>`;
+
+                    chapter.subsections.forEach((sub, subIdx) => {
+                        const subId = `${chapterId}-sub-${subIdx}`;
+                        const hasTitle = sub.title && sub.title.length > 0;
+                        html += `<div class="subsection" id="${subId}">`;
+                        if (hasTitle) html += `<h3>${sub.title}</h3>`;
+                        html += `<div class="sub-content">${sub.content}</div>`;
+                        html += `</div>`;
+                    });
+                    html += `</div>`;
+                });
+                contentContainer.innerHTML = html;
+
+                // Uložíme původní HTML pro vyhledávání
+                document.querySelectorAll('.subsection').forEach(el => {
+                    const contentDiv = el.querySelector('.sub-content');
+                    if (contentDiv && !el.dataset.originalHtml) {
+                        el.dataset.originalHtml = contentDiv.innerHTML;
+                    }
+                });
+            }
+            renderContent();
+
+            // ================================================================
+            // 3. VYHLEDÁVÁNÍ (fulltext)
+            // ================================================================
+            const searchInput = document.getElementById('search-input');
+            const clearBtn = document.getElementById('clear-search');
+            const searchInfo = document.getElementById('search-info');
+            const searchResults = document.getElementById('search-results');
+            const resultsList = document.getElementById('results-list');
+
+            function performSearch(query) {
+                const trimmed = query.trim();
+                if (!trimmed) {
+                    // Reset
+                    document.querySelectorAll('.subsection').forEach(el => {
+                        const cd = el.querySelector('.sub-content');
+                        if (cd && el.dataset.originalHtml) cd.innerHTML = el.dataset.originalHtml;
+                        el.classList.remove('hidden-subsection');
+                    });
+                    document.querySelectorAll('.chapter').forEach(ch => ch.classList.remove('hidden-chapter'));
+                    searchInput.value = '';
+                    searchInfo.textContent = '';
+                    searchResults.classList.remove('visible');
+                    resultsList.innerHTML = '';
+                    return;
+                }
+
+                const lower = trimmed.toLowerCase();
+                let matches = [];
+
+                document.querySelectorAll('.subsection').forEach(el => {
+                    const cd = el.querySelector('.sub-content');
+                    if (!cd) return;
+                    // Vrátíme původní HTML před zvýrazněním
+                    if (el.dataset.originalHtml) cd.innerHTML = el.dataset.originalHtml;
+                    const text = cd.innerText || '';
+                    if (text.toLowerCase().includes(lower)) {
+                        el.classList.remove('hidden-subsection');
+                        const chapterEl = el.closest('.chapter');
+                        const chapterTitle = chapterEl?.querySelector('h2')?.textContent || '';
+                        const subTitle = el.querySelector('h3')?.textContent || '';
+                        const title = subTitle ? `${chapterTitle} – ${subTitle}` : chapterTitle;
+                        matches.push({ id: el.id, title: title });
+                        // Zvýraznění
+                        const regex = new RegExp(`(${trimmed.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+                        cd.innerHTML = cd.innerHTML.replace(regex, '<mark class="highlight">$1</mark>');
+                    } else {
+                        el.classList.add('hidden-subsection');
+                    }
+                });
+
+                document.querySelectorAll('.chapter').forEach(ch => {
+                    const visible = ch.querySelectorAll('.subsection:not(.hidden-subsection)');
+                    ch.classList.toggle('hidden-chapter', visible.length === 0);
+                });
+
+                if (matches.length === 0) {
+                    searchInfo.textContent = `Žádná sekce neobsahuje "${trimmed}".`;
+                    searchResults.classList.remove('visible');
+                } else {
+                    searchInfo.textContent = `Nalezeno ${matches.length} sekcí.`;
+                    resultsList.innerHTML = matches.map(m =>
+                        `<li><a href="#${m.id}" onclick="document.getElementById('${m.id}').scrollIntoView({behavior:'smooth'})">${m.title}</a></li>`
+                    ).join('');
+                    searchResults.classList.add('visible');
+                }
+            }
+
+            searchInput.addEventListener('input', () => performSearch(searchInput.value));
+            clearBtn.addEventListener('click', () => performSearch(''));
+
+            // ================================================================
+            // 4. AI AGENT – KOMUNIKACE S BACKENDEM
+            // ================================================================
+            const aiChat = document.getElementById('aiChat');
+            const aiInput = document.getElementById('aiInput');
+            const aiSendBtn = document.getElementById('aiSendBtn');
+            const aiStatusDot = document.getElementById('aiStatusDot');
+            const aiStatusText = document.getElementById('aiStatusText');
+            const clearChatBtn = document.getElementById('clearChatBtn');
+            const serverStatus = document.getElementById('serverStatus');
+
+            // --- Ověření backendu ---
+            async function checkBackend() {
+                try {
+                    console.log('🔍 Kontrola backendu na /api/test...');
+                    const response = await fetch('/api/test');
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log('✅ Backend online:', data);
+                        serverStatus.className = 'server-status online';
+                        serverStatus.textContent = '✅ Backend online';
+                        return true;
+                    } else {
+                        throw new Error('Backend neodpovídá');
+                    }
+                } catch (e) {
+                    console.error('❌ Backend nedostupný:', e.message);
+                    serverStatus.className = 'server-status offline';
+                    serverStatus.textContent = '❌ Backend nedostupný (spusťte node server.js)';
+                    return false;
+                }
+            }
+
+            // --- Sestavení system promptu z dat ---
+            function buildSystemPrompt() {
+                let fullText = '';
+                schoolData.forEach(chapter => {
+                    fullText += `\n--- ${chapter.chapter} ---\n`;
+                    chapter.subsections.forEach(sub => {
+                        if (sub.title) fullText += `\n${sub.title}:\n`;
+                        fullText += sub.content.replace(/<[^>]*>/g, ' ') + '\n';
+                    });
+                });
+                return `Jsi užitečný asistent pro Hotelovou školu Mariánské Lázně a jmenuješ se Viki. Odpovídej výhradně na základě tohoto školního řádu. Pokud odpověď v řádu nenajdeš, řekni to. Školní řád:\n${fullText}`;
+            }
+
+            const systemPrompt = buildSystemPrompt();
+            let conversationHistory = [
+                { role: 'system', content: systemPrompt }
+            ];
+            let lastAssistantReply = 'Dobrý den, jsem Viki. Zeptejte se mě na cokoli ohledně školního řádu.';
+
+            // --- Odeslání dotazu na backend ---
+            async function sendToAI(query) {
+                try {
+                    console.log('📤 Odesílám dotaz na /api/chat:', query.substring(0, 50) + '...');
+                    const response = await fetch('/api/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            messages: conversationHistory.concat([
+                                { role: 'user', content: query }
+                            ])
+                        })
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        console.error('❌ Backend vrátil chybu:', errorData);
+                        throw new Error(errorData.error || 'Neznámá chyba');
+                    }
+
+                    const data = await response.json();
+                    console.log('✅ Odpověď přijata z backendu');
+                    return data.reply;
+                } catch (error) {
+                    console.error('❌ Chyba v sendToAI:', error.message);
+                    throw error;
+                }
+            }
+
+            // --- UI funkce pro chat ---
+            function addAiMessage(text, type, isError = false) {
+                const msgDiv = document.createElement('div');
+                msgDiv.className = `ai-message ${type}${isError ? ' error' : ''}`;
+                const icon = type === 'user' ? '🧑' : '🤖';
+                msgDiv.innerHTML = `<span class="msg-icon">${icon}</span> ${text}`;
+                aiChat.appendChild(msgDiv);
+                aiChat.scrollTop = aiChat.scrollHeight;
+            }
+
+            function addTypingIndicator() {
+                const el = document.createElement('div');
+                el.className = 'ai-message assistant';
+                el.id = 'typingIndicator';
+                el.innerHTML = `
+                    <span class="msg-icon">🤖</span>
+                    <span class="typing-indicator"><span></span><span></span><span></span></span>
+                `;
+                aiChat.appendChild(el);
+                aiChat.scrollTop = aiChat.scrollHeight;
+            }
+
+            function removeTypingIndicator() {
+                document.getElementById('typingIndicator')?.remove();
+            }
+
+            // --- Zpracování dotazu uživatele ---
+            async function processAiQuery(query) {
+                if (!query.trim()) return;
+
+                // Kontrola backendu
+                const isOnline = await checkBackend();
+                if (!isOnline) {
+                    addAiMessage('❌ Backend není dostupný. Spusťte server příkazem: node server.js', 'assistant', true);
+                    return;
+                }
+
+                addAiMessage(query, 'user');
+                aiInput.value = '';
+                aiSendBtn.disabled = true;
+                aiStatusDot.className = 'dot loading';
+                aiStatusText.textContent = 'Přemýšlím...';
+
+                addTypingIndicator();
+
+                try {
+                    const response = await sendToAI(query);
+                    removeTypingIndicator();
+
+                    conversationHistory.push({ role: 'user', content: query });
+                    conversationHistory.push({ role: 'assistant', content: response });
+
+                    addAiMessage(response, 'assistant');
+                    lastAssistantReply = response;
+                    aiStatusDot.className = 'dot';
+                    aiStatusText.textContent = 'Odpovězeno';
+                    setTimeout(() => {
+                        aiStatusText.textContent = 'Připraven';
+                    }, 2000);
+                } catch (error) {
+                    removeTypingIndicator();
+                    const errorMsg = error.message || 'Neznámá chyba';
+                    addAiMessage(`❌ Chyba: ${errorMsg}`, 'assistant', true);
+                    aiStatusDot.className = 'dot error';
+                    aiStatusText.textContent = 'Chyba';
+                } finally {
+                    aiSendBtn.disabled = false;
+                }
+            }
+
+            // --- Eventy pro chat ---
+            aiSendBtn.addEventListener('click', () => processAiQuery(aiInput.value));
+            aiInput.addEventListener('keyup', (e) => {
+                if (e.key === 'Enter') processAiQuery(aiInput.value);
+            });
+
+            clearChatBtn.addEventListener('click', function () {
+                if (confirm('Smazat konverzaci?')) {
+                    conversationHistory = [{ role: 'system', content: systemPrompt }];
+                    aiChat.innerHTML = `
+                        <div class="ai-message assistant">
+                            <span class="msg-icon">🤖</span> Konverzace byla vymazána.
+                        </div>
+                    `;
+                    lastAssistantReply = 'Konverzace byla vymazána.';
+                    aiStatusDot.className = 'dot';
+                    aiStatusText.textContent = 'Připraven';
+                }
+            });
+
+            // ================================================================
+            // 5. HLASOVÝ VSTUP
+            // ================================================================
+            const aiVoiceInputBtn = document.getElementById('aiVoiceInputBtn');
+            const aiVoiceIndicator = document.getElementById('aiVoiceIndicator');
+
+            let recognition = null;
+            let isRecording = false;
+
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.lang = 'cs-CZ';
+                recognition.continuous = false;
+                recognition.interimResults = false;
+
+                recognition.onstart = function () {
+                    isRecording = true;
+                    aiVoiceInputBtn.classList.add('recording');
+                    aiVoiceIndicator.classList.add('active');
+                    aiStatusText.textContent = 'Poslouchám...';
+                    aiStatusDot.className = 'dot loading';
+                };
+
+                recognition.onresult = function (event) {
+                    const transcript = event.results[0][0].transcript;
+                    aiVoiceInputBtn.classList.remove('recording');
+                    aiVoiceIndicator.classList.remove('active');
+                    aiInput.value = transcript;
+                    processAiQuery(transcript);
+                };
+
+                recognition.onerror = function (event) {
+                    aiVoiceInputBtn.classList.remove('recording');
+                    aiVoiceIndicator.classList.remove('active');
+                    if (event.error !== 'not-allowed') {
+                        aiStatusDot.className = 'dot error';
+                        aiStatusText.textContent = 'Chyba mikrofonu';
+                    }
+                    setTimeout(() => {
+                        aiStatusText.textContent = 'Připraven';
+                        aiStatusDot.className = 'dot';
+                    }, 2000);
+                };
+
+                recognition.onend = function () {
+                    isRecording = false;
+                    aiVoiceInputBtn.classList.remove('recording');
+                    aiVoiceIndicator.classList.remove('active');
+                };
+            }
+
+            aiVoiceInputBtn.addEventListener('click', function () {
+                if (!recognition) {
+                    alert('Web Speech API není podporována.');
+                    return;
+                }
+                if (isRecording) { recognition.stop(); return; }
+                try { recognition.start(); } catch (e) { }
+            });
+
+            // ================================================================
+            // 6. HLASOVÝ VÝSTUP
+            // ================================================================
+            const aiVoiceOutputBtn = document.getElementById('aiVoiceOutputBtn');
+
+            aiVoiceOutputBtn.addEventListener('click', function () {
+                if (!lastAssistantReply || lastAssistantReply === 'Ahoj, jsem Viki. Zeptej se mě na cokoli ohledně školního řádu.') {
+                    alert('Žádná odpověď k přehrání.');
+                    return;
+                }
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance(lastAssistantReply);
+                    utterance.lang = 'cs-CZ';
+                    utterance.rate = 1.0;
+                    speechSynthesis.speak(utterance);
+                }
+            });
+
+            // ================================================================
+            // 7. INICIALIZACE
+            // ================================================================
+            checkBackend();
+            console.log('✅ Aplikace načtena. Backend musí běžet na http://localhost:3000');
+            console.log('📋 Systémový prompt:', systemPrompt.substring(0, 100) + '...');
+        </script>
     </body>
-
-    </html>
+</html>
